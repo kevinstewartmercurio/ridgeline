@@ -72,7 +72,7 @@ const work = [
             <a
               href="/"
               class:list={[
-                "group project-link font-jetbrains text-ink/65 relative text-sm uppercase",
+                "group project-link font-jetbrains text-ink/65 relative text-sm uppercase outline-0",
               ]}
             >
               <div class="relative grid w-full grid-cols-[50px_2.25fr_1.5fr_1fr_1fr_90px] items-center gap-x-5 py-5 pl-1.5">
@@ -94,7 +94,10 @@ const work = [
                 <hr class="border-ink/12 absolute bottom-0 left-0 h-px w-full" />
               </div>
 
-              <div class="bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]">
+              <div
+                class="bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]"
+                aria-hidden="true"
+              >
                 <div class="relative grid w-full grid-cols-[50px_2.25fr_1.5fr_1fr_1fr_90px] items-center gap-x-5 py-5 pl-1.5">
                   {!idx && (
                     <hr class="border-pine absolute top-0 left-0 h-px w-full" />
@@ -129,6 +132,8 @@ const work = [
   const projectLinks = document.querySelectorAll(".project-link");
   const projectSelectors = document.querySelectorAll(".project-selector");
 
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
   if (selectedWorkSection instanceof HTMLElement) {
     let mouseMovingDown = true;
     let prevY = 0;
@@ -140,40 +145,48 @@ const work = [
 
     projectLinks.forEach((project, idx) => {
       if (project instanceof HTMLAnchorElement) {
-        project.addEventListener("mouseenter", () => {
-          if (projectSelectors[idx] instanceof HTMLDivElement) {
-            animate(
-              projectSelectors[idx],
-              {
-                clipPath: [
-                  mouseMovingDown
-                    ? "inset(0% 0% 100% 0%)"
-                    : "inset(100% 0% 0% 0%)",
-                  "inset(0% 0% 0% 0%)",
-                ],
-              },
-              {
-                duration: 0.3,
-              },
-            );
-          }
+        ["mouseenter", "focus"].forEach((trigger) => {
+          project.addEventListener(trigger, () => {
+            if (projectSelectors[idx] instanceof HTMLDivElement) {
+              animate(
+                projectSelectors[idx],
+                {
+                  clipPath: [
+                    trigger === "focus"
+                      ? "inset(0% 0% 100% 0%)"
+                      : mouseMovingDown
+                        ? "inset(0% 0% 100% 0%)"
+                        : "inset(100% 0% 0% 0%)",
+                    "inset(0% 0% 0% 0%)",
+                  ],
+                },
+                {
+                  duration: prefersReducedMotion.matches ? 0 : 0.3,
+                },
+              );
+            }
+          });
         });
 
-        project.addEventListener("mouseleave", () => {
-          if (projectSelectors[idx] instanceof HTMLDivElement) {
-            animate(
-              projectSelectors[idx],
-              {
-                clipPath: [
-                  "inset(0% 0% 0% 0%)",
-                  mouseMovingDown
-                    ? "inset(100% 0% 0% 0%)"
-                    : "inset(0% 0% 100% 0%)",
-                ],
-              },
-              { duration: 0.3 },
-            );
-          }
+        ["mouseleave", "blur"].forEach((trigger) => {
+          project.addEventListener(trigger, () => {
+            if (projectSelectors[idx] instanceof HTMLDivElement) {
+              animate(
+                projectSelectors[idx],
+                {
+                  clipPath: [
+                    "inset(0% 0% 0% 0%)",
+                    trigger === "blur"
+                      ? "inset(100% 0% 0% 0%)"
+                      : mouseMovingDown
+                        ? "inset(100% 0% 0% 0%)"
+                        : "inset(0% 0% 100% 0%)",
+                  ],
+                },
+                { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+              );
+            }
+          });
         });
       }
     });
