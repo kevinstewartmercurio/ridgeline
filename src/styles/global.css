@@ -5,8 +5,12 @@
   --breakpoint-xs: 525px;
 
   --color-alabaster: #e8e6e0;
+  --color-ink: #141412;
+  --color-pine: #1f3d2b;
 }
 
 @theme inline {
   --font-newsreader: var(--newsreader);
+  --font-jetbrains: var(--jetbrains-mono);
+  --font-instrument: var(--instrument-sans);
 }

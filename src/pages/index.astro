@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/hero.astro";
+import SubHero from "../components/sub-hero.astro";
+import SelectedWork from "../components/selected-work.astro";
 
 import HeroImage from "../images/homepage/hero.png";
 ---
@@ -8,5 +10,7 @@ import HeroImage from "../images/homepage/hero.png";
 <Layout title="Welcome to Astro.">
   <main>
     <Hero src={HeroImage} alt="" />
+    <SubHero />
+    <SelectedWork />
   </main>
 </Layout>
