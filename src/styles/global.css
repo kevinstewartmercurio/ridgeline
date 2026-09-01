@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
-/* @theme {
-  --variable: value;
-} */
+@theme {
+  --breakpoint-2xs: 425px;
+  --breakpoint-xs: 525px;
+
+  --color-alabaster: #e8e6e0;
+}
+
+@theme inline {
+  --font-newsreader: var(--newsreader);
+}
