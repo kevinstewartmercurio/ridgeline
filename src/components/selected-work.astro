@@ -1,0 +1,152 @@
+---
+import { Image } from "astro:assets";
+
+import HeroImage from "../images/homepage/hero.png";
+
+const work = [
+  {
+    title: "Larch House",
+    location: "Methow Valley, WA",
+    type: "New Build",
+    year: 2025,
+    img: {
+      src: HeroImage,
+      alt: "",
+    },
+  },
+  {
+    title: "Fern Hollow",
+    location: "Portland, OR",
+    type: "Infill",
+    year: 2024,
+    img: {
+      src: HeroImage,
+      alt: "",
+    },
+  },
+  {
+    title: "Cutbank Residence",
+    location: "Bainbridge Island, WA",
+    type: "New Build",
+    year: 2024,
+    img: {
+      src: HeroImage,
+      alt: "",
+    },
+  },
+  {
+    title: "The Ledger House",
+    location: "Bend, OR",
+    type: "Renovation",
+    year: 2023,
+    img: {
+      src: HeroImage,
+      alt: "",
+    },
+  },
+  {
+    title: "Skagit Barn",
+    location: "Skagit Valley, WA",
+    type: "Addition",
+    year: 2023,
+    img: {
+      src: HeroImage,
+      alt: "",
+    },
+  },
+];
+---
+
+<section id="selected-work-section" class="bg-alabaster px-5 py-20 sm:px-9">
+  <div class="mx-auto w-full max-w-344">
+    <div class="text-ink">
+      <h2
+        class="text-pine font-newsreader flex w-full justify-between text-8xl font-light"
+      >
+        <span>Selected</span>
+        <span>Work</span>
+      </h2>
+      <div>
+        {
+          work.map((project, idx) => (
+            <a
+              href="/"
+              class:list={[
+                "border-ink/12 group project-link font-jetbrains text-ink/65 hover:text-alabaster focus-within:text-alabaster border-b text-sm uppercase duration-30",
+                !idx && "border-t",
+              ]}
+            >
+              <div class="relative grid w-full grid-cols-[50px_2.25fr_1.5fr_1fr_1fr_90px] items-center gap-x-5 overflow-clip py-5 pl-1.5">
+                <div class="project-link-bg bg-pine absolute top-0 left-0 h-full w-full -translate-y-full" />
+                {!idx && (
+                  <hr class="border-ink/12 absolute top-0 left-0 h-px w-full" />
+                )}
+                <span class="relative z-10 block">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <h3 class="text-ink group-hover:text-alabaster group-focus-within:text-alabaster font-newsreader relative z-10 text-4xl font-light normal-case duration-30">
+                  {project.title}
+                </h3>
+                <span class="relative z-10 block">{project.location}</span>
+                <span class="relative z-10 block">{project.type}</span>
+                <span class="relative z-10 block">{project.year}</span>
+                <Image
+                  src={project.img.src}
+                  alt={project.img.alt}
+                  class="relative z-10 h-14 w-22.5 object-cover"
+                />
+                <hr class="border-ink/12 absolute bottom-0 left-0 h-px w-full" />
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { animate } from "motion";
+
+  const selectedWorkSection = document.getElementById("selected-work-section");
+  const projectLinks = document.querySelectorAll(".project-link");
+  const projectLinkBgs = document.querySelectorAll(".project-link-bg");
+
+  if (selectedWorkSection instanceof HTMLElement) {
+    let mouseMovingDown = true;
+    let prevY = 0;
+
+    selectedWorkSection.addEventListener("mousemove", (e) => {
+      mouseMovingDown = e.y > prevY;
+      prevY = e.y;
+    });
+
+    projectLinks.forEach((project, idx) => {
+      if (project instanceof HTMLAnchorElement) {
+        project.addEventListener("mouseenter", () => {
+          if (projectLinkBgs[idx] instanceof HTMLDivElement) {
+            animate(
+              projectLinkBgs[idx],
+              {
+                y: [mouseMovingDown ? "0%" : "200%", "100%"],
+              },
+              { duration: 0.3, ease: "linear" },
+            );
+          }
+        });
+
+        project.addEventListener("mouseleave", () => {
+          if (projectLinkBgs[idx] instanceof HTMLDivElement) {
+            animate(
+              projectLinkBgs[idx],
+              {
+                y: ["100%", mouseMovingDown ? "200%" : "0%"],
+              },
+              { duration: 0.3, ease: "linear" },
+            );
+          }
+        });
+      }
+    });
+  }
+</script>
