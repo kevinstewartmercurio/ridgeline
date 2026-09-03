@@ -143,18 +143,18 @@ const work = [
       project.classList.remove("outline-0");
     });
   } else if (selectedWorkSection instanceof HTMLElement) {
-    let mouseMovingDown = true;
+    let directionDown = true;
     let prevY = 0;
 
     selectedWorkSection.addEventListener("mousemove", (e) => {
-      mouseMovingDown = e.y > prevY;
+      directionDown = e.y > prevY;
       prevY = e.y;
     });
 
     window.addEventListener("keydown", (e) => {
       console.log(e.key, e.shiftKey);
       if (e.key === "Tab") {
-        mouseMovingDown = e.shiftKey ? false : true;
+        directionDown = e.shiftKey ? false : true;
       }
     });
 
@@ -167,7 +167,7 @@ const work = [
                 projectSelectors[idx],
                 {
                   clipPath: [
-                    mouseMovingDown
+                    directionDown
                       ? "inset(0% 0% 100% 0%)"
                       : "inset(100% 0% 0% 0%)",
                     "inset(0% 0% 0% 0%)",
@@ -189,7 +189,7 @@ const work = [
                 {
                   clipPath: [
                     "inset(0% 0% 0% 0%)",
-                    mouseMovingDown
+                    directionDown
                       ? "inset(100% 0% 0% 0%)"
                       : "inset(0% 0% 100% 0%)",
                   ],
