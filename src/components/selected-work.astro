@@ -151,6 +151,13 @@ const work = [
       prevY = e.y;
     });
 
+    window.addEventListener("keydown", (e) => {
+      console.log(e.key, e.shiftKey);
+      if (e.key === "Tab") {
+        mouseMovingDown = e.shiftKey ? false : true;
+      }
+    });
+
     projectLinks.forEach((project, idx) => {
       if (project instanceof HTMLAnchorElement) {
         ["mouseenter", "focus"].forEach((trigger) => {
@@ -160,11 +167,9 @@ const work = [
                 projectSelectors[idx],
                 {
                   clipPath: [
-                    trigger === "focus"
+                    mouseMovingDown
                       ? "inset(0% 0% 100% 0%)"
-                      : mouseMovingDown
-                        ? "inset(0% 0% 100% 0%)"
-                        : "inset(100% 0% 0% 0%)",
+                      : "inset(100% 0% 0% 0%)",
                     "inset(0% 0% 0% 0%)",
                   ],
                 },
@@ -184,11 +189,9 @@ const work = [
                 {
                   clipPath: [
                     "inset(0% 0% 0% 0%)",
-                    trigger === "blur"
+                    mouseMovingDown
                       ? "inset(100% 0% 0% 0%)"
-                      : mouseMovingDown
-                        ? "inset(100% 0% 0% 0%)"
-                        : "inset(0% 0% 100% 0%)",
+                      : "inset(0% 0% 100% 0%)",
                   ],
                 },
                 { duration: prefersReducedMotion.matches ? 0 : 0.3 },
