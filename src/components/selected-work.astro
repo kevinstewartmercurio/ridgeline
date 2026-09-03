@@ -135,9 +135,14 @@ const work = [
   const projectLinks = document.querySelectorAll(".project-link");
   const projectSelectors = document.querySelectorAll(".project-selector");
 
+  const hoverDevice = matchMedia("(hover: hover)").matches;
   const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-  if (selectedWorkSection instanceof HTMLElement) {
+  if (!hoverDevice) {
+    projectLinks.forEach((project) => {
+      project.classList.remove("outline-0");
+    });
+  } else if (selectedWorkSection instanceof HTMLElement) {
     let mouseMovingDown = true;
     let prevY = 0;
 
