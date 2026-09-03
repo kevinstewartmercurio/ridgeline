@@ -15,5 +15,21 @@ export default defineConfig({
       styles: ["normal", "italic"],
       fallbacks: ["Georgia", "serif"],
     },
+    {
+      provider: fontProviders.google(),
+      name: "JetBrains Mono",
+      cssVariable: "--jetbrains-mono",
+      weights: ["100 800"],
+      styles: ["normal", "italic"],
+      fallbacks: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Instrument Sans",
+      cssVariable: "--instrument-sans",
+      weights: ["400 700"],
+      styles: ["normal", "italic"],
+      fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
+    },
   ],
 });
