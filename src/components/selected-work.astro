@@ -61,7 +61,7 @@ const work = [
   <div class="mx-auto w-full max-w-344">
     <div class="text-ink">
       <h2
-        class="text-pine font-newsreader flex w-full justify-between text-8xl font-light"
+        class="text-pine font-newsreader xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
       >
         <span>Selected</span>
         <span>Work</span>
@@ -72,51 +72,51 @@ const work = [
             <a
               href="/"
               class:list={[
-                "group project-link font-jetbrains text-ink/65 relative text-sm uppercase outline-0",
+                "group project-link font-jetbrains text-ink/65 relative text-xs uppercase outline-0 sm:text-sm",
               ]}
             >
-              <div class="relative grid w-full grid-cols-[50px_2.25fr_1.5fr_1fr_1fr_90px] items-center gap-x-5 py-5 pl-1.5">
-                {!idx && (
-                  <hr class="border-ink/12 absolute top-0 left-0 h-px w-full" />
-                )}
-                <span class="block">{String(idx + 1).padStart(2, "0")}</span>
-                <h3 class="text-ink font-newsreader text-4xl font-light normal-case">
-                  {project.title}
-                </h3>
-                <span class="block">{project.location}</span>
-                <span class="block">{project.type}</span>
-                <span class="block">{project.year}</span>
-                <Image
-                  src={project.img.src}
-                  alt={project.img.alt}
-                  class="h-14 w-22.5 object-cover"
-                />
-                <hr class="border-ink/12 absolute bottom-0 left-0 h-px w-full" />
-              </div>
-
-              <div
-                class="bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]"
-                aria-hidden="true"
-              >
-                <div class="relative grid w-full grid-cols-[50px_2.25fr_1.5fr_1fr_1fr_90px] items-center gap-x-5 py-5 pl-1.5">
+              {[0, 1].map((n) => (
+                <div
+                  class:list={[
+                    "xs:grid-cols-[20px_1fr_1fr_72px] grid w-full grid-cols-[20px_1fr_80px] items-center gap-x-4 py-2 pl-1.5 sm:grid-cols-[24px_1fr_0.875fr_80px] sm:gap-x-5 md:grid-cols-[36px_1.375fr_1fr_0.25fr_90px] md:py-4 lg:grid-cols-[50px_2.25fr_1.5fr_1fr_0.5fr_90px] lg:py-5",
+                    n &&
+                      "bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]",
+                  ]}
+                  aria-hidden={idx ? "false" : "true"}
+                >
                   {!idx && (
-                    <hr class="border-pine absolute top-0 left-0 h-px w-full" />
+                    <hr
+                      class:list={[
+                        "absolute top-0 left-0 h-px w-full",
+                        !n ? "border-ink/12" : "border-pine",
+                      ]}
+                    />
                   )}
                   <span class="block">{String(idx + 1).padStart(2, "0")}</span>
-                  <h3 class="text-alabaster font-newsreader text-4xl font-light normal-case">
+                  <h3
+                    class:list={[
+                      "font-newsreader text-xl font-light normal-case sm:text-2xl md:text-3xl lg:text-4xl",
+                      !n ? "text-ink" : "text-alabaster",
+                    ]}
+                  >
                     {project.title}
                   </h3>
-                  <span class="block">{project.location}</span>
-                  <span class="block">{project.type}</span>
-                  <span class="block">{project.year}</span>
+                  <span class="xs:block hidden">{project.location}</span>
+                  <span class="hidden lg:block">{project.type}</span>
+                  <span class="hidden md:block">{project.year}</span>
                   <Image
                     src={project.img.src}
                     alt={project.img.alt}
                     class="h-14 w-22.5 object-cover"
                   />
-                  <hr class="border-pine absolute bottom-0 left-0 h-px w-full" />
+                  <hr
+                    class:list={[
+                      "absolute bottom-0 left-0 h-px w-full",
+                      !n ? "border-ink/12" : "border-pine",
+                    ]}
+                  />
                 </div>
-              </div>
+              ))}
             </a>
           ))
         }
