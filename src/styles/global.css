@@ -4,6 +4,9 @@
   --breakpoint-2xs: 425px;
   --breakpoint-xs: 525px;
 
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: calc(0.875 / 0.625);
+
   --color-alabaster: #e8e6e0;
   --color-ink: #141412;
   --color-pine: #1f3d2b;
