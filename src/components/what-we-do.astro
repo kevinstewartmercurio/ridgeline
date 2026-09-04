@@ -54,7 +54,7 @@ const services = [
       <span>What</span>
       <span>We Do</span>
     </h2>
-    <div class="flex gap-x-6">
+    <div class="flex gap-x-4 lg:gap-x-6">
       <div
         id="wwd-images-container"
         class="relative h-full w-1/2 bg-orange-300/30"
@@ -72,14 +72,18 @@ const services = [
           ))
         }
       </div>
-      <div id="service-cards-container" class="grid w-1/2 grid-cols-2">
+      <div
+        id="service-cards-container"
+        class="grid w-1/2 grid-cols-1 lg:grid-cols-2"
+      >
         {
           services.map((service, idx) => (
             <div
               class:list={[
-                "service-card border-ink/12 relative aspect-square border-t duration-300",
-                idx >= 2 && "border-b",
-                idx % 2 && "border-l",
+                "service-card border-ink/12 relative border-t duration-300 lg:aspect-square",
+                idx >= 2 && "lg:border-b",
+                idx % 2 && "lg:border-l",
+                idx === 3 && "border-b",
                 !idx ? "text-alabaster" : "text-ink/65",
               ]}
             >
@@ -96,17 +100,19 @@ const services = [
                 >
                   <div
                     id="service-card-selector-logo"
-                    class="bg-alabaster absolute top-5 right-5 flex h-16 w-16 origin-top-right scale-0 items-center justify-center duration-300"
+                    class="bg-alabaster absolute top-1/4 right-3 flex h-8 w-8 origin-top-right scale-0 items-center justify-center duration-300 lg:top-5 lg:right-5 lg:h-12 lg:w-12 xl:h-16 xl:w-16"
                   >
-                    <Logo class="fill-pine h-12 w-12" />
+                    <Logo class="fill-pine h-3/4 w-3/4 lg:h-8 lg:w-8 xl:h-12 xl:w-12" />
                   </div>
                 </div>
               )}
-              <div class="absolute bottom-16 left-0 z-20 px-5">
-                <h3 class="font-newsreader mb-3 text-3xl/[1] font-light">
+              <div class="absolute top-1/2 left-0 z-20 -translate-y-1/2 py-2.5 pr-16 pl-3 lg:top-[50%] lg:px-5">
+                <h3 class="font-newsreader mb-1.5 text-lg/[1] font-light lg:text-xl/[1] xl:mb-3 xl:text-2xl/[1]">
                   {service.h3}
                 </h3>
-                <p class="font-jetbrains text-xs uppercase">{service.p}</p>
+                <p class="font-jetbrains text-2xs uppercase xl:text-xs">
+                  {service.p}
+                </p>
               </div>
             </div>
           ))
@@ -132,6 +138,8 @@ const services = [
     "service-card-selector-logo",
   );
 
+  const lgMql = matchMedia("(min-width: 1024px)");
+
   if (
     serviceCardsContainer instanceof HTMLDivElement &&
     serviceCardSelectorBg instanceof HTMLDivElement &&
@@ -146,10 +154,34 @@ const services = [
       serviceCardSelectorLogo.style.scale = "0";
     });
 
+    lgMql.addEventListener("change", () => {
+      serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
+      serviceCardSelectorLogoContainer.style.transform = "translate(0%, 0%)";
+      serviceCardSelectorLogo.style.scale = "0";
+
+      wwdImages.forEach((img, idx) => {
+        img.classList.replace(
+          !idx ? "opacity-0" : "opacity-100",
+          !idx ? "opacity-100" : "opacity-0",
+        );
+      });
+
+      serviceCards.forEach((card, idx) => {
+        card.classList.replace(
+          !idx ? "text-ink/65" : "text-alabaster",
+          !idx ? "text-alabaster" : "text-ink/65",
+        );
+      });
+    });
+
     serviceCards.forEach((card, idx) => {
       card.addEventListener("mouseenter", () => {
-        serviceCardSelectorBg.style.transform = `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`;
-        serviceCardSelectorLogoContainer.style.transform = `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`;
+        serviceCardSelectorBg.style.transform = lgMql.matches
+          ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+          : `translate(0%, ${idx * 100}%)`;
+        serviceCardSelectorLogoContainer.style.transform = lgMql.matches
+          ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+          : `translate(0%, ${idx * 100}%)`;
 
         wwdImages.forEach((img, idx2) => {
           img.classList.replace(
