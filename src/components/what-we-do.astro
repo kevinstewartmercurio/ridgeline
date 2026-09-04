@@ -1,0 +1,214 @@
+---
+import { Image } from "astro:assets";
+import Logo from "./logo.astro";
+
+import wwd1Image from "../images/homepage/wwd-1.png";
+import wwd2Image from "../images/homepage/wwd-2.png";
+import wwd3Image from "../images/homepage/wwd-3.png";
+import wwd4Image from "../images/homepage/wwd-4.png";
+
+const images = [
+  {
+    src: wwd1Image,
+    alt: "",
+  },
+  {
+    src: wwd2Image,
+    alt: "",
+  },
+  {
+    src: wwd3Image,
+    alt: "",
+  },
+  {
+    src: wwd4Image,
+    alt: "",
+  },
+];
+
+const services = [
+  {
+    h3: "Custom residential architecture",
+    p: "New single-family builds, from site reading through final walkthrough",
+  },
+  {
+    h3: "Whole-home renovation & addition",
+    p: "Structural Rework, envelope, and reprogramming of existing houses",
+  },
+  {
+    h3: "Interior architecture & materials",
+    p: "Millwork, stone, fixtures, and finish selection carried in-house",
+  },
+  {
+    h3: "Site selection & feasibility",
+    p: "Land assessment, zoning, buildability, and early cost modeling",
+  },
+];
+---
+
+<section
+  class="bg-alabaster w-full px-5 pt-20 pb-16 sm:px-8 md:pt-26 md:pb-24 lg:px-10"
+>
+  <div
+    class="xs:grid-cols-[1fr_0.675fr] xs:gap-4 mx-auto grid w-full max-w-344 grid-cols-2 md:grid-cols-2 md:gap-y-0 lg:gap-x-6"
+  >
+    <h2
+      class="text-pine font-newsreader 2xs:text-6xl xs:col-span-1 xs:order-2 xs:flex-col order-1 col-span-2 flex w-full justify-between text-5xl font-light md:order-1 md:col-span-2 md:flex-row md:text-7xl lg:text-8xl"
+    >
+      <span>What</span>
+      <span class="xs:translate-y-3 block md:translate-y-0">We Do</span>
+    </h2>
+    <div
+      id="wwd-images-container"
+      class="xs:order-1 xs:col-span-1 xs:mb-0 relative order-2 col-span-2 mb-4 h-full w-full md:order-2"
+    >
+      {
+        images.map((img, idx) => (
+          <Image
+            src={img.src}
+            alt={img.alt}
+            class:list={[
+              "aspect-square w-full object-cover duration-500",
+              !idx ? "opacity-100" : "absolute top-0 left-0 opacity-0",
+            ]}
+          />
+        ))
+      }
+    </div>
+    <div
+      id="service-cards-container"
+      class="xs:grid-cols-2 xs:grid-rows-2 order-3 col-span-2 grid w-full grid-cols-1 grid-rows-4 md:col-span-1 md:grid-cols-1 md:grid-rows-4 lg:grid-cols-2 lg:grid-rows-2"
+    >
+      {
+        services.map((service, idx) => (
+          <div
+            class:list={[
+              "service-card border-ink/12 relative border-t duration-300 lg:aspect-square",
+              idx === 1 && "xs:border-l md:border-l-0 lg:border-l",
+              idx === 2 && "xs:border-b md:border-b-0 lg:border-b",
+              idx === 3 && "xs:border-l border-b md:border-l-0 lg:border-l",
+              !idx ? "text-alabaster" : "text-ink/65",
+            ]}
+          >
+            {!idx && (
+              <div
+                id="service-card-selector-bg"
+                class="bg-pine pointer-events-none absolute top-0 left-0 z-10 h-full w-full duration-300 md:h-[calc(100%+1px)] lg:h-full"
+              />
+            )}
+            {!idx && (
+              <div
+                id="service-card-selector-logo-container"
+                class="pointer-events-none absolute top-0 left-0 z-30 h-full w-full bg-transparent duration-300 md:h-[calc(100%+1px)] lg:h-full"
+              >
+                <div
+                  id="service-card-selector-logo"
+                  class="bg-alabaster absolute top-2 right-2 flex h-8 w-8 origin-top-right scale-0 items-center justify-center duration-300 md:top-1/4 md:right-3 lg:top-5 lg:right-5 lg:h-12 lg:w-12 xl:h-16 xl:w-16"
+                >
+                  <Logo class="fill-pine h-3/4 w-3/4 lg:h-8 lg:w-8 xl:h-12 xl:w-12" />
+                </div>
+              </div>
+            )}
+            <div class="relative z-20 py-2.5 pr-16 pl-3 md:absolute md:top-1/2 md:left-0 md:-translate-y-1/2 lg:top-[50%] lg:px-5">
+              <h3 class="font-newsreader mb-1 text-lg/[1] font-light lg:mb-1.5 lg:text-xl/[1] xl:mb-3 xl:text-2xl/[1]">
+                {service.h3}
+              </h3>
+              <p class="font-jetbrains text-2xs uppercase xl:text-xs">
+                {service.p}
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const wwdImages = document.querySelectorAll("#wwd-images-container img");
+  const serviceCardsContainer = document.getElementById(
+    "service-cards-container",
+  );
+  const serviceCards = document.querySelectorAll(".service-card");
+  const serviceCardSelectorBg = document.getElementById(
+    "service-card-selector-bg",
+  );
+  const serviceCardSelectorLogoContainer = document.getElementById(
+    "service-card-selector-logo-container",
+  );
+  const serviceCardSelectorLogo = document.getElementById(
+    "service-card-selector-logo",
+  );
+
+  const xsMaxMql = matchMedia("(max-width: 525px)");
+  const mdMaxMql = matchMedia("(max-width: 768px)");
+  const lgMinMql = matchMedia("(min-width: 1024px)");
+
+  const xsMql = matchMedia("(min-width: 525px)");
+  const mdMql = matchMedia("(min-width: 768px)");
+  const lgMql = matchMedia("(min-width: 1024px)");
+
+  if (
+    serviceCardsContainer instanceof HTMLDivElement &&
+    serviceCardSelectorBg instanceof HTMLDivElement &&
+    serviceCardSelectorLogoContainer instanceof HTMLDivElement &&
+    serviceCardSelectorLogo instanceof HTMLDivElement
+  ) {
+    serviceCardsContainer.addEventListener("mouseenter", () => {
+      serviceCardSelectorLogo.style.scale = "1";
+    });
+
+    serviceCardsContainer.addEventListener("mouseleave", () => {
+      serviceCardSelectorLogo.style.scale = "0";
+    });
+
+    [xsMql, mdMql, lgMql].forEach((mql) => {
+      mql.addEventListener("change", () => {
+        serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
+        serviceCardSelectorLogoContainer.style.transform = "translate(0%, 0%)";
+        serviceCardSelectorLogo.style.scale = "0";
+
+        wwdImages.forEach((img, idx) => {
+          img.classList.replace(
+            !idx ? "opacity-0" : "opacity-100",
+            !idx ? "opacity-100" : "opacity-0",
+          );
+        });
+
+        serviceCards.forEach((card, idx) => {
+          card.classList.replace(
+            !idx ? "text-ink/65" : "text-alabaster",
+            !idx ? "text-alabaster" : "text-ink/65",
+          );
+        });
+      });
+    });
+
+    serviceCards.forEach((card, idx) => {
+      card.addEventListener("mouseenter", () => {
+        serviceCardSelectorBg.style.transform =
+          lgMql.matches || (!mdMql.matches && xsMql.matches)
+            ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+            : `translate(0%, ${idx * 100}%)`;
+        serviceCardSelectorLogoContainer.style.transform =
+          lgMql.matches || (!mdMql.matches && xsMql.matches)
+            ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+            : `translate(0%, ${idx * 100}%)`;
+
+        wwdImages.forEach((img, idx2) => {
+          img.classList.replace(
+            idx === idx2 ? "opacity-0" : "opacity-100",
+            idx === idx2 ? "opacity-100" : "opacity-0",
+          );
+        });
+
+        serviceCards.forEach((card2, idx2) => {
+          card2.classList.replace(
+            idx === idx2 ? "text-ink/65" : "text-alabaster",
+            idx === idx2 ? "text-alabaster" : "text-ink/65",
+          );
+        });
+      });
+    });
+  }
+</script>
