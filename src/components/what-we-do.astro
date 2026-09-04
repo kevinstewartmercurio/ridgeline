@@ -1,0 +1,170 @@
+---
+import { Image } from "astro:assets";
+import Logo from "./logo.astro";
+
+import wwd1Image from "../images/homepage/wwd-1.png";
+import wwd2Image from "../images/homepage/wwd-2.png";
+import wwd3Image from "../images/homepage/wwd-3.png";
+import wwd4Image from "../images/homepage/wwd-4.png";
+
+const images = [
+  {
+    src: wwd1Image,
+    alt: "",
+  },
+  {
+    src: wwd2Image,
+    alt: "",
+  },
+  {
+    src: wwd3Image,
+    alt: "",
+  },
+  {
+    src: wwd4Image,
+    alt: "",
+  },
+];
+
+const services = [
+  {
+    h3: "Custom residential architecture",
+    p: "New single-family builds, from site reading through final walkthrough",
+  },
+  {
+    h3: "Whole-home renovation & addition",
+    p: "Structural Rework, envelope, and reprogramming of existing houses",
+  },
+  {
+    h3: "Interior architecture & materials",
+    p: "Millwork, stone, fixtures, and finish selection carried in-house",
+  },
+  {
+    h3: "Site selection & feasibility",
+    p: "Land assessment, zoning, buildability, and early cost modeling",
+  },
+];
+---
+
+<section class="bg-alabaster w-full px-5 pt-26 pb-24 sm:px-8 lg:px-10">
+  <div class="mx-auto w-full max-w-344">
+    <h2
+      class="text-pine font-newsreader 2xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
+    >
+      <span>What</span>
+      <span>We Do</span>
+    </h2>
+    <div class="flex gap-x-6">
+      <div
+        id="wwd-images-container"
+        class="relative h-full w-1/2 bg-orange-300/30"
+      >
+        {
+          images.map((img, idx) => (
+            <Image
+              src={img.src}
+              alt={img.alt}
+              class:list={[
+                "aspect-square w-full object-cover duration-500",
+                !idx ? "opacity-100" : "absolute top-0 left-0 opacity-0",
+              ]}
+            />
+          ))
+        }
+      </div>
+      <div id="service-cards-container" class="grid w-1/2 grid-cols-2">
+        {
+          services.map((service, idx) => (
+            <div
+              class:list={[
+                "service-card border-ink/12 relative aspect-square border-t duration-300",
+                idx >= 2 && "border-b",
+                idx % 2 && "border-l",
+                !idx ? "text-alabaster" : "text-ink/65",
+              ]}
+            >
+              {!idx && (
+                <div
+                  id="service-card-selector-bg"
+                  class="bg-pine pointer-events-none absolute top-0 left-0 z-10 h-full w-full duration-300"
+                />
+              )}
+              {!idx && (
+                <div
+                  id="service-card-selector-logo-container"
+                  class="pointer-events-none absolute top-0 left-0 z-30 h-full w-full bg-transparent duration-300"
+                >
+                  <div
+                    id="service-card-selector-logo"
+                    class="bg-alabaster absolute top-5 right-5 flex h-16 w-16 origin-top-right scale-0 items-center justify-center duration-300"
+                  >
+                    <Logo class="fill-pine h-12 w-12" />
+                  </div>
+                </div>
+              )}
+              <div class="absolute bottom-16 left-0 z-20 px-5">
+                <h3 class="font-newsreader mb-3 text-3xl/[1] font-light">
+                  {service.h3}
+                </h3>
+                <p class="font-jetbrains text-xs uppercase">{service.p}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const wwdImages = document.querySelectorAll("#wwd-images-container img");
+  const serviceCardsContainer = document.getElementById(
+    "service-cards-container",
+  );
+  const serviceCards = document.querySelectorAll(".service-card");
+  const serviceCardSelectorBg = document.getElementById(
+    "service-card-selector-bg",
+  );
+  const serviceCardSelectorLogoContainer = document.getElementById(
+    "service-card-selector-logo-container",
+  );
+  const serviceCardSelectorLogo = document.getElementById(
+    "service-card-selector-logo",
+  );
+
+  if (
+    serviceCardsContainer instanceof HTMLDivElement &&
+    serviceCardSelectorBg instanceof HTMLDivElement &&
+    serviceCardSelectorLogoContainer instanceof HTMLDivElement &&
+    serviceCardSelectorLogo instanceof HTMLDivElement
+  ) {
+    serviceCardsContainer.addEventListener("mouseenter", () => {
+      serviceCardSelectorLogo.style.scale = "1";
+    });
+
+    serviceCardsContainer.addEventListener("mouseleave", () => {
+      serviceCardSelectorLogo.style.scale = "0";
+    });
+
+    serviceCards.forEach((card, idx) => {
+      card.addEventListener("mouseenter", () => {
+        serviceCardSelectorBg.style.transform = `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`;
+        serviceCardSelectorLogoContainer.style.transform = `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`;
+
+        wwdImages.forEach((img, idx2) => {
+          img.classList.replace(
+            idx === idx2 ? "opacity-0" : "opacity-100",
+            idx === idx2 ? "opacity-100" : "opacity-0",
+          );
+        });
+
+        serviceCards.forEach((card2, idx2) => {
+          card2.classList.replace(
+            idx === idx2 ? "text-ink/65" : "text-alabaster",
+            idx === idx2 ? "text-alabaster" : "text-ink/65",
+          );
+        });
+      });
+    });
+  }
+</script>
