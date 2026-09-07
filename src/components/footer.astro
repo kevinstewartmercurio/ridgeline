@@ -1,0 +1,119 @@
+<section class="bg-pine px-5 py-10 sm:px-8 lg:px-10">
+  <div class="mx-auto w-full max-w-344">
+    <div class="border-alabaster/15 flex w-full gap-x-16 border-t pt-14">
+      <div class="w-1/2 space-y-6">
+        <h2
+          class="text-alabaster font-newsreader 2xs:text-6xl text-5xl font-light md:text-7xl lg:text-8xl/[85%]"
+        >
+          Start a conversation
+        </h2>
+        <p
+          class="font-instrument text-alabaster max-w-md opacity-65 md:max-w-121 xl:text-lg"
+        >
+          Tell us the project type, roughly where it sits, and when you would
+          like to be living in it. A partner replies to every enquiry.
+        </p>
+      </div>
+      <div class="w-1/2 pb-10">
+        <form>
+          <div class="border-alabaster/14 relative border-y">
+            <input
+              id="name"
+              type="text"
+              placeholder="Name"
+              class="peer text-alabaster/65 font-newsreader w-full px-2.5 py-4 text-lg placeholder-transparent"
+            />
+            <label
+              for="name"
+              class="font-jetbrains text-alabaster/65 absolute top-2.5 left-2.5 -translate-y-1/2 text-[0.5625rem] uppercase duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-xs peer-focus:top-2.5 peer-focus:text-[0.5625rem]"
+            >
+              Name
+            </label>
+          </div>
+          <div class="border-alabaster/14 relative border-b">
+            <input
+              id="email"
+              type="email"
+              placeholder="Email Address"
+              class="peer text-alabaster/65 font-newsreader w-full px-2.5 py-4 text-lg placeholder-transparent"
+            />
+            <label
+              for="email"
+              class="font-jetbrains text-alabaster/65 absolute top-2.5 left-2.5 -translate-y-1/2 text-[0.5625rem] uppercase duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-xs peer-focus:top-2.5 peer-focus:text-[0.5625rem]"
+            >
+              Email Address
+            </label>
+          </div>
+          <div class="border-alabaster/14 relative border-b">
+            <input
+              id="phone"
+              type="tel"
+              placeholder="Phone Number"
+              class="peer text-alabaster/65 font-newsreader w-full px-2.5 py-4 text-lg placeholder-transparent"
+            />
+            <label
+              for="phone"
+              class="font-jetbrains text-alabaster/65 absolute top-2.5 left-2.5 -translate-y-1/2 text-[0.5625rem] uppercase duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-xs peer-focus:top-2.5 peer-focus:text-[0.5625rem]"
+            >
+              Phone Number
+            </label>
+          </div>
+          <div class="border-alabaster/14 relative border-b">
+            <textarea
+              id="message"
+              placeholder="Message"
+              rows="6"
+              class="peer text-alabaster/65 font-newsreader w-full resize-none px-2.5 py-4 text-lg placeholder-transparent"
+            ></textarea>
+            <label
+              for="message"
+              class="font-jetbrains text-alabaster/65 absolute top-2.5 left-2.5 -translate-y-1/2 text-[0.5625rem] uppercase duration-300 peer-placeholder-shown:top-7.5 peer-placeholder-shown:text-xs peer-focus:top-2.5 peer-focus:text-[0.5625rem]"
+            >
+              Message
+            </label>
+          </div>
+          <button
+            type="submit"
+            class="text-pine bg-alabaster font-jetbrains mt-6 cursor-pointer px-5 py-4 text-xs uppercase"
+            >Send Enquiry</button
+          >
+        </form>
+      </div>
+    </div>
+    <div
+      class="font-jetbrains text-alabaster/65 text-2xs border-alabaster/15 grid w-full grid-cols-3 border-t py-6 uppercase"
+    >
+      <div>
+        <a href="/" class="hover:underline focus:underline">
+          Ridgeline Architecture Studio
+        </a>
+        <br />
+        © 2026 Ridgeline Architecture Studio
+      </div>
+      <div class="flex justify-center">
+        <div>
+          <a href="/" class="hover:underline focus:underline">
+            (360) 555-0148
+          </a>
+          <br /><br />
+
+          <a href="/" class="hover:underline focus:underline">
+            1420 Alder Ridge Lane, Suite 300 <br />
+            Bellingham, WA 98825
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-end gap-x-4">
+          {
+            ["Instagram", "LinkedIn", "Contact"].map((s) => (
+              <a href="/" class="hover:underline focus:underline">
+                {s}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
