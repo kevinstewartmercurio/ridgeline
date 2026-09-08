@@ -20,11 +20,13 @@
         <div class="max-w-lg pb-10 md:w-1/2 md:max-w-none">
           <form>
             {
-              [
-                { id: "name", type: "text", label: "Name" },
-                { id: "email", type: "email", label: "Email Address" },
-                { id: "phone", type: "tel", label: "Phone Number" },
-              ].map((inputObj, idx) => (
+              (
+                [
+                  { id: "name", type: "text", label: "Name" },
+                  { id: "email", type: "email", label: "Email Address" },
+                  { id: "phone", type: "tel", label: "Phone Number" },
+                ] as const
+              ).map((inputObj, idx) => (
                 <div
                   class:list={[
                     "border-alabaster/14 relative",
