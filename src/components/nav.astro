@@ -1,0 +1,116 @@
+---
+import Logo from "./logo.astro";
+---
+
+{
+  /* `#nav-logo` is the square the page transition shrinks into, so its size
+     and position are measured at runtime rather than duplicated there.
+
+     `#nav-panel` opens out of the logo while the page is scrolled to the top.
+     It is revealed with clip-path rather than animated width so its contents
+     stay put instead of reflowing as it opens. Clip-path also limits clicks to
+     the visible part of the panel, so a closed panel leaves only the logo
+     clickable.
+
+     The nav spans the page width, so it ignores clicks to keep the content
+     beneath it clickable; anything interactive inside needs
+     `pointer-events-auto`. */
+}
+
+<nav
+  transition:persist="nav"
+  class="pointer-events-none fixed top-5 left-0 z-40 w-full"
+>
+  <div class="w-full px-5 sm:px-8 lg:px-10">
+    <div class="mx-auto w-full max-w-344">
+      <a
+        href="/"
+        id="nav-home"
+        aria-label="Ridgeline Architecture Studio home"
+        class="flex"
+      >
+        <div
+          id="nav-logo"
+          class="bg-pine pointer-events-auto flex size-14 shrink-0 items-center justify-center px-3 py-2 lg:size-16"
+        >
+          <Logo class="fill-alabaster h-full w-full" aria-hidden="true" />
+        </div>
+        <div
+          id="nav-panel"
+          data-open
+          class="text-alabaster bg-pine pointer-events-auto flex h-14 items-center pr-3 transition-[clip-path] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:inset(0_100%_0_0)] data-open:[clip-path:inset(0)] motion-reduce:transition-none lg:h-16 lg:pr-4"
+        >
+          <div>
+            <span
+              class="font-newsreader block text-2xl/[110%] font-light lg:text-3xl"
+              >Ridgeline</span
+            >
+            <span
+              class="font-jetbrains text-2xs/[1] block uppercase lg:text-xs/[1]"
+              >Architecture Studio</span
+            >
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* A closed panel still takes up room inside the link, so move the focus ring
+     onto the logo rather than outlining empty space. */
+  #nav-home:focus-visible:has(#nav-panel:not([data-open])) {
+    outline: none;
+  }
+
+  #nav-home:focus-visible:has(#nav-panel:not([data-open])) #nav-logo {
+    outline: auto;
+  }
+</style>
+
+<script>
+  const panel = document.getElementById("nav-panel");
+
+  if (panel instanceof HTMLDivElement) {
+    // While a page transition runs the panel stays closed, so that it opens
+    // out of the logo once the curtain has shrunk into it.
+    let transitioning = false;
+
+    const setOpen = (open: boolean) => {
+      if (panel.hasAttribute("data-open") === open) return;
+
+      panel.toggleAttribute("data-open", open);
+    };
+
+    // Changes the panel without its transition.
+    const snapOpen = (open: boolean) => {
+      panel.style.transition = "none";
+      setOpen(open);
+      // Flushes the change so the transition applies again to the next one.
+      panel.getBoundingClientRect();
+      panel.style.transition = "";
+    };
+
+    const isAtTop = () => window.scrollY <= 0;
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!transitioning) setOpen(isAtTop());
+      },
+      { passive: true },
+    );
+
+    document.addEventListener("page-transition:covered", () => {
+      transitioning = true;
+      snapOpen(false);
+    });
+
+    document.addEventListener("page-transition:finished", () => {
+      transitioning = false;
+      setOpen(isAtTop());
+    });
+
+    snapOpen(isAtTop());
+  }
+</script>
