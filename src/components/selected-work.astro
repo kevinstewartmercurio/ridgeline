@@ -131,74 +131,80 @@ const work = [
 <script>
   import { animate } from "motion";
 
-  const selectedWorkSection = document.getElementById("selected-work-section");
-  const projectLinks = document.querySelectorAll(".project-link");
-  const projectSelectors = document.querySelectorAll(".project-selector");
+  const init = () => {
+    const selectedWorkSection = document.getElementById(
+      "selected-work-section",
+    );
+    const projectLinks = document.querySelectorAll(".project-link");
+    const projectSelectors = document.querySelectorAll(".project-selector");
 
-  const hoverDevice = matchMedia("(hover: hover)").matches;
-  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const hoverDevice = matchMedia("(hover: hover)").matches;
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-  if (!hoverDevice) {
-    projectLinks.forEach((project) => {
-      project.classList.remove("outline-0");
-    });
-  } else if (selectedWorkSection instanceof HTMLElement) {
-    let directionDown = true;
-    let prevY = 0;
+    if (!hoverDevice) {
+      projectLinks.forEach((project) => {
+        project.classList.remove("outline-0");
+      });
+    } else if (selectedWorkSection instanceof HTMLElement) {
+      let directionDown = true;
+      let prevY = 0;
 
-    selectedWorkSection.addEventListener("mousemove", (e) => {
-      directionDown = e.y > prevY;
-      prevY = e.y;
-    });
+      selectedWorkSection.addEventListener("mousemove", (e) => {
+        directionDown = e.y > prevY;
+        prevY = e.y;
+      });
 
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Tab") {
-        directionDown = e.shiftKey ? false : true;
-      }
-    });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          directionDown = e.shiftKey ? false : true;
+        }
+      });
 
-    projectLinks.forEach((project, idx) => {
-      if (project instanceof HTMLAnchorElement) {
-        ["mouseenter", "focus"].forEach((trigger) => {
-          project.addEventListener(trigger, () => {
-            if (projectSelectors[idx] instanceof HTMLDivElement) {
-              animate(
-                projectSelectors[idx],
-                {
-                  clipPath: [
-                    directionDown
-                      ? "inset(0% 0% 100% 0%)"
-                      : "inset(100% 0% 0% 0%)",
-                    "inset(0% 0% 0% 0%)",
-                  ],
-                },
-                {
-                  duration: prefersReducedMotion.matches ? 0 : 0.3,
-                },
-              );
-            }
+      projectLinks.forEach((project, idx) => {
+        if (project instanceof HTMLAnchorElement) {
+          ["mouseenter", "focus"].forEach((trigger) => {
+            project.addEventListener(trigger, () => {
+              if (projectSelectors[idx] instanceof HTMLDivElement) {
+                animate(
+                  projectSelectors[idx],
+                  {
+                    clipPath: [
+                      directionDown
+                        ? "inset(0% 0% 100% 0%)"
+                        : "inset(100% 0% 0% 0%)",
+                      "inset(0% 0% 0% 0%)",
+                    ],
+                  },
+                  {
+                    duration: prefersReducedMotion.matches ? 0 : 0.3,
+                  },
+                );
+              }
+            });
           });
-        });
 
-        ["mouseleave", "blur"].forEach((trigger) => {
-          project.addEventListener(trigger, () => {
-            if (projectSelectors[idx] instanceof HTMLDivElement) {
-              animate(
-                projectSelectors[idx],
-                {
-                  clipPath: [
-                    "inset(0% 0% 0% 0%)",
-                    directionDown
-                      ? "inset(100% 0% 0% 0%)"
-                      : "inset(0% 0% 100% 0%)",
-                  ],
-                },
-                { duration: prefersReducedMotion.matches ? 0 : 0.3 },
-              );
-            }
+          ["mouseleave", "blur"].forEach((trigger) => {
+            project.addEventListener(trigger, () => {
+              if (projectSelectors[idx] instanceof HTMLDivElement) {
+                animate(
+                  projectSelectors[idx],
+                  {
+                    clipPath: [
+                      "inset(0% 0% 0% 0%)",
+                      directionDown
+                        ? "inset(100% 0% 0% 0%)"
+                        : "inset(0% 0% 100% 0%)",
+                    ],
+                  },
+                  { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+                );
+              }
+            });
           });
-        });
-      }
-    });
-  }
+        }
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
 </script>

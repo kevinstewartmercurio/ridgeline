@@ -122,17 +122,21 @@
 </footer>
 
 <script>
-  const footer = document.querySelector("footer");
+  const init = () => {
+    const footer = document.querySelector("footer");
 
-  if (footer instanceof HTMLElement) {
-    window.addEventListener("resize", () => {
-      const footerHeight = footer.getBoundingClientRect().height;
+    if (footer instanceof HTMLElement) {
+      window.addEventListener("resize", () => {
+        const footerHeight = footer.getBoundingClientRect().height;
 
-      if (footerHeight > window.innerHeight) {
-        footer.classList.remove("sticky", "bottom-0");
-      } else {
-        footer.classList.add("sticky", "bottom-0");
-      }
-    });
-  }
+        if (footerHeight > window.innerHeight) {
+          footer.classList.remove("sticky", "bottom-0");
+        } else {
+          footer.classList.add("sticky", "bottom-0");
+        }
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
 </script>
