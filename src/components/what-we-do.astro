@@ -125,90 +125,95 @@ const services = [
 </section>
 
 <script>
-  const wwdImages = document.querySelectorAll("#wwd-images-container img");
-  const serviceCardsContainer = document.getElementById(
-    "service-cards-container",
-  );
-  const serviceCards = document.querySelectorAll(".service-card");
-  const serviceCardSelectorBg = document.getElementById(
-    "service-card-selector-bg",
-  );
-  const serviceCardSelectorLogoContainer = document.getElementById(
-    "service-card-selector-logo-container",
-  );
-  const serviceCardSelectorLogo = document.getElementById(
-    "service-card-selector-logo",
-  );
+  const init = () => {
+    const wwdImages = document.querySelectorAll("#wwd-images-container img");
+    const serviceCardsContainer = document.getElementById(
+      "service-cards-container",
+    );
+    const serviceCards = document.querySelectorAll(".service-card");
+    const serviceCardSelectorBg = document.getElementById(
+      "service-card-selector-bg",
+    );
+    const serviceCardSelectorLogoContainer = document.getElementById(
+      "service-card-selector-logo-container",
+    );
+    const serviceCardSelectorLogo = document.getElementById(
+      "service-card-selector-logo",
+    );
 
-  const xsMaxMql = matchMedia("(max-width: 525px)");
-  const mdMaxMql = matchMedia("(max-width: 768px)");
-  const lgMinMql = matchMedia("(min-width: 1024px)");
+    const xsMaxMql = matchMedia("(max-width: 525px)");
+    const mdMaxMql = matchMedia("(max-width: 768px)");
+    const lgMinMql = matchMedia("(min-width: 1024px)");
 
-  const xsMql = matchMedia("(min-width: 525px)");
-  const mdMql = matchMedia("(min-width: 768px)");
-  const lgMql = matchMedia("(min-width: 1024px)");
+    const xsMql = matchMedia("(min-width: 525px)");
+    const mdMql = matchMedia("(min-width: 768px)");
+    const lgMql = matchMedia("(min-width: 1024px)");
 
-  if (
-    serviceCardsContainer instanceof HTMLDivElement &&
-    serviceCardSelectorBg instanceof HTMLDivElement &&
-    serviceCardSelectorLogoContainer instanceof HTMLDivElement &&
-    serviceCardSelectorLogo instanceof HTMLDivElement
-  ) {
-    serviceCardsContainer.addEventListener("mouseenter", () => {
-      serviceCardSelectorLogo.style.scale = "1";
-    });
+    if (
+      serviceCardsContainer instanceof HTMLDivElement &&
+      serviceCardSelectorBg instanceof HTMLDivElement &&
+      serviceCardSelectorLogoContainer instanceof HTMLDivElement &&
+      serviceCardSelectorLogo instanceof HTMLDivElement
+    ) {
+      serviceCardsContainer.addEventListener("mouseenter", () => {
+        serviceCardSelectorLogo.style.scale = "1";
+      });
 
-    serviceCardsContainer.addEventListener("mouseleave", () => {
-      serviceCardSelectorLogo.style.scale = "0";
-    });
-
-    [xsMql, mdMql, lgMql].forEach((mql) => {
-      mql.addEventListener("change", () => {
-        serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
-        serviceCardSelectorLogoContainer.style.transform = "translate(0%, 0%)";
+      serviceCardsContainer.addEventListener("mouseleave", () => {
         serviceCardSelectorLogo.style.scale = "0";
+      });
 
-        wwdImages.forEach((img, idx) => {
-          img.classList.replace(
-            !idx ? "opacity-0" : "opacity-100",
-            !idx ? "opacity-100" : "opacity-0",
-          );
-        });
+      [xsMql, mdMql, lgMql].forEach((mql) => {
+        mql.addEventListener("change", () => {
+          serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
+          serviceCardSelectorLogoContainer.style.transform =
+            "translate(0%, 0%)";
+          serviceCardSelectorLogo.style.scale = "0";
 
-        serviceCards.forEach((card, idx) => {
-          card.classList.replace(
-            !idx ? "text-ink/65" : "text-alabaster",
-            !idx ? "text-alabaster" : "text-ink/65",
-          );
+          wwdImages.forEach((img, idx) => {
+            img.classList.replace(
+              !idx ? "opacity-0" : "opacity-100",
+              !idx ? "opacity-100" : "opacity-0",
+            );
+          });
+
+          serviceCards.forEach((card, idx) => {
+            card.classList.replace(
+              !idx ? "text-ink/65" : "text-alabaster",
+              !idx ? "text-alabaster" : "text-ink/65",
+            );
+          });
         });
       });
-    });
 
-    serviceCards.forEach((card, idx) => {
-      card.addEventListener("mouseenter", () => {
-        serviceCardSelectorBg.style.transform =
-          lgMql.matches || (!mdMql.matches && xsMql.matches)
-            ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
-            : `translate(0%, ${idx * 100}%)`;
-        serviceCardSelectorLogoContainer.style.transform =
-          lgMql.matches || (!mdMql.matches && xsMql.matches)
-            ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
-            : `translate(0%, ${idx * 100}%)`;
+      serviceCards.forEach((card, idx) => {
+        card.addEventListener("mouseenter", () => {
+          serviceCardSelectorBg.style.transform =
+            lgMql.matches || (!mdMql.matches && xsMql.matches)
+              ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+              : `translate(0%, ${idx * 100}%)`;
+          serviceCardSelectorLogoContainer.style.transform =
+            lgMql.matches || (!mdMql.matches && xsMql.matches)
+              ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+              : `translate(0%, ${idx * 100}%)`;
 
-        wwdImages.forEach((img, idx2) => {
-          img.classList.replace(
-            idx === idx2 ? "opacity-0" : "opacity-100",
-            idx === idx2 ? "opacity-100" : "opacity-0",
-          );
-        });
+          wwdImages.forEach((img, idx2) => {
+            img.classList.replace(
+              idx === idx2 ? "opacity-0" : "opacity-100",
+              idx === idx2 ? "opacity-100" : "opacity-0",
+            );
+          });
 
-        serviceCards.forEach((card2, idx2) => {
-          card2.classList.replace(
-            idx === idx2 ? "text-ink/65" : "text-alabaster",
-            idx === idx2 ? "text-alabaster" : "text-ink/65",
-          );
+          serviceCards.forEach((card2, idx2) => {
+            card2.classList.replace(
+              idx === idx2 ? "text-ink/65" : "text-alabaster",
+              idx === idx2 ? "text-alabaster" : "text-ink/65",
+            );
+          });
         });
       });
-    });
-  }
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
 </script>
