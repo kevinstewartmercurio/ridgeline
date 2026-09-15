@@ -105,7 +105,7 @@ import Hamburger from "./hamburger.astro";
 <script>
   const nav = document.getElementById("nav");
   // Matches Tailwind's `md` breakpoint, below which only the hamburger is used.
-  const md = matchMedia("(width >= 48rem)");
+  const mdMql = matchMedia("(min-width: 768px)");
   const leftPanel = document.getElementById("nav-left-panel");
   const rightPanel = document.getElementById("nav-right-panel");
   const hamburger = document.getElementById("nav-hamburger-btn");
@@ -137,7 +137,7 @@ import Hamburger from "./hamburger.astro";
       // Keeps whichever of the two is hidden out of the tab order. Below `md`
       // the panel isn't displayed and the hamburger always shows.
       rightPanel.inert = !open;
-      hamburger.inert = open && md.matches;
+      hamburger.inert = open && mdMql.matches;
     };
 
     // Changes elements without their transitions.
@@ -182,7 +182,7 @@ import Hamburger from "./hamburger.astro";
       { passive: true },
     );
 
-    md.addEventListener("change", () => setRightOpen(isAtTop()));
+    mdMql.addEventListener("change", () => setRightOpen(isAtTop()));
 
     // Brings the nav back when a keyboard user tabs into it while hidden.
     nav.addEventListener("focusin", () => setHidden(false));
