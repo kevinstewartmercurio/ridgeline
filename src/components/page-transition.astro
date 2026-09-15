@@ -1,0 +1,244 @@
+---
+import Logo from "./logo.astro";
+---
+
+{
+  /* Resting styles are inline rather than utilities: Tailwind's translate
+     utilities compile to the `translate` property, which composes with the
+     `transform` Motion writes instead of replacing it, and the clip-path
+     keyframes need to match the exact strings the script animates between.
+
+     The background is a sibling of the logo rather than its parent so that it
+     can be scaled unevenly into the nav square without stretching the logo. */
+}
+
+<div
+  id="page-transition"
+  transition:persist="page-transition"
+  aria-hidden="true"
+  class="pointer-events-none invisible fixed inset-0 z-50 flex items-center justify-center will-change-transform"
+  style="transform: translateY(-100%)"
+>
+  <div
+    id="page-transition-background"
+    class="bg-pine absolute inset-0 origin-top-left will-change-transform"
+  >
+  </div>
+  <div
+    id="page-transition-logo"
+    class="relative size-20 will-change-transform md:size-28"
+    style="clip-path: inset(0% 0% 100% 0%)"
+  >
+    <Logo class="fill-alabaster size-full" />
+  </div>
+</div>
+
+<style is:global>
+  /* The curtain covers the viewport for the whole swap, so the browser's
+     default root cross-fade would only delay the reveal. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+</style>
+
+<script>
+  import { animate, type AnimationPlaybackControls } from "motion";
+
+  const COVER_DURATION = 0.5;
+  const LOGO_REVEAL_DURATION = 0.6;
+  const SHRINK_DURATION = 0.8;
+  // Used when there is no nav logo to shrink into.
+  const SLIDE_OUT_DURATION = 0.5;
+  // How long the logo stays centered after the new page is ready.
+  const HOLD_DURATION = 1.5;
+  const EASE = [0.76, 0, 0.24, 1] as const;
+
+  // The shrink animates whole `transform` strings rather than clip-path or
+  // Motion's `x`/`scale` shorthands: Motion hands full transforms to the
+  // browser, which runs them on the compositor, so the shrink stays smooth
+  // while the new page's scripts and images load. Clip-path had to repaint the
+  // whole viewport every frame and stuttered. Both keyframes share the same
+  // function list so the browser interpolates each value linearly.
+  const IDENTITY = "translate(0px, 0px) scale(1, 1)";
+  const LOGO_HIDDEN = "inset(0% 0% 100% 0%)";
+  const LOGO_SHOWN = "inset(0% 0% 0% 0%)";
+
+  const curtain = document.getElementById("page-transition");
+  const background = document.getElementById("page-transition-background");
+  const logo = document.getElementById("page-transition-logo");
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  const timing = (seconds: number) =>
+    prefersReducedMotion.matches ? 0 : seconds;
+
+  const wait = (seconds: number) =>
+    new Promise((resolve) => setTimeout(resolve, timing(seconds) * 1000));
+
+  if (
+    curtain instanceof HTMLDivElement &&
+    background instanceof HTMLDivElement &&
+    logo instanceof HTMLDivElement
+  ) {
+    // Whether the curtain is currently down, so that a navigation started
+    // while another one is still running does not replay the slide in.
+    let covered = false;
+    let logoShown = false;
+    // `astro:page-load` also fires on the initial load, where there is
+    // nothing to reveal.
+    let navigating = false;
+    // The shrink in progress, so that a navigation started mid-shrink can
+    // grow the curtain back out instead of snapping it off screen.
+    let shrinking: AnimationPlaybackControls[] = [];
+
+    const cover = async () => {
+      if (covered) return;
+      covered = true;
+
+      curtain.classList.remove("pointer-events-none");
+
+      if (shrinking.length) {
+        shrinking.forEach((animation) => animation.stop());
+        shrinking = [];
+
+        const options = { duration: timing(SHRINK_DURATION), ease: EASE };
+        await Promise.all([
+          animate(background, { transform: IDENTITY }, options),
+          animate(logo, { transform: IDENTITY }, options),
+        ]);
+      } else {
+        curtain.classList.remove("invisible");
+        await animate(
+          curtain,
+          { y: ["-100%", "0%"] },
+          { duration: timing(COVER_DURATION), ease: EASE },
+        );
+      }
+
+      // Lets the nav rearrange itself while nothing underneath is visible.
+      document.dispatchEvent(new Event("page-transition:covered"));
+    };
+
+    const revealLogo = async () => {
+      if (logoShown) return;
+      logoShown = true;
+
+      await animate(
+        logo,
+        { clipPath: [LOGO_HIDDEN, LOGO_SHOWN] },
+        { duration: timing(LOGO_REVEAL_DURATION), ease: EASE },
+      );
+    };
+
+    // Puts the curtain back above the viewport, hidden, ready for the next
+    // navigation.
+    const reset = () => {
+      curtain.classList.add("invisible", "pointer-events-none");
+      logoShown = false;
+
+      animate(curtain, { y: "-100%" }, { duration: 0 });
+      animate(background, { transform: IDENTITY }, { duration: 0 });
+      animate(
+        logo,
+        { transform: IDENTITY, clipPath: LOGO_HIDDEN },
+        { duration: 0 },
+      );
+
+      document.dispatchEvent(new Event("page-transition:finished"));
+    };
+
+    const reveal = async () => {
+      if (!covered) return;
+      covered = false;
+
+      curtain.classList.add("pointer-events-none");
+
+      const square = document.getElementById("nav-logo");
+      const mark = square?.querySelector("svg");
+
+      if (!square || !mark) {
+        await animate(
+          curtain,
+          { y: ["0%", "-100%"] },
+          { duration: timing(SLIDE_OUT_DURATION), ease: EASE },
+        );
+        if (!covered) reset();
+        return;
+      }
+
+      const bounds = curtain.getBoundingClientRect();
+      const squareBounds = square.getBoundingClientRect();
+      const markBounds = mark.getBoundingClientRect();
+      const logoBounds = logo.getBoundingClientRect();
+
+      // The background scales from its top-left corner.
+      const backgroundX = squareBounds.left - bounds.left;
+      const backgroundY = squareBounds.top - bounds.top;
+      const backgroundScaleX = squareBounds.width / bounds.width;
+      const backgroundScaleY = squareBounds.height / bounds.height;
+
+      // The logo scales from its center.
+      const logoX =
+        markBounds.left +
+        markBounds.width / 2 -
+        (logoBounds.left + logoBounds.width / 2);
+      const logoY =
+        markBounds.top +
+        markBounds.height / 2 -
+        (logoBounds.top + logoBounds.height / 2);
+      const logoScale = markBounds.width / logoBounds.width;
+
+      const options = { duration: timing(SHRINK_DURATION), ease: EASE };
+      const animations = [
+        animate(
+          background,
+          {
+            transform: [
+              IDENTITY,
+              `translate(${backgroundX}px, ${backgroundY}px) scale(${backgroundScaleX}, ${backgroundScaleY})`,
+            ],
+          },
+          options,
+        ),
+        animate(
+          logo,
+          {
+            transform: [
+              IDENTITY,
+              `translate(${logoX}px, ${logoY}px) scale(${logoScale}, ${logoScale})`,
+            ],
+          },
+          options,
+        ),
+      ];
+      shrinking = animations;
+
+      await Promise.all(animations);
+      // A new navigation took over mid-shrink.
+      if (shrinking !== animations) return;
+      shrinking = [];
+
+      // The curtain now sits exactly over the nav logo, so hiding it is
+      // invisible.
+      reset();
+    };
+
+    document.addEventListener("astro:before-preparation", (e) => {
+      const loadNewDocument = e.loader;
+      navigating = true;
+
+      e.loader = async () => {
+        await cover();
+        await Promise.all([revealLogo(), loadNewDocument()]);
+        await wait(HOLD_DURATION);
+      };
+    });
+
+    document.addEventListener("astro:page-load", () => {
+      if (!navigating) return;
+      navigating = false;
+
+      reveal();
+    });
+  }
+</script>
