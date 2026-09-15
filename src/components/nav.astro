@@ -1,16 +1,24 @@
 ---
 import Logo from "./logo.astro";
+import Arrow from "./arrow.astro";
+import Hamburger from "./hamburger.astro";
 ---
 
 {
   /* `#nav-logo` is the square the page transition shrinks into, so its size
      and position are measured at runtime rather than duplicated there.
 
-     `#nav-panel` opens out of the logo while the page is scrolled to the top.
+     `#nav-left-panel` opens out of the logo while the page is scrolled to the top.
      It is revealed with clip-path rather than animated width so its contents
      stay put instead of reflowing as it opens. Clip-path also limits clicks to
      the visible part of the panel, so a closed panel leaves only the logo
-     clickable.
+     clickable. `#nav-right-panel` slides off to the right while the page is
+     scrolled, and `#nav-hamburger-btn` slides in from the right in its place.
+     Below the `md` breakpoint the right panel is never shown and the hamburger
+     always is.
+
+     The whole nav slides up out of the viewport while scrolling down and comes
+     back on scrolling up.
 
      The nav spans the page width, so it ignores clicks to keep the content
      beneath it clickable; anything interactive inside needs
@@ -18,11 +26,12 @@ import Logo from "./logo.astro";
 }
 
 <nav
+  id="nav"
   transition:persist="nav"
-  class="pointer-events-none fixed top-5 left-0 z-40 w-full"
+  class="pointer-events-none fixed top-5 left-0 z-40 w-full transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-hidden:translate-y-[calc(-100%---spacing(5))] motion-reduce:transition-none"
 >
   <div class="w-full px-5 sm:px-8 lg:px-10">
-    <div class="mx-auto w-full max-w-344">
+    <div class="mx-auto flex w-full max-w-344 justify-between">
       <a
         href="/"
         id="nav-home"
@@ -36,7 +45,7 @@ import Logo from "./logo.astro";
           <Logo class="fill-alabaster h-full w-full" aria-hidden="true" />
         </div>
         <div
-          id="nav-panel"
+          id="nav-left-panel"
           data-open
           class="text-alabaster bg-pine pointer-events-auto flex h-14 items-center pr-3 transition-[clip-path] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:inset(0_100%_0_0)] data-open:[clip-path:inset(0)] motion-reduce:transition-none lg:h-16 lg:pr-4"
         >
@@ -52,6 +61,31 @@ import Logo from "./logo.astro";
           </div>
         </div>
       </a>
+      <div class="relative overflow-clip max-md:w-12">
+        <div
+          id="nav-right-panel"
+          data-open
+          class="font-jetbrains text-alabaster peer pointer-events-auto flex h-14 translate-x-full items-center gap-x-7 text-xs uppercase transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:translate-x-0 motion-reduce:transition-none max-md:hidden lg:h-16"
+        >
+          <a href="/">Projects</a>
+          <a href="/">Studio</a>
+          <button class="group flex h-12 cursor-pointer">
+            <div class="bg-alabaster text-ink flex items-center px-3 uppercase">
+              Start a Conversation
+            </div>
+            <div class="bg-pine flex items-center px-3">
+              <Arrow class="fill-alabaster w-11" />
+            </div>
+          </button>
+        </div>
+        <button
+          id="nav-hamburger-btn"
+          inert
+          class="bg-alabaster pointer-events-auto absolute top-1/2 right-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none md:peer-data-open:translate-x-full lg:size-10"
+        >
+          <Hamburger class="w-5 lg:w-6" />
+        </button>
+      </div>
     </div>
   </div>
 </nav>
@@ -59,58 +93,114 @@ import Logo from "./logo.astro";
 <style>
   /* A closed panel still takes up room inside the link, so move the focus ring
      onto the logo rather than outlining empty space. */
-  #nav-home:focus-visible:has(#nav-panel:not([data-open])) {
+  #nav-home:focus-visible:has(#nav-left-panel:not([data-open])) {
     outline: none;
   }
 
-  #nav-home:focus-visible:has(#nav-panel:not([data-open])) #nav-logo {
+  #nav-home:focus-visible:has(#nav-left-panel:not([data-open])) #nav-logo {
     outline: auto;
   }
 </style>
 
 <script>
-  const panel = document.getElementById("nav-panel");
+  const nav = document.getElementById("nav");
+  // Matches Tailwind's `md` breakpoint, below which only the hamburger is used.
+  const md = matchMedia("(width >= 48rem)");
+  const leftPanel = document.getElementById("nav-left-panel");
+  const rightPanel = document.getElementById("nav-right-panel");
+  const hamburger = document.getElementById("nav-hamburger-btn");
 
-  if (panel instanceof HTMLDivElement) {
-    // While a page transition runs the panel stays closed, so that it opens
-    // out of the logo once the curtain has shrunk into it.
+  if (
+    nav instanceof HTMLElement &&
+    leftPanel instanceof HTMLDivElement &&
+    rightPanel instanceof HTMLDivElement &&
+    hamburger instanceof HTMLButtonElement
+  ) {
+    // While a page transition runs the left panel stays closed, so that it
+    // opens out of the logo once the curtain has shrunk into it, and the nav
+    // stays in view for the curtain to shrink into. The right panel only
+    // follows the scroll position.
     let transitioning = false;
+    // Compared against on each scroll to tell which way the page is moving.
+    let lastScrollY = window.scrollY;
 
-    const setOpen = (open: boolean) => {
+    const setOpen = (panel: HTMLElement, open: boolean) => {
       if (panel.hasAttribute("data-open") === open) return;
 
       panel.toggleAttribute("data-open", open);
     };
 
-    // Changes the panel without its transition.
-    const snapOpen = (open: boolean) => {
-      panel.style.transition = "none";
-      setOpen(open);
-      // Flushes the change so the transition applies again to the next one.
-      panel.getBoundingClientRect();
-      panel.style.transition = "";
+    // The hamburger's position is styled off the right panel's `data-open`,
+    // so only its focusability needs setting here.
+    const setRightOpen = (open: boolean) => {
+      setOpen(rightPanel, open);
+      // Keeps whichever of the two is hidden out of the tab order. Below `md`
+      // the panel isn't displayed and the hamburger always shows.
+      rightPanel.inert = !open;
+      hamburger.inert = open && md.matches;
+    };
+
+    // Changes elements without their transitions.
+    const snap = (elements: HTMLElement[], change: () => void) => {
+      elements.forEach((element) => (element.style.transition = "none"));
+      change();
+      // Flushes the change so the transitions apply again to the next one.
+      elements.forEach((element) => {
+        element.getBoundingClientRect();
+        element.style.transition = "";
+      });
     };
 
     const isAtTop = () => window.scrollY <= 0;
 
+    const setHidden = (hidden: boolean) => {
+      nav.toggleAttribute("data-hidden", hidden);
+    };
+
+    // Hides the nav while scrolling down, but only once the page has scrolled
+    // past the nav itself, so the panels can be seen closing near the top.
+    const updateHidden = () => {
+      // Clamped because overscroll bounce can report a negative position.
+      const scrollY = Math.max(window.scrollY, 0);
+      if (scrollY === lastScrollY) return;
+
+      const scrollingDown = scrollY > lastScrollY;
+      lastScrollY = scrollY;
+
+      setHidden(scrollingDown && scrollY > nav.offsetTop + nav.offsetHeight);
+    };
+
     window.addEventListener(
       "scroll",
       () => {
-        if (!transitioning) setOpen(isAtTop());
+        setRightOpen(isAtTop());
+        if (transitioning) return;
+
+        setOpen(leftPanel, isAtTop());
+        updateHidden();
       },
       { passive: true },
     );
 
+    md.addEventListener("change", () => setRightOpen(isAtTop()));
+
+    // Brings the nav back when a keyboard user tabs into it while hidden.
+    nav.addEventListener("focusin", () => setHidden(false));
+
     document.addEventListener("page-transition:covered", () => {
       transitioning = true;
-      snapOpen(false);
+      snap([leftPanel], () => setOpen(leftPanel, false));
+      snap([nav], () => setHidden(false));
     });
 
     document.addEventListener("page-transition:finished", () => {
       transitioning = false;
-      setOpen(isAtTop());
+      lastScrollY = Math.max(window.scrollY, 0);
+      setOpen(leftPanel, isAtTop());
+      setRightOpen(isAtTop());
     });
 
-    snapOpen(isAtTop());
+    snap([leftPanel], () => setOpen(leftPanel, isAtTop()));
+    snap([rightPanel, hamburger], () => setRightOpen(isAtTop()));
   }
 </script>
