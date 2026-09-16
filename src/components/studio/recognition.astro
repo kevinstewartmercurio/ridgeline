@@ -1,0 +1,197 @@
+---
+const recognition = [
+  {
+    title: "Larch House, Home of the Year finalist",
+    year: 2025,
+    publisher: "Dwell",
+  },
+  {
+    title: "Building for three generations in the Methow",
+    year: 2025,
+    publisher: "The Modern House Journal",
+  },
+  {
+    title: "AIA Northwest & Pacific Merit Award, Fern Hollow",
+    year: 2024,
+    publisher: "AIA",
+  },
+  {
+    title: "Twelve studios shaping Northwest residential design",
+    year: 2022,
+    publisher: "Gray Magazine",
+  },
+  {
+    title: "Honor Award for Residential Design, Chuckanut Ridge House",
+    year: 2022,
+    publisher: "AIA Seattle",
+  },
+  {
+    title: "Fifty houses in, still drawing every detail",
+    year: 2021,
+    publisher: "Fine Homebuilding",
+  },
+  {
+    title: "Samish Crossing, Home of the Year",
+    year: 2019,
+    publisher: "Sunset Magazine",
+  },
+  {
+    title: "Merit Award, Padden Creek Cabin",
+    year: 2018,
+    publisher: "AIA Northwest Washington",
+  },
+  {
+    title: "Emerging Practice of the Year",
+    year: 2014,
+    publisher: "AIA Northwest & Pacific Region",
+  },
+  {
+    title: "From a Bellingham garage, a studio takes shape",
+    year: 2012,
+    publisher: "The Bellingham Herald",
+  },
+];
+---
+
+<section
+  id="recognition-section"
+  class="bg-alabaster relative z-10 px-5 py-16 sm:px-8 md:py-20 lg:px-10"
+>
+  <div class="mx-auto w-full max-w-344">
+    <h2 class="font-jetbrains text-ink/65 text-2xs mb-5 uppercase sm:text-xs">
+      Recognition
+    </h2>
+    <div>
+      {
+        recognition.map((item, idx) => (
+          <a
+            href="/"
+            class="group recognition-link font-jetbrains text-ink/65 text-2xs relative uppercase outline-0 sm:text-xs"
+          >
+            {[0, 1].map((n) => (
+              <div
+                class:list={[
+                  "xs:grid-cols-[44px_1fr_auto] grid w-full grid-cols-[40px_1fr] items-center gap-x-4 px-1.5 py-3 sm:gap-x-5 md:py-4 lg:grid-cols-[50px_1fr_auto] lg:py-5",
+                  n &&
+                    "bg-pine recognition-selector text-alabaster absolute -top-px left-0 h-[calc(100%+2px)] w-full [clip-path:inset(0%_0%_100%_0%)]",
+                ]}
+                aria-hidden={n ? "true" : "false"}
+              >
+                {!idx && !n && (
+                  <hr class="border-ink/12 text-2xs absolute top-0 left-0 h-px w-full md:text-xs lg:text-sm" />
+                )}
+                <span class="block">{item.year}</span>
+                <h3
+                  class:list={[
+                    "font-newsreader text-base font-light normal-case md:text-lg lg:text-xl xl:text-2xl",
+                    !n ? "text-ink" : "text-alabaster",
+                  ]}
+                >
+                  {item.title}
+                </h3>
+                <span class="xl::text-base text-2xs hidden text-right sm:block md:text-xs lg:text-sm">
+                  {item.publisher}
+                </span>
+                {!n && (
+                  <hr class="border-ink/12 absolute bottom-0 left-0 h-px w-full" />
+                )}
+              </div>
+            ))}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import { animate } from "motion";
+
+  const init = () => {
+    const recognitionSection = document.getElementById("recognition-section");
+    const recognitionLinks = document.querySelectorAll(".recognition-link");
+    const recognitionSelectors = document.querySelectorAll(
+      ".recognition-selector",
+    );
+
+    const hoverDevice = matchMedia("(hover: hover)").matches;
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (!hoverDevice) {
+      recognitionLinks.forEach((item) => {
+        item.classList.remove("outline-0");
+      });
+    } else if (recognitionSection instanceof HTMLElement) {
+      // `astro:page-load` runs this again after every navigation, so the
+      // listeners below are dropped as the page they belong to goes away.
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
+      let directionDown = true;
+      let prevY = 0;
+
+      recognitionSection.addEventListener(
+        "mousemove",
+        (e) => {
+          directionDown = e.y > prevY;
+          prevY = e.y;
+        },
+        { signal },
+      );
+
+      window.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key === "Tab") {
+            directionDown = e.shiftKey ? false : true;
+          }
+        },
+        { signal },
+      );
+
+      // The pine row wipes in from the edge the pointer crossed and back out
+      // the way it came.
+      const wipe = (selector: Element, show: boolean) => {
+        if (!(selector instanceof HTMLDivElement)) return;
+
+        const away = directionDown
+          ? show
+            ? "inset(0% 0% 100% 0%)"
+            : "inset(100% 0% 0% 0%)"
+          : show
+            ? "inset(100% 0% 0% 0%)"
+            : "inset(0% 0% 100% 0%)";
+        const covered = "inset(0% 0% 0% 0%)";
+
+        animate(
+          selector,
+          { clipPath: show ? [away, covered] : [covered, away] },
+          { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+        );
+      };
+
+      recognitionLinks.forEach((item, idx) => {
+        const selector = recognitionSelectors[idx];
+        if (!(item instanceof HTMLAnchorElement) || !selector) return;
+
+        ["mouseenter", "focus"].forEach((trigger) => {
+          item.addEventListener(trigger, () => wipe(selector, true), {
+            signal,
+          });
+        });
+
+        ["mouseleave", "blur"].forEach((trigger) => {
+          item.addEventListener(trigger, () => wipe(selector, false), {
+            signal,
+          });
+        });
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>
