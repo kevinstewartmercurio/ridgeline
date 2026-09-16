@@ -76,7 +76,7 @@
         class="font-jetbrains text-alabaster/65 text-2xs border-alabaster/15 flex w-full flex-col gap-y-8 border-t py-6 uppercase sm:flex-row sm:justify-between md:grid md:grid-cols-3"
       >
         <div>
-          <a href="/" class="hover:underline focus:underline">
+          <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
             Ridgeline Architecture Studio
           </a>
           <br /><br class="hidden sm:block" />
@@ -86,30 +86,38 @@
             href="https://www.kevinstewartmercurio.com/"
             target="_blank"
             rel="noreferer"
-            class="text-nowrap hover:underline focus:underline"
+            class="uline after:bg-alabaster text-nowrap after:h-[0.5px]!"
             >Kevin Stewart-Mercurio</a
           >
         </div>
         <div class="flex sm:justify-center">
           <div>
-            <a href="/" class="hover:underline focus:underline">
+            <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
               (360) 555-0148
             </a>
             <br /><br />
 
-            <a href="/" class="hover:underline focus:underline">
-              1420 Alder Ridge Lane, Suite 300 <br />
-              Bellingham, WA 98825
+            <a href="/" class="group">
+              <span
+                class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+                >1420 Alder Ridge Lane, Suite 300</span
+              >
+              <br />
+              <span
+                class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:delay-150 after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+              >
+                Bellingham, WA 98825
+              </span>
             </a>
           </div>
         </div>
         <div>
           <div
-            class="flex gap-x-4 gap-y-1 sm:flex-col sm:items-end md:flex-row md:justify-end"
+            class="flex gap-x-6 gap-y-1 sm:flex-col sm:items-end md:flex-row md:justify-end lg:gap-x-8"
           >
             {
               ["Instagram", "LinkedIn", "Contact"].map((s) => (
-                <a href="/" class="hover:underline focus:underline">
+                <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
                   {s}
                 </a>
               ))
