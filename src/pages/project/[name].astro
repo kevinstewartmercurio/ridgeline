@@ -1,0 +1,28 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+
+import Layout from "../../layouts/Layout.astro";
+import Hero from "../../components/project/hero.astro";
+import Unreal from "../../components/unreal.astro";
+import Footer from "../../components/footer.astro";
+
+import { projects } from "../../data/projects";
+
+export const getStaticPaths = (() =>
+  projects.map((project) => ({
+    params: { name: project.slug },
+    props: { project },
+  }))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { project } = Astro.props;
+---
+
+<Layout title={`${project.title} — Ridgeline Architecture Studio`}>
+  <main>
+    <Hero project={project} />
+    <Unreal />
+    <Footer />
+  </main>
+</Layout>

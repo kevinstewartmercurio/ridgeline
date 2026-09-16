@@ -224,6 +224,9 @@ import Logo from "./logo.astro";
     };
 
     document.addEventListener("astro:before-preparation", (e) => {
+      // These links bring their own transition, which takes priority.
+      if (e.sourceElement?.closest("[data-project-transition]")) return;
+
       const loadNewDocument = e.loader;
       navigating = true;
 
