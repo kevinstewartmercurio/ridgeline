@@ -1,0 +1,60 @@
+---
+import { Image } from "astro:assets";
+import Logo from "./logo.astro";
+import Arrow from "./arrow.astro";
+
+import unrealImage from "../images/homepage/unreal.png";
+---
+
+<section
+  class="bg-alabaster xs:pt-12 relative z-10 w-full px-5 pt-8 pb-16 sm:px-8 sm:pt-16 lg:px-10"
+>
+  <div
+    class="mx-auto w-full max-w-344 gap-x-10 md:flex md:h-100 lg:h-100 lg:gap-x-16 xl:h-116 xl:gap-x-20"
+  >
+    <div class="xs:flex mb-5 space-y-6 md:mb-0 md:block md:space-y-12">
+      <div class="xs:w-1/2 flex gap-x-2.5 md:w-auto md:gap-x-4">
+        <Logo
+          class="fill-pine xs:h-11 xs:w-11 h-14 w-14 shrink-0 sm:h-14 sm:w-14 md:h-18 md:w-18 lg:h-24 lg:w-24 xl:h-30 xl:w-30"
+        />
+        <h2 class="text-pine">
+          <span
+            class="font-newsreader xs:text-4xl block text-5xl font-light sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
+            >Ridgeline
+          </span>
+          <span
+            class="font-jetbrains xs:text-base text-lg uppercase sm:text-lg md:text-xl lg:text-2xl"
+          >
+            isn't real
+          </span>
+        </h2>
+      </div>
+      <div class="xs:w-1/2 space-y-4 md:w-auto xl:gap-y-8">
+        <p
+          class="font-newsreader text-ink/65 text-xl font-light md:text-2xl lg:text-3xl xl:text-4xl"
+        >
+          But you are.
+        </p>
+        <p
+          class="font-instrument text-ink/65 max-w-sm lg:max-w-md lg:text-lg xl:text-xl"
+        >
+          I caught your eye with a fake architecture studio. Imagine what I can
+          do for something you actually care about.
+        </p>
+        <button
+          class="bg-pine text-alabaster flex w-max cursor-pointer items-center gap-x-3 px-3 py-2 lg:px-4 lg:py-3 xl:gap-x-4"
+        >
+          <span
+            class="font-jetbrains block text-sm uppercase md:text-base lg:text-lg xl:text-xl"
+          >
+            Get in touch
+          </span>
+          <Arrow class="fill-alabaster w-6 md:w-7 lg:w-8 xl:w-10" />
+        </button>
+      </div>
+    </div>
+    <div class="grow">
+      <Image src={unrealImage} alt="" class="h-full w-full object-cover" />
+    </div>
+  </div>
+</section>
