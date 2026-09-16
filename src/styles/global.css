@@ -12,6 +12,17 @@
   --color-pine: #1f3d2b;
 }
 
+@layer base {
+  html {
+    /* Stops the trackpad's elastic overscroll from pulling the page away from
+       the top of the hero or the bottom of the footer. */
+    overscroll-behavior-y: none;
+    /* Shows through only if a browser bounces anyway, so it matches the
+       footer rather than the default white. */
+    background-color: var(--color-pine);
+  }
+}
+
 @theme inline {
   --font-newsreader: var(--newsreader);
   --font-jetbrains: var(--jetbrains-mono);
