@@ -1,16 +1,11 @@
 ---
 import { Image } from "astro:assets";
 
-type Props = {
-  src: ImageMetadata;
-  alt: string;
-};
-
-const { src, alt } = Astro.props;
+import heroImage from "../../images/homepage/hero.png";
 ---
 
 <section class="relative z-10 h-screen max-h-224 w-full">
-  <Image src={src} alt={alt} class="h-full w-full object-cover" />
+  <Image src={heroImage} alt="" class="h-full w-full object-cover" />
   <div
     class="absolute top-0 left-1/2 h-full w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10"
   >

@@ -1,19 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Hero from "../components/hero.astro";
-import SubHero from "../components/sub-hero.astro";
-import SelectedWork from "../components/selected-work.astro";
-import Stack from "../components/stack.astro";
-import WhatWeDo from "../components/what-we-do.astro";
+import Hero from "../components/homepage/hero.astro";
+import SubHero from "../components/homepage/sub-hero.astro";
+import SelectedWork from "../components/homepage/selected-work.astro";
+import Stack from "../components/homepage/stack.astro";
+import WhatWeDo from "../components/homepage/what-we-do.astro";
 import Unreal from "../components/unreal.astro";
 import Footer from "../components/footer.astro";
-
-import HeroImage from "../images/homepage/hero.png";
 ---
 
 <Layout title="Ridgeline Architecture Studio">
   <main class="relative">
-    <Hero src={HeroImage} alt="" />
+    <Hero />
     <SubHero />
     <SelectedWork />
     <Stack />
