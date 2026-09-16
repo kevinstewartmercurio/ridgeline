@@ -1,7 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Hero from "../components/hero.astro";
+import SubHero from "../components/sub-hero.astro";
+import SelectedWork from "../components/selected-work.astro";
+import Stack from "../components/stack.astro";
+import WhatWeDo from "../components/what-we-do.astro";
+import Unreal from "../components/unreal.astro";
+import Footer from "../components/footer.astro";
+
+import HeroImage from "../images/homepage/hero.png";
 ---
 
 <Layout title="Welcome to Astro.">
-  <main></main>
+  <main class="relative">
+    <Hero src={HeroImage} alt="" />
+    <SubHero />
+    <SelectedWork />
+    <Stack />
+    <WhatWeDo />
+    <Unreal />
+    <Footer />
+  </main>
 </Layout>

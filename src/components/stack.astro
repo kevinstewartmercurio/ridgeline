@@ -1,0 +1,71 @@
+---
+import { Image } from "astro:assets";
+
+import stack1Image from "../images/homepage/stack-1.png";
+import stack2Image from "../images/homepage/stack-2.png";
+import stack3Image from "../images/homepage/stack-3.png";
+import stack4Image from "../images/homepage/stack-4.png";
+
+const cards = [
+  {
+    img: {
+      src: stack1Image,
+      alt: "",
+    },
+    span: "Our Position",
+    p: "A home should be designed around how a family actually lives, not around a template.",
+  },
+  {
+    img: {
+      src: stack2Image,
+      alt: "",
+    },
+    span: "One Roof",
+    p: "Design and construction oversight stay in-house from day one. Fewer handoffs, shorter timelines, fewer cost overruns.",
+  },
+  {
+    img: {
+      src: stack3Image,
+      alt: "",
+    },
+    span: "Small Roster",
+    p: "Eight to ten active projects at a time, so every home gets partner-level attention rather than a junior team.",
+  },
+  {
+    img: {
+      src: stack4Image,
+      alt: "",
+    },
+    span: "Architect First",
+    p: "Every engagement opens with an architect on the site, reading the land before anything is drawn.",
+  },
+];
+---
+
+<section class="bg-pine relative z-10">
+  <div class="relative w-full">
+    {
+      cards.map((card) => (
+        <div class="sticky top-0 h-screen w-full">
+          <div class="relative h-full w-full">
+            <Image
+              src={card.img.src}
+              alt={card.img.alt}
+              class="h-full w-full object-cover"
+            />
+            <div class="absolute bottom-[calc(min(20%,160px))] left-1/2 w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10">
+              <div class="mx-auto w-full max-w-344">
+                <span class="font-jetbrains text-alabaster mb-2 block text-xs uppercase md:mb-3 md:text-sm">
+                  {card.span}
+                </span>
+                <p class="font-newsreader text-alabaster max-w-md text-2xl font-light md:max-w-135 md:text-3xl lg:max-w-2xl lg:text-4xl">
+                  {card.p}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

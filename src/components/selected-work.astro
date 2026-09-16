@@ -1,0 +1,214 @@
+---
+import { Image } from "astro:assets";
+
+import larchHouseImage from "../images/larch-house/hero.png";
+import fernHollowImage from "../images/fern-hollow/hero.png";
+import cutbankResidenceImage from "../images/cutbank-residence/hero.png";
+import ledgerHouseImage from "../images/ledger-house/hero.png";
+import skagitBarnImage from "../images/skagit-barn/hero.png";
+
+const work = [
+  {
+    title: "Larch House",
+    location: "Methow Valley, WA",
+    type: "New Build",
+    year: 2025,
+    img: {
+      src: larchHouseImage,
+      alt: "",
+    },
+  },
+  {
+    title: "Fern Hollow",
+    location: "Portland, OR",
+    type: "Infill",
+    year: 2024,
+    img: {
+      src: fernHollowImage,
+      alt: "",
+    },
+  },
+  {
+    title: "Cutbank Residence",
+    location: "Bainbridge Island, WA",
+    type: "New Build",
+    year: 2024,
+    img: {
+      src: cutbankResidenceImage,
+      alt: "",
+    },
+  },
+  {
+    title: "The Ledger House",
+    location: "Bend, OR",
+    type: "Renovation",
+    year: 2023,
+    img: {
+      src: ledgerHouseImage,
+      alt: "",
+    },
+  },
+  {
+    title: "Skagit Barn",
+    location: "Skagit Valley, WA",
+    type: "Addition",
+    year: 2023,
+    img: {
+      src: skagitBarnImage,
+      alt: "",
+    },
+  },
+];
+---
+
+<section
+  id="selected-work-section"
+  class="bg-alabaster relative z-10 px-5 py-16 sm:px-8 md:py-20 lg:px-10"
+>
+  <div class="mx-auto w-full max-w-344">
+    <div class="text-ink">
+      <h2
+        class="text-pine font-newsreader 2xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
+      >
+        <span>Selected</span>
+        <span>Work</span>
+      </h2>
+      <div>
+        {
+          work.map((project, idx) => (
+            <a
+              href="/"
+              class:list={[
+                "group project-link font-jetbrains text-ink/65 relative text-xs uppercase outline-0 sm:text-sm",
+              ]}
+            >
+              {[0, 1].map((n) => (
+                <div
+                  class:list={[
+                    "xs:grid-cols-[20px_1fr_1fr_72px] grid w-full grid-cols-[20px_1fr_80px] items-center gap-x-4 py-2 pl-1.5 sm:grid-cols-[24px_1fr_0.875fr_80px] sm:gap-x-5 md:grid-cols-[36px_1.375fr_1fr_0.25fr_90px] md:py-4 lg:grid-cols-[50px_2.25fr_1.5fr_1fr_0.5fr_90px] lg:py-5",
+                    n &&
+                      "bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]",
+                  ]}
+                  aria-hidden={idx ? "false" : "true"}
+                >
+                  {!idx && (
+                    <hr
+                      class:list={[
+                        "absolute top-0 left-0 h-px w-full",
+                        !n ? "border-ink/12" : "border-pine",
+                      ]}
+                    />
+                  )}
+                  <span class="block">{String(idx + 1).padStart(2, "0")}</span>
+                  <h3
+                    class:list={[
+                      "font-newsreader text-xl font-light normal-case sm:text-2xl md:text-3xl lg:text-4xl",
+                      !n ? "text-ink" : "text-alabaster",
+                    ]}
+                  >
+                    {project.title}
+                  </h3>
+                  <span class="xs:block hidden">{project.location}</span>
+                  <span class="hidden lg:block">{project.type}</span>
+                  <span class="hidden md:block">{project.year}</span>
+                  <Image
+                    src={project.img.src}
+                    alt={project.img.alt}
+                    class="h-14 w-22.5 object-cover"
+                  />
+                  <hr
+                    class:list={[
+                      "absolute bottom-0 left-0 h-px w-full",
+                      !n ? "border-ink/12" : "border-pine",
+                    ]}
+                  />
+                </div>
+              ))}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { animate } from "motion";
+
+  const init = () => {
+    const selectedWorkSection = document.getElementById(
+      "selected-work-section",
+    );
+    const projectLinks = document.querySelectorAll(".project-link");
+    const projectSelectors = document.querySelectorAll(".project-selector");
+
+    const hoverDevice = matchMedia("(hover: hover)").matches;
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (!hoverDevice) {
+      projectLinks.forEach((project) => {
+        project.classList.remove("outline-0");
+      });
+    } else if (selectedWorkSection instanceof HTMLElement) {
+      let directionDown = true;
+      let prevY = 0;
+
+      selectedWorkSection.addEventListener("mousemove", (e) => {
+        directionDown = e.y > prevY;
+        prevY = e.y;
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          directionDown = e.shiftKey ? false : true;
+        }
+      });
+
+      projectLinks.forEach((project, idx) => {
+        if (project instanceof HTMLAnchorElement) {
+          ["mouseenter", "focus"].forEach((trigger) => {
+            project.addEventListener(trigger, () => {
+              if (projectSelectors[idx] instanceof HTMLDivElement) {
+                animate(
+                  projectSelectors[idx],
+                  {
+                    clipPath: [
+                      directionDown
+                        ? "inset(0% 0% 100% 0%)"
+                        : "inset(100% 0% 0% 0%)",
+                      "inset(0% 0% 0% 0%)",
+                    ],
+                  },
+                  {
+                    duration: prefersReducedMotion.matches ? 0 : 0.3,
+                  },
+                );
+              }
+            });
+          });
+
+          ["mouseleave", "blur"].forEach((trigger) => {
+            project.addEventListener(trigger, () => {
+              if (projectSelectors[idx] instanceof HTMLDivElement) {
+                animate(
+                  projectSelectors[idx],
+                  {
+                    clipPath: [
+                      "inset(0% 0% 0% 0%)",
+                      directionDown
+                        ? "inset(100% 0% 0% 0%)"
+                        : "inset(0% 0% 100% 0%)",
+                    ],
+                  },
+                  { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+                );
+              }
+            });
+          });
+        }
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>
