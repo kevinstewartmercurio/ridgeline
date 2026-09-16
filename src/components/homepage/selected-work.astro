@@ -1,64 +1,7 @@
 ---
 import { Image } from "astro:assets";
 
-import larchHouseImage from "../../images/larch-house/hero.png";
-import fernHollowImage from "../../images/fern-hollow/hero.png";
-import cutbankResidenceImage from "../../images/cutbank-residence/hero.png";
-import ledgerHouseImage from "../../images/ledger-house/hero.png";
-import skagitBarnImage from "../../images/skagit-barn/hero.png";
-
-const work = [
-  {
-    title: "Larch House",
-    location: "Methow Valley, WA",
-    type: "New Build",
-    year: 2025,
-    img: {
-      src: larchHouseImage,
-      alt: "",
-    },
-  },
-  {
-    title: "Fern Hollow",
-    location: "Portland, OR",
-    type: "Infill",
-    year: 2024,
-    img: {
-      src: fernHollowImage,
-      alt: "",
-    },
-  },
-  {
-    title: "Cutbank Residence",
-    location: "Bainbridge Island, WA",
-    type: "New Build",
-    year: 2024,
-    img: {
-      src: cutbankResidenceImage,
-      alt: "",
-    },
-  },
-  {
-    title: "The Ledger House",
-    location: "Bend, OR",
-    type: "Renovation",
-    year: 2023,
-    img: {
-      src: ledgerHouseImage,
-      alt: "",
-    },
-  },
-  {
-    title: "Skagit Barn",
-    location: "Skagit Valley, WA",
-    type: "Addition",
-    year: 2023,
-    img: {
-      src: skagitBarnImage,
-      alt: "",
-    },
-  },
-];
+import { projects } from "../../data/projects";
 ---
 
 <section
@@ -75,9 +18,10 @@ const work = [
       </h2>
       <div>
         {
-          work.map((project, idx) => (
+          projects.map((project, idx) => (
             <a
-              href="/"
+              href={`/project/${project.slug}`}
+              data-project-transition
               class:list={[
                 "group project-link font-jetbrains text-ink/65 relative text-xs uppercase outline-0 sm:text-sm",
               ]}
@@ -115,6 +59,7 @@ const work = [
                     src={project.img.src}
                     alt={project.img.alt}
                     class="h-14 w-22.5 object-cover"
+                    data-project-thumbnail={!n || undefined}
                   />
                   <hr
                     class:list={[

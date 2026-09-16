@@ -5,6 +5,7 @@ import { ClientRouter } from "astro:transitions";
 import Lenis from "../components/lenis.astro";
 import Nav from "../components/nav.astro";
 import PageTransition from "../components/page-transition.astro";
+import ProjectTransition from "../components/project-transition.astro";
 
 import "../styles/global.css";
 
@@ -33,6 +34,7 @@ const { title } = Astro.props;
     <Lenis />
     <Nav />
     <slot />
+    <ProjectTransition />
     <PageTransition />
   </body>
 </html>
