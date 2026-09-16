@@ -20,6 +20,10 @@ import Hamburger from "./hamburger.astro";
      The whole nav slides up out of the viewport while scrolling down and comes
      back on scrolling up.
 
+     The hamburger opens `#nav-menu`, a panel in the bottom right over a scrim,
+     with the page behind it locked. Both sit outside `<nav>`, which is
+     translated as it hides and would otherwise drag them along with it.
+
      The nav spans the page width, so it ignores clicks to keep the content
      beneath it clickable; anything interactive inside needs
      `pointer-events-auto`. */
@@ -81,14 +85,89 @@ import Hamburger from "./hamburger.astro";
         <button
           id="nav-hamburger-btn"
           inert
-          class="bg-alabaster pointer-events-auto absolute top-1/2 right-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none md:peer-data-open:translate-x-full lg:size-10"
+          aria-expanded="false"
+          class="bg-alabaster pointer-events-auto absolute top-1/2 right-0 flex size-12 -translate-y-1/2 cursor-pointer items-center justify-center transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none md:peer-data-open:translate-x-full"
         >
-          <Hamburger class="w-5 lg:w-6" />
+          <Hamburger class="scale-80 overflow-visible" />
         </button>
       </div>
     </div>
   </div>
 </nav>
+
+<div
+  id="nav-scrim"
+  transition:persist="nav-scrim"
+  class="bg-ink/80 invisible fixed inset-0 z-30 opacity-0 [backdrop-filter:blur(2px)] transition-[opacity,visibility] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:visible data-open:opacity-100 motion-reduce:transition-none"
+>
+</div>
+
+{
+  /* The wrapper lines the panel up with the nav's right edge, and the column
+    inside it clips the panel so that it is out of sight while closed rather
+    than showing in the gutter beside it. */
+}
+<div
+  id="nav-menu"
+  transition:persist="nav-menu"
+  inert
+  class="group pointer-events-none fixed inset-x-0 bottom-5 z-45 px-5 sm:px-8 lg:px-10"
+>
+  <div class="mx-auto flex w-full max-w-344 justify-end overflow-clip">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+      class="bg-alabaster pointer-events-auto max-h-[calc(100dvh-2.5rem)] w-72 max-w-full translate-x-full overflow-y-auto p-4 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-open:translate-x-0 motion-reduce:transition-none lg:w-88 lg:p-5"
+    >
+      <a href="/" class="mb-5 flex items-center gap-x-3 lg:mb-6">
+        <Logo class="fill-pine size-8 lg:size-10" />
+        <div>
+          <span
+            class="font-newsreader block text-2xl/[110%] font-light lg:text-3xl/[110%]"
+            >Ridgeline</span
+          >
+          <span
+            class="font-jetbrains text-2xs/[1] block font-light uppercase lg:text-xs"
+            >Architecture Studio</span
+          >
+        </div>
+      </a>
+      <div
+        class="text-ink font-jetbrains mb-8 space-y-3 text-sm font-light uppercase lg:mb-12 lg:space-y-4 lg:text-base"
+      >
+        <a href="/" class="focus:underlin block hover:underline"> Projects </a>
+        <a href="/" class="focus:underlin block hover:underline"> Studio </a>
+        <button
+          class="focus:underlin flex cursor-pointer gap-x-3 hover:underline"
+        >
+          <span class="block uppercase"> Start a Conversation </span>
+          <Arrow class="fill-ink w-7 lg:w-9" />
+        </button>
+      </div>
+      <div
+        class="font-jetbrains text-ink mb-8 flex gap-x-4 text-xs font-light uppercase lg:mb-12 lg:gap-x-6 lg:text-sm"
+      >
+        <a href="/" class="hover:underline focus:underline">Instagram</a>
+        <a href="/" class="hover:underline focus:underline">LinkedIn</a>
+        <a href="/" class="hover:underline focus:underline">Contact</a>
+      </div>
+      <div
+        class="font-jetbrains text-ink text-xs font-light uppercase lg:text-sm"
+      >
+        <a href="/" class="hover:underline focus:underline">(360) 555-0148</a>
+        <br /><br />
+        <a href="/" class="hover:underline focus:underline">
+          1420 Alder ridge lane, suite 300
+          <br />
+          Bellingham, WA 98225
+        </a>
+        <br /><br />
+        © 2026 Ridgeline Architecture Studio
+      </div>
+    </div>
+  </div>
+</div>
 
 <style>
   /* A closed panel still takes up room inside the link, so move the focus ring
@@ -104,17 +183,21 @@ import Hamburger from "./hamburger.astro";
 
 <script>
   const nav = document.getElementById("nav");
+  const scrim = document.getElementById("nav-scrim");
+  const menu = document.getElementById("nav-menu");
   // Matches Tailwind's `md` breakpoint, below which only the hamburger is used.
   const mdMql = matchMedia("(min-width: 768px)");
   const leftPanel = document.getElementById("nav-left-panel");
   const rightPanel = document.getElementById("nav-right-panel");
-  const hamburger = document.getElementById("nav-hamburger-btn");
+  const hamburgerBtn = document.getElementById("nav-hamburger-btn");
 
   if (
     nav instanceof HTMLElement &&
+    scrim instanceof HTMLDivElement &&
+    menu instanceof HTMLDivElement &&
     leftPanel instanceof HTMLDivElement &&
     rightPanel instanceof HTMLDivElement &&
-    hamburger instanceof HTMLButtonElement
+    hamburgerBtn instanceof HTMLButtonElement
   ) {
     // While a page transition runs the left panel stays closed, so that it
     // opens out of the logo once the curtain has shrunk into it, and the nav
@@ -123,6 +206,9 @@ import Hamburger from "./hamburger.astro";
     let transitioning = false;
     // Compared against on each scroll to tell which way the page is moving.
     let lastScrollY = window.scrollY;
+    // Freezes the nav's scroll-driven state, so that the hamburger stays in
+    // view to close the menu with.
+    let menuOpen = false;
 
     const setOpen = (panel: HTMLElement, open: boolean) => {
       if (panel.hasAttribute("data-open") === open) return;
@@ -137,7 +223,7 @@ import Hamburger from "./hamburger.astro";
       // Keeps whichever of the two is hidden out of the tab order. Below `md`
       // the panel isn't displayed and the hamburger always shows.
       rightPanel.inert = !open;
-      hamburger.inert = open && mdMql.matches;
+      hamburgerBtn.inert = open && mdMql.matches;
     };
 
     // Changes elements without their transitions.
@@ -173,6 +259,12 @@ import Hamburger from "./hamburger.astro";
     window.addEventListener(
       "scroll",
       () => {
+        // A resize while the menu is open can move the page and fire this.
+        if (menuOpen) {
+          lastScrollY = Math.max(window.scrollY, 0);
+          return;
+        }
+
         setRightOpen(isAtTop());
         if (transitioning) return;
 
@@ -182,13 +274,58 @@ import Hamburger from "./hamburger.astro";
       { passive: true },
     );
 
-    mdMql.addEventListener("change", () => setRightOpen(isAtTop()));
+    mdMql.addEventListener("change", () => {
+      if (!menuOpen) setRightOpen(isAtTop());
+    });
+
+    // Stops the page behind the menu from scrolling, padding out the gap left
+    // by a scrollbar that takes up space so the page doesn't shift sideways.
+    const setScrollLocked = (locked: boolean) => {
+      const scrollbarWidth = locked
+        ? window.innerWidth - document.documentElement.clientWidth
+        : 0;
+      const gap = scrollbarWidth ? `${scrollbarWidth}px` : "";
+
+      document.documentElement.style.overflow = locked ? "hidden" : "";
+      document.body.style.paddingRight = gap;
+      // The nav is fixed, so body padding doesn't move it.
+      nav.style.paddingRight = gap;
+    };
+
+    const setMenuOpen = (open: boolean) => {
+      menuOpen = open;
+      hamburgerBtn.classList.toggle("open", open);
+      hamburgerBtn.setAttribute("aria-expanded", String(open));
+      scrim.toggleAttribute("data-open", open);
+      menu.toggleAttribute("data-open", open);
+      // Keeps the closed menu out of the tab order while it stays in the DOM.
+      menu.inert = !open;
+      setScrollLocked(open);
+
+      if (open) {
+        // The nav holds the only way to close the menu again, so it stays in
+        // view with the hamburger showing whatever the scroll position and
+        // viewport width do next.
+        setHidden(false);
+        setRightOpen(false);
+      } else {
+        lastScrollY = Math.max(window.scrollY, 0);
+        setRightOpen(isAtTop());
+        setOpen(leftPanel, isAtTop());
+      }
+    };
+
+    hamburgerBtn.addEventListener("click", () => {
+      setMenuOpen(hamburgerBtn.getAttribute("aria-expanded") !== "true");
+    });
 
     // Brings the nav back when a keyboard user tabs into it while hidden.
     nav.addEventListener("focusin", () => setHidden(false));
 
     document.addEventListener("page-transition:covered", () => {
       transitioning = true;
+      // Leaves the next page scrollable if a link in the menu was followed.
+      setMenuOpen(false);
       snap([leftPanel], () => setOpen(leftPanel, false));
       snap([nav], () => setHidden(false));
     });
@@ -201,6 +338,6 @@ import Hamburger from "./hamburger.astro";
     });
 
     snap([leftPanel], () => setOpen(leftPanel, isAtTop()));
-    snap([rightPanel, hamburger], () => setRightOpen(isAtTop()));
+    snap([rightPanel, hamburgerBtn], () => setRightOpen(isAtTop()));
   }
 </script>
