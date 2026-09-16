@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import Logo from "../logo.astro";
 
 import marenOstbergImage from "../../images/studio/maren-ostberg.png";
 import danielReyesImage from "../../images/studio/daniel-reyes.png";
@@ -43,7 +44,7 @@ const team = [
 ---
 
 <section
-  class="bg-pine relative z-10 w-full px-5 pt-20 pb-16 sm:px-8 md:pt-26 md:pb-24 lg:px-10"
+  class="bg-pine relative z-10 w-full px-5 py-16 sm:px-8 sm:pt-20 md:pt-26 md:pb-24 lg:px-10"
 >
   <div class="mx-auto w-full max-w-344">
     <div>
@@ -55,24 +56,52 @@ const team = [
       </h2>
       <hr class="border-alabaster w-full" />
     </div>
-    <div class="grid grid-cols-3 gap-x-5 gap-y-24 py-10">
+    <div
+      class="grid grid-cols-2 gap-x-3 gap-y-12 pt-10 sm:gap-y-16 md:grid-cols-3 lg:gap-x-5 lg:gap-y-24"
+    >
       {
         team.map((member) => (
-          <div>
+          <div class="member relative">
             <Image
               src={member.src}
               alt={`${member.name}, ${member.title}`}
               class="mb-4 aspect-square w-full object-cover"
             />
-            <h3 class="font-newsreader text-alabaster mb-1.5 text-3xl font-light">
+            <h3 class="font-newsreader text-alabaster xs:text-2xl text-xl font-light lg:mb-1.5 lg:text-3xl">
               {member.name}
             </h3>
-            <span class="text-alabaster font-jetbrains block text-xs uppercase">
+            <span class="text-alabaster font-jetbrains text-2xs block uppercase lg:text-xs">
               {member.title}
             </span>
+            <div class="bg-alabaster member-logo xs:size-12 absolute top-2.5 right-2.5 flex size-10 origin-top-right scale-0 items-center justify-center duration-300 sm:size-14 md:size-10 lg:size-12 xl:size-20">
+              <Logo class="fill-pine size-[75%]" />
+            </div>
           </div>
         ))
       }
     </div>
   </div>
 </section>
+
+<script>
+  const init = () => {
+    const teamMembers = document.querySelectorAll(".member");
+    const memberLogos = document.querySelectorAll(".member-logo");
+
+    teamMembers.forEach((member, idx) => {
+      member.addEventListener("mouseenter", () => {
+        if (memberLogos[idx] instanceof HTMLDivElement) {
+          memberLogos[idx].classList.replace("scale-0", "scale-100");
+        }
+      });
+
+      member.addEventListener("mouseleave", () => {
+        if (memberLogos[idx] instanceof HTMLDivElement) {
+          memberLogos[idx].classList.replace("scale-100", "scale-0");
+        }
+      });
+    });
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>
