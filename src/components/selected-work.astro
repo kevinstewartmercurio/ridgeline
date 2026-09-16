@@ -89,7 +89,7 @@ const work = [
                     n &&
                       "bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]",
                   ]}
-                  aria-hidden={idx ? "false" : "true"}
+                  aria-hidden={n ? "true" : "false"}
                 >
                   {!idx && (
                     <hr
@@ -150,60 +150,85 @@ const work = [
         project.classList.remove("outline-0");
       });
     } else if (selectedWorkSection instanceof HTMLElement) {
+      // `astro:page-load` runs this again after every navigation, so the
+      // listeners below are dropped as the page they belong to goes away.
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
       let directionDown = true;
       let prevY = 0;
 
-      selectedWorkSection.addEventListener("mousemove", (e) => {
-        directionDown = e.y > prevY;
-        prevY = e.y;
-      });
+      selectedWorkSection.addEventListener(
+        "mousemove",
+        (e) => {
+          directionDown = e.y > prevY;
+          prevY = e.y;
+        },
+        { signal },
+      );
 
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Tab") {
-          directionDown = e.shiftKey ? false : true;
-        }
-      });
+      window.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key === "Tab") {
+            directionDown = e.shiftKey ? false : true;
+          }
+        },
+        { signal },
+      );
 
       projectLinks.forEach((project, idx) => {
         if (project instanceof HTMLAnchorElement) {
           ["mouseenter", "focus"].forEach((trigger) => {
-            project.addEventListener(trigger, () => {
-              if (projectSelectors[idx] instanceof HTMLDivElement) {
-                animate(
-                  projectSelectors[idx],
-                  {
-                    clipPath: [
-                      directionDown
-                        ? "inset(0% 0% 100% 0%)"
-                        : "inset(100% 0% 0% 0%)",
-                      "inset(0% 0% 0% 0%)",
-                    ],
-                  },
-                  {
-                    duration: prefersReducedMotion.matches ? 0 : 0.3,
-                  },
-                );
-              }
-            });
+            project.addEventListener(
+              trigger,
+              () => {
+                if (projectSelectors[idx] instanceof HTMLDivElement) {
+                  animate(
+                    projectSelectors[idx],
+                    {
+                      clipPath: [
+                        directionDown
+                          ? "inset(0% 0% 100% 0%)"
+                          : "inset(100% 0% 0% 0%)",
+                        "inset(0% 0% 0% 0%)",
+                      ],
+                    },
+                    {
+                      duration: prefersReducedMotion.matches ? 0 : 0.3,
+                    },
+                  );
+                }
+              },
+              { signal },
+            );
           });
 
           ["mouseleave", "blur"].forEach((trigger) => {
-            project.addEventListener(trigger, () => {
-              if (projectSelectors[idx] instanceof HTMLDivElement) {
-                animate(
-                  projectSelectors[idx],
-                  {
-                    clipPath: [
-                      "inset(0% 0% 0% 0%)",
-                      directionDown
-                        ? "inset(100% 0% 0% 0%)"
-                        : "inset(0% 0% 100% 0%)",
-                    ],
-                  },
-                  { duration: prefersReducedMotion.matches ? 0 : 0.3 },
-                );
-              }
-            });
+            project.addEventListener(
+              trigger,
+              () => {
+                if (projectSelectors[idx] instanceof HTMLDivElement) {
+                  animate(
+                    projectSelectors[idx],
+                    {
+                      clipPath: [
+                        "inset(0% 0% 0% 0%)",
+                        directionDown
+                          ? "inset(100% 0% 0% 0%)"
+                          : "inset(0% 0% 100% 0%)",
+                      ],
+                    },
+                    { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+                  );
+                }
+              },
+              { signal },
+            );
           });
         }
       });
