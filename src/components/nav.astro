@@ -71,8 +71,8 @@ import Hamburger from "./hamburger.astro";
           data-open
           class="font-jetbrains text-alabaster peer pointer-events-auto flex h-14 translate-x-full items-center gap-x-7 text-xs uppercase transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:translate-x-0 motion-reduce:transition-none max-md:hidden lg:h-16"
         >
-          <a href="/">Projects</a>
-          <a href="/">Studio</a>
+          <a href="/" class="uline after:bg-alabaster">Projects</a>
+          <a href="/" class="uline after:bg-alabaster">Studio</a>
           <button class="group flex h-12 cursor-pointer">
             <div class="bg-alabaster text-ink flex items-center px-3 uppercase">
               Start a Conversation
@@ -136,31 +136,41 @@ import Hamburger from "./hamburger.astro";
       <div
         class="text-ink font-jetbrains mb-8 space-y-3 text-sm font-light uppercase lg:mb-12 lg:space-y-4 lg:text-base"
       >
-        <a href="/" class="focus:underlin block hover:underline"> Projects </a>
-        <a href="/" class="focus:underlin block hover:underline"> Studio </a>
-        <button
-          class="focus:underlin flex cursor-pointer gap-x-3 hover:underline"
-        >
-          <span class="block uppercase"> Start a Conversation </span>
+        <a href="/" class="uline after:bg-ink block w-max"> Projects </a>
+        <a href="/" class="uline after:bg-ink block w-max"> Studio </a>
+        <button class="group/modal-convo flex cursor-pointer gap-x-3">
+          <span
+            class="after:bg-ink relative block uppercase after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover/modal-convo:after:origin-bottom-left group-hover/modal-convo:after:scale-x-100 group-focus-visible/modal-convo:after:origin-bottom-left group-focus-visible/modal-convo:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+          >
+            Start a Conversation
+          </span>
           <Arrow class="fill-ink w-7 lg:w-9" />
         </button>
       </div>
       <div
         class="font-jetbrains text-ink mb-8 flex gap-x-4 text-xs font-light uppercase lg:mb-12 lg:gap-x-6 lg:text-sm"
       >
-        <a href="/" class="hover:underline focus:underline">Instagram</a>
-        <a href="/" class="hover:underline focus:underline">LinkedIn</a>
-        <a href="/" class="hover:underline focus:underline">Contact</a>
+        <a href="/" class="uline after:bg-ink">Instagram</a>
+        <a href="/" class="uline after:bg-ink">LinkedIn</a>
+        <a href="/" class="uline after:bg-ink">Contact</a>
       </div>
       <div
         class="font-jetbrains text-ink text-xs font-light uppercase lg:text-sm"
       >
-        <a href="/" class="hover:underline focus:underline">(360) 555-0148</a>
+        <a href="/" class="uline after:bg-ink">(360) 555-0148</a>
         <br /><br />
-        <a href="/" class="hover:underline focus:underline">
-          1420 Alder ridge lane, suite 300
+        <a href="/" class="group/address">
+          <span
+            class="after:bg-ink relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover/address:after:origin-bottom-left group-hover/address:after:scale-x-100 group-focus-visible/address:after:origin-bottom-left group-focus-visible/address:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+          >
+            1420 Alder ridge lane, suite 300
+          </span>
           <br />
-          Bellingham, WA 98225
+          <span
+            class="after:bg-ink relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:delay-150 after:duration-300 group-hover/address:after:origin-bottom-left group-hover/address:after:scale-x-100 group-focus-visible/address:after:origin-bottom-left group-focus-visible/address:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+          >
+            Bellingham, WA 98225
+          </span>
         </a>
         <br /><br />
         © 2026 Ridgeline Architecture Studio
