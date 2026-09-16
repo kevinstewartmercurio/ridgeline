@@ -2,9 +2,14 @@
 const { ...props } = Astro.props;
 ---
 
+{
+  /* No `height`: with only a width and the viewBox, the height follows from
+     the aspect ratio, so a `w-*` class scales the whole arrow. A fixed height
+     would cap the drawing and leave empty space beside it instead. */
+}
+
 <svg
   width="41"
-  height="18"
   viewBox="0 0 41 18"
   xmlns="http://www.w3.org/2000/svg"
   {...props}

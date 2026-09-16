@@ -3,6 +3,8 @@ import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 
 import Layout from "../../layouts/Layout.astro";
 import Hero from "../../components/project/hero.astro";
+import SubHero from "../../components/project/sub-hero.astro";
+import NextProject from "../../components/project/next-project.astro";
 import Unreal from "../../components/unreal.astro";
 import Footer from "../../components/footer.astro";
 
@@ -22,6 +24,8 @@ const { project } = Astro.props;
 <Layout title={`${project.title} — Ridgeline Architecture Studio`}>
   <main>
     <Hero project={project} />
+    <SubHero project={project} />
+    <NextProject project={project} />
     <Unreal />
     <Footer />
   </main>
