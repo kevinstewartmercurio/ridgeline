@@ -34,3 +34,37 @@ const { title } = Astro.props;
     <PageTransition />
   </body>
 </html>
+
+<style is:global>
+  .uline {
+    position: relative;
+  }
+
+  .uline::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    transform-origin: bottom right;
+    transform: scaleX(0);
+    /* background: var(--color-alabaster); */
+    /* Tailwind's `transition` easing and `duration-300`. */
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Swapping the origin makes the underline wipe out the way it came in. */
+  .uline:hover::after,
+  .uline:focus-visible::after,
+  .uline[data-active="true"]::after {
+    transform-origin: bottom left;
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .uline::after {
+      transition: none;
+    }
+  }
+</style>
