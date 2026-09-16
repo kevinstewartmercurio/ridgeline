@@ -151,39 +151,67 @@ const services = [
       serviceCardSelectorLogoContainer instanceof HTMLDivElement &&
       serviceCardSelectorLogo instanceof HTMLDivElement
     ) {
-      serviceCardsContainer.addEventListener("mouseenter", () => {
-        serviceCardSelectorLogo.style.scale = "1";
+      // `astro:page-load` runs this again after every navigation. The element
+      // listeners go away with the elements, but the `MediaQueryList`s are
+      // fresh objects the browser keeps alive for as long as they have
+      // listeners, so those have to be dropped explicitly.
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
       });
 
-      serviceCardsContainer.addEventListener("mouseleave", () => {
-        serviceCardSelectorLogo.style.scale = "0";
-      });
+      serviceCardsContainer.addEventListener(
+        "mouseenter",
+        () => {
+          serviceCardSelectorLogo.style.scale = "1";
+        },
+        { signal },
+      );
+
+      serviceCardsContainer.addEventListener(
+        "mouseleave",
+        () => {
+          serviceCardSelectorLogo.style.scale = "0";
+        },
+        { signal },
+      );
 
       [xsMql, mdMql, lgMql].forEach((mql) => {
-        mql.addEventListener("change", () => {
-          serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
-          serviceCardSelectorLogoContainer.style.transform =
-            "translate(0%, 0%)";
-          serviceCardSelectorLogo.style.scale = "0";
+        mql.addEventListener(
+          "change",
+          () => {
+            serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
+            serviceCardSelectorLogoContainer.style.transform =
+              "translate(0%, 0%)";
+            serviceCardSelectorLogo.style.scale = "0";
 
-          wwdImages.forEach((img, idx) => {
-            img.classList.replace(
-              !idx ? "opacity-0" : "opacity-100",
-              !idx ? "opacity-100" : "opacity-0",
-            );
-          });
+            wwdImages.forEach((img, idx) => {
+              img.classList.replace(
+                !idx ? "opacity-0" : "opacity-100",
+                !idx ? "opacity-100" : "opacity-0",
+              );
+            });
 
-          serviceCards.forEach((card, idx) => {
-            card.classList.replace(
-              !idx ? "text-ink/65" : "text-alabaster",
-              !idx ? "text-alabaster" : "text-ink/65",
-            );
-          });
-        });
+            serviceCards.forEach((card, idx) => {
+              card.classList.replace(
+                !idx ? "text-ink/65" : "text-alabaster",
+                !idx ? "text-alabaster" : "text-ink/65",
+              );
+            });
+          },
+          { signal },
+        );
       });
 
       serviceCards.forEach((card, idx) => {
         card.addEventListener("mouseenter", () => {
+          // The breakpoint reset above hides the logo; a card hover always
+          // happens inside the container, so bring it back here too rather
+          // than waiting for the pointer to re-enter the container.
+          serviceCardSelectorLogo.style.scale = "1";
+
           serviceCardSelectorBg.style.transform =
             lgMql.matches || (!mdMql.matches && xsMql.matches)
               ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
