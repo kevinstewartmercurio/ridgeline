@@ -1,0 +1,48 @@
+{
+  /* The instance is rebuilt after every navigation rather than reused: the
+     ClientRouter's swap replaces every attribute on `<html>` with the
+     incoming document's (see `swapRootAttributes` in
+     astro/dist/transitions/swap-functions.js), which wipes the `lenis`
+     class Lenis sets on it. Rebuilding on `astro:after-swap` picks that back
+     up instead of leaving a stale, unclassed root behind. Its raf runs on
+     Motion's frame loop rather than a bare `requestAnimationFrame` since
+     Motion already owns one for the page-transition and nav animations. */
+}
+
+<script>
+  import Lenis from "lenis";
+  import { frame, cancelFrame } from "motion";
+
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  let lenis: Lenis | undefined;
+
+  const update = ({ timestamp }: { timestamp: number }) => {
+    lenis?.raf(timestamp);
+  };
+
+  const start = () => {
+    if (prefersReducedMotion.matches) return;
+
+    lenis = new Lenis({ autoRaf: false });
+    frame.update(update, true);
+  };
+
+  const stop = () => {
+    if (!lenis) return;
+
+    cancelFrame(update);
+    lenis.destroy();
+    lenis = undefined;
+  };
+
+  const restart = () => {
+    stop();
+    start();
+  };
+
+  prefersReducedMotion.addEventListener("change", restart);
+  document.addEventListener("astro:after-swap", restart);
+
+  start();
+</script>
