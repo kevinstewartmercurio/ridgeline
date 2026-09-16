@@ -1,0 +1,70 @@
+<section
+  class="bg-alabaster xs:pt-16 relative z-10 px-5 pt-12 sm:px-8 lg:px-10 lg:pt-20"
+>
+  <div class="mx-auto w-full max-w-344">
+    <div class="w-full space-y-8 gap-x-14 pb-12 md:flex lg:gap-x-20">
+      <div class="md:w-1/2">
+        <p
+          class="font-newsreader text-ink text-2xl font-extralight md:text-3xl lg:text-4xl xl:text-5xl"
+        >
+          We began in a converted garage in 2011 with one commission and a
+          conviction that design and building should not be separate businesses.
+        </p>
+      </div>
+      <div class="md:w-1/2">
+        <p class="font-instrument opacity-65 xl:text-lg">
+          Fifteen years later we are fourteen: architects, interior designers,
+          and project managers working exclusively on one-of-a-kind homes, from
+          forested mountain retreats to modern infill in the city.
+        </p>
+        <br />
+        <p class="font-instrument opacity-65 xl:text-lg">
+          We keep construction oversight in-house alongside a small group of
+          vetted general contractors. It is a slower way to grow a practice and
+          a faster way to build a house.
+        </p>
+      </div>
+    </div>
+    <div
+      class="xs:pb-12 grid grid-cols-2 pb-8 lg:grid-cols-4 lg:pb-16 xl:pb-20"
+    >
+      {
+        [
+          {
+            h3: "14",
+            p: "Architects, Designers, & PMs",
+          },
+          {
+            h3: "8-10",
+            p: " Active projects at a time",
+          },
+          {
+            h3: "2011",
+            p: "Year founded",
+          },
+          {
+            h3: "62",
+            p: "Homes completed",
+          },
+        ].map((obj, idx) => (
+          <div
+            class:list={[
+              "border-ink/14 px-3.5 py-5 md:space-y-1 md:px-5 lg:px-3.5 xl:space-y-1.5 xl:px-5 xl:py-6",
+              idx === 0 && "border-t lg:border-b",
+              idx === 1 && "border-t border-l lg:border-b",
+              idx === 2 && "border-y lg:border-l",
+              idx === 3 && "border-y border-l",
+            ]}
+          >
+            <h3 class="font-newsreader text-pine text-4xl font-light md:text-5xl xl:text-6xl">
+              {obj.h3}
+            </h3>
+            <p class="font-jetbrains text-ink/65 text-2xs uppercase md:text-xs">
+              {obj.p}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
