@@ -85,7 +85,7 @@
           <a
             href="https://www.kevinstewartmercurio.com/"
             target="_blank"
-            rel="noreferer"
+            rel="noopener noreferrer"
             class="uline after:bg-alabaster text-nowrap after:h-[0.5px]!"
             >Kevin Stewart-Mercurio</a
           >
@@ -106,7 +106,7 @@
               <span
                 class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:delay-150 after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
               >
-                Bellingham, WA 98825
+                Bellingham, WA 98225
               </span>
             </a>
           </div>
@@ -134,15 +134,31 @@
     const footer = document.querySelector("footer");
 
     if (footer instanceof HTMLElement) {
-      window.addEventListener("resize", () => {
-        const footerHeight = footer.getBoundingClientRect().height;
+      // `astro:page-load` runs this again after every navigation, so the
+      // listener below is dropped as the footer it belongs to goes away.
+      const controller = new AbortController();
 
-        if (footerHeight > window.innerHeight) {
-          footer.classList.remove("sticky", "bottom-0");
-        } else {
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
+      // A footer taller than the viewport can't be stuck to the bottom: the
+      // top of it would scroll out of reach above the fold.
+      const updateSticky = () => {
+        // Measured unstuck, so the height doesn't depend on the current state.
+        footer.classList.remove("sticky", "bottom-0");
+
+        if (footer.getBoundingClientRect().height <= window.innerHeight) {
           footer.classList.add("sticky", "bottom-0");
         }
+      };
+
+      window.addEventListener("resize", updateSticky, {
+        signal: controller.signal,
       });
+
+      // The markup ships sticky, so the first load needs this too.
+      updateSticky();
     }
   };
 
