@@ -1,0 +1,78 @@
+---
+import { Image } from "astro:assets";
+
+import marenOstbergImage from "../../images/studio/maren-ostberg.png";
+import danielReyesImage from "../../images/studio/daniel-reyes.png";
+import irisNakamuraImage from "../../images/studio/iris-nakamura.png";
+import priyaAnandImage from "../../images/studio/priya-anand.png";
+import callumSorensenImage from "../../images/studio/callum-sorensen.png";
+import tomWhitlockImage from "../../images/studio/tom-whitlock.png";
+
+const team = [
+  {
+    name: "Maren Ostberg",
+    title: "Founding Partner, Architect",
+    src: marenOstbergImage,
+  },
+  {
+    name: "Daniel Reyes",
+    title: "Partner, Design-Build",
+    src: danielReyesImage,
+  },
+  {
+    name: "Iris Nakamura",
+    title: "Director of Interiors",
+    src: irisNakamuraImage,
+  },
+  {
+    name: "Priya Anand",
+    title: "Project Architect",
+    src: priyaAnandImage,
+  },
+  {
+    name: "Callum Sørensen",
+    title: " Site & Materials Lead",
+    src: callumSorensenImage,
+  },
+  {
+    name: "Tom Whitlock",
+    title: "Construction Administration",
+    src: tomWhitlockImage,
+  },
+];
+---
+
+<section
+  class="bg-pine relative z-10 w-full px-5 pt-20 pb-16 sm:px-8 md:pt-26 md:pb-24 lg:px-10"
+>
+  <div class="mx-auto w-full max-w-344">
+    <div>
+      <h2
+        class="text-alabaster font-newsreader 2xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
+      >
+        <span>The</span>
+        <span>Team</span>
+      </h2>
+      <hr class="border-alabaster w-full" />
+    </div>
+    <div class="grid grid-cols-3 gap-x-5 gap-y-24 py-10">
+      {
+        team.map((member) => (
+          <div>
+            <Image
+              src={member.src}
+              alt={`${member.name}, ${member.title}`}
+              class="mb-4 aspect-square w-full object-cover"
+            />
+            <h3 class="font-newsreader text-alabaster mb-1.5 text-3xl font-light">
+              {member.name}
+            </h3>
+            <span class="text-alabaster font-jetbrains block text-xs uppercase">
+              {member.title}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
