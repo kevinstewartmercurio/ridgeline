@@ -32,6 +32,14 @@ import fernHollow4Image from "../images/fern-hollow/grid-4.jpg";
 import fernHollow5Image from "../images/fern-hollow/grid-5.jpeg";
 import fernHollow6Image from "../images/fern-hollow/grid-6.jpg";
 
+import skagitBarn1Image from "../images/skagit-barn/grid-1.jpg";
+import skagitBarn2Image from "../images/skagit-barn/grid-2.jpg";
+import skagitBarn3Image from "../images/skagit-barn/grid-3.jpg";
+import skagitBarn4Image from "../images/skagit-barn/grid-4.jpg";
+import skagitBarn5Image from "../images/skagit-barn/grid-5.jpg";
+import skagitBarn6Image from "../images/skagit-barn/grid-6.jpg";
+import skagitBarn7Image from "../images/skagit-barn/grid-7.jpg";
+
 type Image = NonNullable<GridCell["image"]>;
 type Caption = NonNullable<GridCell["caption"]>;
 type Tile = Omit<GridCell, "span" | "start">;
@@ -231,35 +239,35 @@ export const projectGrids: Record<string, GridRow[]> = {
     columns(
       [
         {
-          image: photo(exteriorImage, "16 / 9"),
+          image: photo(skagitBarn1Image, "16 / 9"),
           caption: {
             label: "The brief",
             body: "A working farm that needed another bedroom, a proper bathroom, and somewhere to put visiting family without giving up the shop.",
           },
         },
         {
-          image: photo(tableImage, "3 / 4"),
+          image: photo(skagitBarn2Image, "3 / 4"),
         },
       ],
       [8, 4],
     ),
-    full(photo(skagitBarnImage, "21 / 9")),
+    full(photo(skagitBarn3Image, "16 / 9")),
     columns(
       [
-        { image: photo(duskImage, "5 / 6") },
+        { image: photo(skagitBarn4Image, "5 / 6") },
         {
-          image: photo(detailImage, "5 / 4"),
+          image: photo(skagitBarn5Image, "5 / 4"),
           caption: {
             label: "The site",
             body: "Six acres of flat ground under a big sky, with a barn from 1936 that the county would not let anyone take down.",
           },
         },
-        { image: photo(roomImage, "5 / 4") },
+        { image: photo(skagitBarn6Image, "5 / 4") },
       ],
       [4, 4, 4],
     ),
     captioned(
-      photo(diningImage, "21 / 9"),
+      photo(skagitBarn7Image, "21 / 9"),
       {
         label: "The outcome",
         body: "An addition that borrows the barn's roof pitch and stops short of touching it. Corrugated steel weathering to the same grey, and a glazed link that keeps the two apart.",
