@@ -1,0 +1,295 @@
+---
+import type { ImageMetadata } from "astro";
+
+import type { GridRow } from "../../data/project-grid";
+
+interface Props {
+  slug: string;
+  rows: GridRow[];
+}
+
+const { slug, rows } = Astro.props;
+
+// Every image in `src/images`, so a slot can be pointed at any of them. New
+// files dropped into that folder show up after a reload.
+const modules = import.meta.glob<ImageMetadata>(
+  "../../images/**/*.{png,jpg,jpeg,webp,avif}",
+  { eager: true, import: "default" },
+);
+
+const images = Object.entries(modules)
+  .map(([key, meta]) => ({
+    path: key.replace("../../images/", ""),
+    src: meta.src,
+  }))
+  .sort((a, b) => a.path.localeCompare(b.path));
+
+const pathFor = (src: string) =>
+  images.find((image) => image.src === src)?.path ?? "";
+
+const data = {
+  slug,
+  images,
+  rows: rows.map((row) => row.cells.map((cell) => cell.span ?? 6)),
+  slots: rows.flatMap((row, r) =>
+    row.cells.map((cell, c) => ({
+      slot: `${r}-${c}`,
+      path: pathFor(cell.image.src.src),
+      aspect: cell.image.aspect ?? "4 / 3",
+    })),
+  ),
+};
+---
+
+{
+  /* Dev-only panel for trying photos in the project grid. Choices are kept in
+     localStorage per project, so they survive reloads and navigating between
+     projects; uploaded files are previews only and are lost on reload. */
+}
+
+<script
+  is:inline
+  type="application/json"
+  id="grid-tweaks-data"
+  set:html={JSON.stringify(data)}
+/>
+
+<script>
+  import GUI from "lil-gui";
+
+  type Slot = { slot: string; path: string; aspect: string };
+  type Data = {
+    slug: string;
+    images: { path: string; src: string }[];
+    rows: number[][];
+    slots: Slot[];
+  };
+  type Saved = Record<string, { path: string; aspect: string; was: Slot }>;
+
+  const STORAGE_PREFIX = "grid-tweaks:";
+  const ASPECTS = [
+    "21 / 9",
+    "16 / 9",
+    "3 / 2",
+    "4 / 3",
+    "5 / 4",
+    "1 / 1",
+    "4 / 5",
+    "3 / 4",
+    "2 / 3",
+  ];
+
+  const load = (slug: string): Saved => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_PREFIX + slug) ?? "{}");
+    } catch {
+      return {};
+    }
+  };
+
+  const save = (slug: string, saved: Saved) => {
+    try {
+      if (Object.keys(saved).length === 0) {
+        localStorage.removeItem(STORAGE_PREFIX + slug);
+      } else {
+        localStorage.setItem(STORAGE_PREFIX + slug, JSON.stringify(saved));
+      }
+    } catch {}
+  };
+
+  let gui: GUI | undefined;
+  // Uploads on the current page, by slot, for the change list.
+  let uploads = new Map<string, string>();
+
+  const destroy = () => {
+    gui?.destroy();
+    gui = undefined;
+    uploads.forEach((_, slot) => {
+      const img = document.querySelector<HTMLImageElement>(
+        `[data-grid-slot="${slot}"] img`,
+      );
+      if (img?.src.startsWith("blob:")) URL.revokeObjectURL(img.src);
+    });
+    uploads = new Map();
+  };
+
+  const describeChanges = (data: Data) => {
+    const lines: string[] = [];
+    const slugs = Object.keys(localStorage)
+      .filter((key) => key.startsWith(STORAGE_PREFIX))
+      .map((key) => key.slice(STORAGE_PREFIX.length));
+    if (uploads.size > 0 && !slugs.includes(data.slug)) slugs.push(data.slug);
+
+    for (const slug of slugs.sort()) {
+      const saved = load(slug);
+      const entries = Object.entries(saved).sort(([a], [b]) =>
+        a.localeCompare(b, undefined, { numeric: true }),
+      );
+      const slugUploads = slug === data.slug ? [...uploads] : [];
+      if (entries.length === 0 && slugUploads.length === 0) continue;
+
+      lines.push(slug);
+      for (const [slot, { path, aspect, was }] of entries) {
+        const [row, cell] = slot.split("-").map((n) => Number(n) + 1);
+        const from =
+          was.path === path && was.aspect === aspect
+            ? ""
+            : ` (was ${was.path}, ${was.aspect})`;
+        lines.push(`- Row ${row}, slot ${cell}: ${path}, ${aspect}${from}`);
+      }
+      for (const [slot, name] of slugUploads) {
+        const [row, cell] = slot.split("-").map((n) => Number(n) + 1);
+        lines.push(
+          `- Row ${row}, slot ${cell}: uploaded "${name}" (add it to src/images/${slug}/)`,
+        );
+      }
+      lines.push("");
+    }
+
+    return lines.join("\n").trim() || "No changes.";
+  };
+
+  const init = () => {
+    destroy();
+
+    const script = document.getElementById("grid-tweaks-data");
+    if (!script?.textContent) return;
+    const data: Data = JSON.parse(script.textContent);
+
+    const srcFor = new Map(data.images.map((image) => [image.path, image.src]));
+    const imageOptions = data.images.map((image) => image.path);
+    const saved = load(data.slug);
+
+    gui = new GUI({ title: `Grid photos · ${data.slug}`, width: 320 });
+    // Keep Lenis from swallowing wheel events over the panel.
+    gui.domElement.setAttribute("data-lenis-prevent", "");
+    gui.domElement.style.maxHeight = "calc(100dvh - 1rem)";
+    gui.domElement.style.overflowY = "auto";
+
+    const actions = {
+      copy: async () => {
+        const text = describeChanges(data);
+        console.log(text);
+        try {
+          await navigator.clipboard.writeText(text);
+          copyButton.name("Copied ✓");
+        } catch {
+          copyButton.name("Logged to console");
+        }
+        setTimeout(() => copyButton.name("Copy changes (all projects)"), 1500);
+      },
+      resetPage: () => {
+        save(data.slug, {});
+        location.reload();
+      },
+    };
+    const copyButton = gui
+      .add(actions, "copy")
+      .name("Copy changes (all projects)");
+    gui.add(actions, "resetPage").name("Reset this project");
+
+    data.rows.forEach((spans, r) => {
+      const rowFolder = gui!.addFolder(`Row ${r + 1} · ${spans.join(" / ")}`);
+      rowFolder.close();
+
+      spans.forEach((span, c) => {
+        const original = data.slots.find((s) => s.slot === `${r}-${c}`);
+        if (!original) return;
+
+        const figure = document.querySelector<HTMLElement>(
+          `[data-grid-slot="${original.slot}"]`,
+        );
+        const frame = figure?.querySelector<HTMLElement>(".grid-cell-frame");
+        const img = figure?.querySelector<HTMLImageElement>("img");
+        if (!figure || !frame || !img) return;
+
+        const state = {
+          image: saved[original.slot]?.path ?? original.path,
+          aspect: saved[original.slot]?.aspect ?? original.aspect,
+          upload: () => fileInput.click(),
+          reset: () => {
+            state.image = original.path;
+            state.aspect = original.aspect;
+            clearUpload();
+            apply();
+            folder.controllers.forEach((controller) =>
+              controller.updateDisplay(),
+            );
+          },
+        };
+
+        const aspects = ASPECTS.includes(state.aspect)
+          ? ASPECTS
+          : [state.aspect, ...ASPECTS];
+
+        const clearUpload = () => {
+          if (img.src.startsWith("blob:")) URL.revokeObjectURL(img.src);
+          uploads.delete(original.slot);
+          uploadButton.name("Upload file…");
+        };
+
+        const apply = () => {
+          frame.style.aspectRatio = state.aspect;
+          if (!uploads.has(original.slot)) {
+            img.removeAttribute("srcset");
+            img.removeAttribute("sizes");
+            img.src = srcFor.get(state.image) ?? img.src;
+          }
+
+          if (
+            state.image === original.path &&
+            state.aspect === original.aspect
+          ) {
+            delete saved[original.slot];
+          } else {
+            saved[original.slot] = {
+              path: state.image,
+              aspect: state.aspect,
+              was: original,
+            };
+          }
+          save(data.slug, saved);
+        };
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.addEventListener("change", () => {
+          const file = fileInput.files?.[0];
+          if (!file) return;
+          clearUpload();
+          uploads.set(original.slot, file.name);
+          img.removeAttribute("srcset");
+          img.removeAttribute("sizes");
+          img.src = URL.createObjectURL(file);
+          uploadButton.name(`Uploaded: ${file.name}`);
+          fileInput.value = "";
+        });
+
+        const folder = rowFolder.addFolder(`Slot ${c + 1} · ${span} cols`);
+        folder.add(state, "image", imageOptions).onChange(() => {
+          clearUpload();
+          apply();
+        });
+        folder.add(state, "aspect", aspects).onChange(apply);
+        const uploadButton = folder.add(state, "upload").name("Upload file…");
+        folder.add(state, "reset").name("Reset slot");
+
+        // Outline the cell while its controls are hovered.
+        folder.domElement.addEventListener("mouseenter", () => {
+          figure.style.outline = "2px solid #e11d48";
+          figure.style.outlineOffset = "4px";
+        });
+        folder.domElement.addEventListener("mouseleave", () => {
+          figure.style.outline = "";
+          figure.style.outlineOffset = "";
+        });
+
+        if (saved[original.slot]) apply();
+      });
+    });
+  };
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:before-swap", destroy);
+</script>

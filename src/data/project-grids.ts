@@ -17,6 +17,14 @@ import roomImage from "../images/homepage/stack-1.png";
 import tableImage from "../images/homepage/stack-2.png";
 import duskImage from "../images/homepage/stack-3.png";
 
+import larchHouse1Image from "../images/larch-house/grid-1.jpeg";
+import larchHouse2Image from "../images/larch-house/grid-2.jpg";
+import larchHouse3Image from "../images/larch-house/grid-3.jpg";
+import larchHouse4Image from "../images/larch-house/grid-4.jpg";
+import larchHouse5Image from "../images/larch-house/grid-5.jpeg";
+import larchHouse6Image from "../images/larch-house/grid-6.jpg";
+import larchHouse7Image from "../images/larch-house/grid-7.jpg";
+
 type Image = NonNullable<GridCell["image"]>;
 type Caption = NonNullable<GridCell["caption"]>;
 type Tile = Omit<GridCell, "span" | "start">;
@@ -60,21 +68,20 @@ export const projectGrids: Record<string, GridRow[]> = {
     columns(
       [
         {
-          image: photo(interiorImage, "4 / 3"),
+          image: photo(larchHouse1Image, "4 / 3"),
+        },
+        {
+          image: photo(larchHouse2Image, "3 / 2"),
           caption: {
             label: "The brief",
             body: "A family of six, spread across three generations, wanted one building that could hold a full holiday and still feel right for two people in February. The clients asked for warmth without heaviness, and for every room to know where the valley was.",
           },
         },
-        {
-          image: photo(exteriorImage, "3 / 2"),
-        },
       ],
       [7, 5],
     ),
-    // full(photo(larchHouseImage, "21 / 9")),
     captioned(
-      photo(larchHouseImage, "21 / 9"),
+      photo(larchHouse3Image, "21 / 9"),
       {
         label: "The site",
         body: "Eleven acres on a south-facing bench above the river, screened by second-growth larch. Steep, dry, and cold, with a narrow window of winter sun that set the building's angle before the first sketch was made.",
@@ -83,13 +90,13 @@ export const projectGrids: Record<string, GridRow[]> = {
     ),
     columns(
       [
-        { image: photo(roomImage, "4 / 3") },
-        { image: photo(tableImage, "4 / 3") },
-        { image: photo(duskImage, "5 / 6") },
+        { image: photo(larchHouse4Image, "4 / 3") },
+        { image: photo(larchHouse5Image, "4 / 3") },
+        { image: photo(larchHouse6Image, "5 / 6") },
       ],
       [4, 4, 4],
     ),
-    captioned(photo(detailImage, "16 / 9"), {
+    captioned(photo(larchHouse7Image, "16 / 9"), {
       label: "The outcome",
       body: "Two low volumes joined by a glazed passage. A compact winter house and a summer wing that closes down when it is empty. Board-form concrete at the base, charred larch above, weathering to match the trees it was milled beside.",
     }),
