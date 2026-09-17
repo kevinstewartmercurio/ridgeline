@@ -1,0 +1,31 @@
+---
+import GridRow from "./grid-row.astro";
+
+import type { GridRow as Row } from "../../data/project-grid";
+
+interface Props {
+  rows: Row[];
+}
+
+const { rows } = Astro.props;
+---
+
+{
+  /* Each row lays its own cells out, so a project can mix a full-bleed photo
+     with rows of two or three uneven columns. */
+}
+
+{
+  rows.length > 0 && (
+    <section
+      id="project-grid"
+      class="bg-alabaster relative z-10 px-5 pb-16 sm:px-8 md:pb-20 lg:px-10"
+    >
+      <div class="mx-auto flex w-full max-w-344 flex-col gap-y-12 md:gap-y-16 lg:gap-y-24">
+        {rows.map((row) => (
+          <GridRow row={row} />
+        ))}
+      </div>
+    </section>
+  )
+}
