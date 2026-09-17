@@ -14,14 +14,17 @@ export type GridCell = {
   span?: number;
   /** Column the cell starts at, out of twelve, for leaving a gap beside it. */
   start?: number;
-  image?: {
+  image: {
     src: ImageMetadata;
     alt: string;
     /** Any CSS `aspect-ratio`, e.g. "4 / 3" for landscape or "3 / 4" for portrait. */
     aspect?: string;
   };
+  /** Always set beneath the image; a cell never holds a caption on its own. */
   caption?: {
     label?: string;
+    /** Which side of the cell the caption sits on. Defaults to the left. */
+    align?: "start" | "end";
     body: string;
   };
 };
