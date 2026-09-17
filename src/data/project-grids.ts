@@ -25,6 +25,13 @@ import larchHouse5Image from "../images/larch-house/grid-5.jpeg";
 import larchHouse6Image from "../images/larch-house/grid-6.jpg";
 import larchHouse7Image from "../images/larch-house/grid-7.jpg";
 
+import fernHollow1Image from "../images/fern-hollow/grid-1.jpg";
+import fernHollow2Image from "../images/fern-hollow/grid-2.jpg";
+import fernHollow3Image from "../images/fern-hollow/grid-3.jpg";
+import fernHollow4Image from "../images/fern-hollow/grid-4.jpg";
+import fernHollow5Image from "../images/fern-hollow/grid-5.jpeg";
+import fernHollow6Image from "../images/fern-hollow/grid-6.jpg";
+
 type Image = NonNullable<GridCell["image"]>;
 type Caption = NonNullable<GridCell["caption"]>;
 type Tile = Omit<GridCell, "span" | "start">;
@@ -103,7 +110,7 @@ export const projectGrids: Record<string, GridRow[]> = {
   ],
   "fern-hollow": [
     captioned(
-      photo(fernHollowImage, "16 / 9"),
+      photo(fernHollow1Image, "16 / 9"),
       {
         label: "The brief",
         body: "A corner lot two streets from a light rail stop, and a couple who wanted to stay in the neighbourhood they had rented in for a decade. Room for a workshop, and nothing they would have to explain to the neighbours.",
@@ -113,24 +120,24 @@ export const projectGrids: Record<string, GridRow[]> = {
     columns(
       [
         {
-          image: photo(diningImage, "4 / 3"),
+          image: photo(fernHollow2Image, "4 / 3"),
           caption: {
             label: "The site",
             body: "A quarter of an acre that slopes away from the street, with a cedar the city had tagged for retention. The house steps down with the grade and keeps its distance from the roots.",
           },
         },
-        { image: photo(roomImage, "6 / 5") },
+        { image: photo(fernHollow3Image, "1 / 1") },
       ],
       [5, 7],
     ),
-    full(photo(duskImage, "21 / 9")),
+    full(photo(fernHollow4Image, "16 / 9")),
     columns(
       [
         {
-          image: photo(interiorImage, "4 / 3"),
+          image: photo(fernHollow5Image, "4 / 3"),
         },
         {
-          image: photo(exteriorImage, "3 / 2"),
+          image: photo(fernHollow6Image, "3 / 2"),
           caption: {
             label: "The outcome",
             body: "Three storeys that read as two from the pavement. Brick at the base to match the block, stained cedar above, and a workshop that opens onto the lane behind.",
