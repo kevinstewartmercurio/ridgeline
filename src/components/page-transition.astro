@@ -4,10 +4,11 @@ import { getImage } from "astro:assets";
 
 import Logo from "./logo.astro";
 
-// The photographs only ever appear inside the 80–112px square the logo sits
+// The photographs only ever appear inside the 96–144px square the logo sits
 // in, so they are cropped square and small here rather than at their hero
-// sizes: the reveal has to start moments after a link is clicked.
-const PHOTOGRAPH_SIZE = 256;
+// sizes: the reveal has to start moments after a link is clicked. The size
+// leaves enough for a 2x screen at the larger of those two widths.
+const PHOTOGRAPH_SIZE = 384;
 
 // The most photographs one run can show. The script picks four or five each
 // time, so the markup carries the larger number and leaves the last slot
@@ -67,7 +68,7 @@ const pool = await Promise.all(
     class="bg-pine absolute inset-0 origin-top-left will-change-transform"
   >
   </div>
-  <div class="relative size-20 md:size-28">
+  <div class="relative size-24 md:size-36">
     <div
       id="page-transition-photographs"
       class="absolute inset-0"
@@ -108,14 +109,17 @@ const pool = await Promise.all(
 
   const COVER_DURATION = 0.5;
   // The photographs share one budget however many of them there are, so the
-  // run lasts the same either way.
-  const PHOTOGRAPH_SEQUENCE_DURATION = 0.95;
+  // run lasts the same either way. It is long enough that the quickest
+  // photograph still holds the square for about a fifth of a second, which is
+  // roughly what it takes to read one.
+  const PHOTOGRAPH_SEQUENCE_DURATION = 1.9;
   // Each photograph is revealed for this fraction of the time the one before
-  // it took, so the sequence tightens as it goes.
-  const ACCELERATION = 0.62;
+  // it took, so the sequence tightens as it goes. Steeper than this and the
+  // last photographs go by before they register.
+  const ACCELERATION = 0.78;
   // The logo's wipe is a touch slower than the last photograph's, which lets
   // the run land on it instead of running past it.
-  const LOGO_REVEAL_DURATION = 0.16;
+  const LOGO_REVEAL_DURATION = 0.28;
   const SHRINK_DURATION = 0.8;
   // Used when there is no nav logo to shrink into.
   const SLIDE_OUT_DURATION = 0.5;
