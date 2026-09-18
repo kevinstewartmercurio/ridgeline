@@ -10,10 +10,9 @@ import Logo from "./logo.astro";
 // leaves enough for a 2x screen at the larger of those two widths.
 const PHOTOGRAPH_SIZE = 384;
 
-// The most photographs one run can show. The script picks four or five each
-// time, so the markup carries the larger number and leaves the last slot
-// empty when only four are used.
-const SLOTS = 5;
+// How many photographs one run shows. The script fills every slot, so this
+// number alone decides the length of the run.
+const SLOTS = 8;
 
 // Everything photographed for the site, so no two transitions look alike. The
 // studio portraits are left out: faces flickering past read as people rather
@@ -68,7 +67,7 @@ const pool = await Promise.all(
     class="bg-pine absolute inset-0 origin-top-left will-change-transform"
   >
   </div>
-  <div class="relative size-24 md:size-36">
+  <div class="relative size-36 md:size-48">
     <div
       id="page-transition-photographs"
       class="absolute inset-0"
@@ -108,23 +107,21 @@ const pool = await Promise.all(
   import { animate, type AnimationPlaybackControls } from "motion";
 
   const COVER_DURATION = 0.5;
-  // The photographs share one budget however many of them there are, so the
-  // run lasts the same either way.
-  const PHOTOGRAPH_SEQUENCE_DURATION = 1.55;
+  // Every photograph in a run shares this budget.
+  const PHOTOGRAPH_SEQUENCE_DURATION = 2.25;
   // Each photograph is revealed for this fraction of the time the one before
-  // it took, so the sequence tightens as it goes. Between them the two
-  // constants hold the quickest photograph on screen for about a sixth of a
-  // second: steeper or shorter than this and the tail of the run goes by
-  // before it registers.
-  const ACCELERATION = 0.75;
+  // it took, so the sequence tightens as it goes. Eight of them divide the
+  // budget finely enough that the run has to accelerate gently to keep its
+  // tail on screen long enough to register.
+  const ACCELERATION = 0.9;
   // The logo's wipe is a touch slower than the last photograph's, which lets
   // the run land on it instead of running past it.
-  const LOGO_REVEAL_DURATION = 0.24;
+  const LOGO_REVEAL_DURATION = 0.3;
   const SHRINK_DURATION = 0.8;
   // Used when there is no nav logo to shrink into.
-  const SLIDE_OUT_DURATION = 0.5;
+  const SLIDE_OUT_DURATION = 0.25;
   // How long the logo stays centered after the new page is ready.
-  const HOLD_DURATION = 0.25;
+  const HOLD_DURATION = 0.5;
   // How long the run will wait for a photograph that was not already in the
   // cache before starting without it.
   const DECODE_TIMEOUT = 0.3;
@@ -190,16 +187,11 @@ const pool = await Promise.all(
         return;
       }
 
-      const count = Math.min(
-        4 + Math.round(Math.random()),
-        slots.length,
-        pool.length,
-      );
       // Drawn without replacement so a run never shows the same photograph
       // twice.
       const remaining = [...pool];
 
-      chosen = slots.slice(0, count);
+      chosen = slots.slice(0, Math.min(slots.length, pool.length));
       chosen.forEach((slot) => {
         const [src] = remaining.splice(
           Math.floor(Math.random() * remaining.length),
