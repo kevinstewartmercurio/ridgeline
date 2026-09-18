@@ -5,10 +5,9 @@ import type { GridRow } from "../../data/project-grid";
 
 interface Props {
   row: GridRow;
-  index: number;
 }
 
-const { row, index } = Astro.props;
+const { row } = Astro.props;
 ---
 
 {
@@ -20,5 +19,5 @@ const { row, index } = Astro.props;
 <div
   class="grid grid-cols-1 items-start gap-x-4 gap-y-4 md:grid-cols-12 lg:gap-x-5 lg:gap-y-5"
 >
-  {row.cells.map((cell, i) => <GridCell cell={cell} slot={`${index}-${i}`} />)}
+  {row.cells.map((cell) => <GridCell cell={cell} />)}
 </div>
