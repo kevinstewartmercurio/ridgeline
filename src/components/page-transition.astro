@@ -1,5 +1,43 @@
 ---
+import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
+
 import Logo from "./logo.astro";
+
+// The photographs only ever appear inside the 80–112px square the logo sits
+// in, so they are cropped square and small here rather than at their hero
+// sizes: the reveal has to start moments after a link is clicked.
+const PHOTOGRAPH_SIZE = 256;
+
+// The most photographs one run can show. The script picks four or five each
+// time, so the markup carries the larger number and leaves the last slot
+// empty when only four are used.
+const SLOTS = 5;
+
+// Everything photographed for the site, so no two transitions look alike. The
+// studio portraits are left out: faces flickering past read as people rather
+// than as places.
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  "../images/**/*.{png,jpg,jpeg}",
+  { eager: true },
+);
+
+const pool = await Promise.all(
+  Object.entries(files)
+    .filter(
+      ([path]) => !path.includes("/studio/") || path.endsWith("/hero.png"),
+    )
+    .map(([, file]) =>
+      getImage({
+        src: file.default,
+        width: PHOTOGRAPH_SIZE,
+        height: PHOTOGRAPH_SIZE,
+        fit: "cover",
+        position: "center",
+        format: "webp",
+      }),
+    ),
+);
 ---
 
 {
@@ -9,7 +47,12 @@ import Logo from "./logo.astro";
      keyframes need to match the exact strings the script animates between.
 
      The background is a sibling of the logo rather than its parent so that it
-     can be scaled unevenly into the nav square without stretching the logo. */
+     can be scaled unevenly into the nav square without stretching the logo.
+
+     The photographs sit under the logo in the same square. The logo carries a
+     pine backing of its own so that wiping it over the last photograph shows
+     the same negative space as always through the mark, rather than a window
+     onto the photograph underneath. */
 }
 
 <div
@@ -24,12 +67,30 @@ import Logo from "./logo.astro";
     class="bg-pine absolute inset-0 origin-top-left will-change-transform"
   >
   </div>
-  <div
-    id="page-transition-logo"
-    class="relative size-20 will-change-transform md:size-28"
-    style="clip-path: inset(0% 0% 100% 0%)"
-  >
-    <Logo class="fill-alabaster size-full" />
+  <div class="relative size-20 md:size-28">
+    <div
+      id="page-transition-photographs"
+      class="absolute inset-0"
+      data-pool={JSON.stringify(pool.map((image) => image.src))}
+    >
+      {
+        Array.from({ length: SLOTS }, () => (
+          <img
+            alt=""
+            fetchpriority="low"
+            class="absolute inset-0 size-full object-cover"
+            style="clip-path: inset(0% 0% 100% 0%)"
+          />
+        ))
+      }
+    </div>
+    <div
+      id="page-transition-logo"
+      class="bg-pine absolute inset-0 will-change-transform"
+      style="clip-path: inset(0% 0% 100% 0%)"
+    >
+      <Logo class="fill-alabaster size-full" />
+    </div>
   </div>
 </div>
 
@@ -46,13 +107,27 @@ import Logo from "./logo.astro";
   import { animate, type AnimationPlaybackControls } from "motion";
 
   const COVER_DURATION = 0.5;
-  const LOGO_REVEAL_DURATION = 0.6;
+  // The photographs share one budget however many of them there are, so the
+  // run lasts the same either way.
+  const PHOTOGRAPH_SEQUENCE_DURATION = 0.95;
+  // Each photograph is revealed for this fraction of the time the one before
+  // it took, so the sequence tightens as it goes.
+  const ACCELERATION = 0.62;
+  // The logo's wipe is a touch slower than the last photograph's, which lets
+  // the run land on it instead of running past it.
+  const LOGO_REVEAL_DURATION = 0.16;
   const SHRINK_DURATION = 0.8;
   // Used when there is no nav logo to shrink into.
   const SLIDE_OUT_DURATION = 0.5;
   // How long the logo stays centered after the new page is ready.
   const HOLD_DURATION = 0.25;
+  // How long the run will wait for a photograph that was not already in the
+  // cache before starting without it.
+  const DECODE_TIMEOUT = 0.3;
   const EASE = [0.76, 0, 0.24, 1] as const;
+  // The photographs hand off to one another, so each wipe leads with its
+  // speed rather than easing in from a stop.
+  const PHOTOGRAPH_EASE = [0.33, 1, 0.68, 1] as const;
 
   // The shrink animates whole `transform` strings rather than clip-path or
   // Motion's `x`/`scale` shorthands: Motion hands full transforms to the
@@ -61,11 +136,12 @@ import Logo from "./logo.astro";
   // whole viewport every frame and stuttered. Both keyframes share the same
   // function list so the browser interpolates each value linearly.
   const IDENTITY = "translate(0px, 0px) scale(1, 1)";
-  const LOGO_HIDDEN = "inset(0% 0% 100% 0%)";
-  const LOGO_SHOWN = "inset(0% 0% 0% 0%)";
+  const HIDDEN = "inset(0% 0% 100% 0%)";
+  const SHOWN = "inset(0% 0% 0% 0%)";
 
   const curtain = document.getElementById("page-transition");
   const background = document.getElementById("page-transition-background");
+  const photographs = document.getElementById("page-transition-photographs");
   const logo = document.getElementById("page-transition-logo");
   const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -75,11 +151,20 @@ import Logo from "./logo.astro";
   const wait = (seconds: number) =>
     new Promise((resolve) => setTimeout(resolve, timing(seconds) * 1000));
 
+  // Unlike `wait`, this one is a deadline rather than a beat, so reduced
+  // motion must not collapse it to nothing.
+  const deadline = (seconds: number) =>
+    new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+
   if (
     curtain instanceof HTMLDivElement &&
     background instanceof HTMLDivElement &&
+    photographs instanceof HTMLDivElement &&
     logo instanceof HTMLDivElement
   ) {
+    const pool: string[] = JSON.parse(photographs.dataset.pool ?? "[]");
+    const slots = Array.from(photographs.querySelectorAll("img"));
+
     // Whether the curtain is currently down, so that a navigation started
     // while another one is still running does not replay the slide in.
     let covered = false;
@@ -90,6 +175,35 @@ import Logo from "./logo.astro";
     // The shrink in progress, so that a navigation started mid-shrink can
     // grow the curtain back out instead of snapping it off screen.
     let shrinking: AnimationPlaybackControls[] = [];
+    // The slots holding the next run's photographs. They are filled a whole
+    // navigation ahead, at a low fetch priority, so the reveal never waits on
+    // the network and the loading never competes with the page's own images.
+    let chosen: HTMLImageElement[] = [];
+
+    const choose = () => {
+      if (prefersReducedMotion.matches || !pool.length) {
+        chosen = [];
+        return;
+      }
+
+      const count = Math.min(
+        4 + Math.round(Math.random()),
+        slots.length,
+        pool.length,
+      );
+      // Drawn without replacement so a run never shows the same photograph
+      // twice.
+      const remaining = [...pool];
+
+      chosen = slots.slice(0, count);
+      chosen.forEach((slot) => {
+        const [src] = remaining.splice(
+          Math.floor(Math.random() * remaining.length),
+          1,
+        );
+        slot.src = src;
+      });
+    };
 
     const cover = async () => {
       if (covered) return;
@@ -119,15 +233,49 @@ import Logo from "./logo.astro";
       document.dispatchEvent(new Event("page-transition:covered"));
     };
 
+    // Wipes a handful of photographs through the square, each faster than the
+    // last, and lands on the logo.
     const revealLogo = async () => {
       if (logoShown) return;
       logoShown = true;
 
+      const run = chosen;
+
+      if (run.length) {
+        await Promise.race([
+          Promise.all(run.map((slot) => slot.decode().catch(() => {}))),
+          deadline(DECODE_TIMEOUT),
+        ]);
+      }
+
+      // The durations are a geometric run summing to the budget, so adding a
+      // fifth photograph tightens the whole sequence rather than lengthening
+      // it.
+      const ratios = run.map((_, index) => ACCELERATION ** index);
+      const total = ratios.reduce((sum, ratio) => sum + ratio, 0);
+
+      for (const [index, slot] of run.entries()) {
+        await animate(
+          slot,
+          { clipPath: [HIDDEN, SHOWN] },
+          {
+            duration: timing(
+              (PHOTOGRAPH_SEQUENCE_DURATION * ratios[index]) / total,
+            ),
+            ease: PHOTOGRAPH_EASE,
+          },
+        );
+      }
+
       await animate(
         logo,
-        { clipPath: [LOGO_HIDDEN, LOGO_SHOWN] },
+        { clipPath: [HIDDEN, SHOWN] },
         { duration: timing(LOGO_REVEAL_DURATION), ease: EASE },
       );
+
+      // The logo's own backing now covers the square, so dropping the
+      // photographs before the shrink carries them off is invisible.
+      photographs.style.visibility = "hidden";
     };
 
     // Puts the curtain back above the viewport, hidden, ready for the next
@@ -138,11 +286,14 @@ import Logo from "./logo.astro";
 
       animate(curtain, { y: "-100%" }, { duration: 0 });
       animate(background, { transform: IDENTITY }, { duration: 0 });
-      animate(
-        logo,
-        { transform: IDENTITY, clipPath: LOGO_HIDDEN },
-        { duration: 0 },
+      animate(logo, { transform: IDENTITY, clipPath: HIDDEN }, { duration: 0 });
+      photographs.style.visibility = "";
+      slots.forEach((slot) =>
+        animate(slot, { clipPath: HIDDEN }, { duration: 0 }),
       );
+
+      // Loads the next run's photographs now, while nothing is moving.
+      choose();
 
       document.dispatchEvent(new Event("page-transition:finished"));
     };
@@ -222,6 +373,8 @@ import Logo from "./logo.astro";
       // invisible.
       reset();
     };
+
+    choose();
 
     document.addEventListener("astro:before-preparation", (e) => {
       // These links bring their own transition, which takes priority.
