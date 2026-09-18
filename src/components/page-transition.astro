@@ -109,17 +109,17 @@ const pool = await Promise.all(
 
   const COVER_DURATION = 0.5;
   // The photographs share one budget however many of them there are, so the
-  // run lasts the same either way. It is long enough that the quickest
-  // photograph still holds the square for about a fifth of a second, which is
-  // roughly what it takes to read one.
-  const PHOTOGRAPH_SEQUENCE_DURATION = 1.9;
+  // run lasts the same either way.
+  const PHOTOGRAPH_SEQUENCE_DURATION = 1.55;
   // Each photograph is revealed for this fraction of the time the one before
-  // it took, so the sequence tightens as it goes. Steeper than this and the
-  // last photographs go by before they register.
-  const ACCELERATION = 0.78;
+  // it took, so the sequence tightens as it goes. Between them the two
+  // constants hold the quickest photograph on screen for about a sixth of a
+  // second: steeper or shorter than this and the tail of the run goes by
+  // before it registers.
+  const ACCELERATION = 0.75;
   // The logo's wipe is a touch slower than the last photograph's, which lets
   // the run land on it instead of running past it.
-  const LOGO_REVEAL_DURATION = 0.28;
+  const LOGO_REVEAL_DURATION = 0.24;
   const SHRINK_DURATION = 0.8;
   // Used when there is no nav logo to shrink into.
   const SLIDE_OUT_DURATION = 0.5;
