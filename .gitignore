@@ -25,3 +25,9 @@ pnpm-debug.log*
 
 # per-machine Claude Code settings (personal hooks, permissions, paths)
 .claude/settings.local.json
+
+# Claude Code worktrees
+.claude/worktrees/
+
+# vim swap files
+*.swp

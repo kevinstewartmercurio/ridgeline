@@ -5,11 +5,9 @@ import type { GridCell } from "../../data/project-grid";
 
 interface Props {
   cell: GridCell;
-  /** "row-cell", zero-based, so the dev grid tweaks can find this cell. */
-  slot: string;
 }
 
-const { cell, slot } = Astro.props;
+const { cell } = Astro.props;
 const { image, caption, span = 6, start } = cell;
 
 // Spans vary per cell, so placement is passed as a custom property rather
@@ -19,7 +17,6 @@ const placement = start ? `${start} / span ${span}` : `span ${span}`;
 
 <figure
   class="grid-cell"
-  data-grid-slot={slot}
   style={`--cell-placement: ${placement}`}
 >
   <div

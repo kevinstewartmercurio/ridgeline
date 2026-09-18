@@ -32,6 +32,14 @@ import fernHollow4Image from "../images/fern-hollow/grid-4.jpg";
 import fernHollow5Image from "../images/fern-hollow/grid-5.jpeg";
 import fernHollow6Image from "../images/fern-hollow/grid-6.jpg";
 
+import cutbankResidence1Image from "../images/cutbank-residence/grid-1.jpg";
+import cutbankResidence2Image from "../images/cutbank-residence/grid-2.jpg";
+import cutbankResidence3Image from "../images/cutbank-residence/grid-3.jpg";
+import cutbankResidence4Image from "../images/cutbank-residence/grid-4.jpg";
+import cutbankResidence5Image from "../images/cutbank-residence/grid-5.jpg";
+import cutbankResidence6Image from "../images/cutbank-residence/grid-6.jpg";
+import cutbankResidence7Image from "../images/cutbank-residence/grid-7.jpg";
+
 import ledgerHouse1Image from "../images/ledger-house/grid-1.jpg";
 import ledgerHouse2Image from "../images/ledger-house/grid-2.jpg";
 import ledgerHouse3Image from "../images/ledger-house/grid-3.jpg";
@@ -166,24 +174,24 @@ export const projectGrids: Record<string, GridRow[]> = {
     columns(
       [
         {
-          image: photo(detailImage, "4 / 3"),
+          image: photo(cutbankResidence1Image, "4 / 3"),
           caption: {
             label: "The brief",
             body: "A retired couple moving from a farmhouse they had kept for forty years, wanting less to look after and no less room for the family that visits each August.",
           },
         },
-        { image: photo(diningImage, "4 / 3") },
+        { image: photo(cutbankResidence2Image, "4 / 3") },
       ],
       [6, 6],
     ),
-    full(photo(cutbankResidenceImage, "21 / 9")),
+    full(photo(cutbankResidence3Image, "21 / 9")),
     columns(
       [
         {
-          image: photo(tableImage, "4 / 3"),
+          image: photo(cutbankResidence4Image, "4 / 3"),
         },
         {
-          image: photo(exteriorImage, "16 / 9"),
+          image: photo(cutbankResidence5Image, "16 / 9"),
           caption: {
             label: "The site",
             body: "Two and a half acres on a bluff, with a setback that fixed the footprint before design began. Madrona along the edge, and wind off the water most afternoons.",
@@ -195,13 +203,13 @@ export const projectGrids: Record<string, GridRow[]> = {
     columns(
       [
         {
-          image: photo(roomImage, "4 / 3"),
+          image: photo(cutbankResidence6Image, "4 / 3"),
           caption: {
             label: "The outcome",
             body: "A single storey held back from the bluff, wrapped by a deep porch that takes the wind. Everything the couple needs sits on one side; the guest rooms close off when the summer ends.",
           },
         },
-        { image: photo(duskImage, "4 / 3") },
+        { image: photo(cutbankResidence7Image, "4 / 3") },
       ],
       [6, 6],
     ),

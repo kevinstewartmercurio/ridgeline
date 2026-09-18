@@ -108,15 +108,15 @@ const pool = await Promise.all(
 
   const COVER_DURATION = 0.5;
   // Every photograph in a run shares this budget.
-  const PHOTOGRAPH_SEQUENCE_DURATION = 2.25;
+  const PHOTOGRAPH_SEQUENCE_DURATION = 1.5;
   // Each photograph is revealed for this fraction of the time the one before
   // it took, so the sequence tightens as it goes. Eight of them divide the
   // budget finely enough that the run has to accelerate gently to keep its
   // tail on screen long enough to register.
-  const ACCELERATION = 0.9;
+  const ACCELERATION = 0.85;
   // The logo's wipe is a touch slower than the last photograph's, which lets
   // the run land on it instead of running past it.
-  const LOGO_REVEAL_DURATION = 0.3;
+  const LOGO_REVEAL_DURATION = 0.25;
   const SHRINK_DURATION = 0.8;
   // Used when there is no nav logo to shrink into.
   const SLIDE_OUT_DURATION = 0.25;
