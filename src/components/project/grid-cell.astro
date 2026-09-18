@@ -1,0 +1,63 @@
+---
+import { Image } from "astro:assets";
+
+import type { GridCell } from "../../data/project-grid";
+
+interface Props {
+  cell: GridCell;
+}
+
+const { cell } = Astro.props;
+const { image, caption, span = 6, start } = cell;
+
+// Spans vary per cell, so placement is passed as a custom property rather
+// than a class, which Tailwind can only generate from literal values.
+const placement = start ? `${start} / span ${span}` : `span ${span}`;
+---
+
+<figure
+  class="grid-cell"
+  style={`--cell-placement: ${placement}`}
+>
+  <div
+    class="grid-cell-frame relative w-full overflow-hidden"
+    style={`aspect-ratio: ${image.aspect ?? "4 / 3"}`}
+  >
+    <Image
+      src={image.src}
+      alt={image.alt}
+      class="grid-cell-image absolute inset-0 h-full w-full object-cover"
+    />
+  </div>
+  {
+    caption && (
+      <figcaption
+        class:list={[
+          "mt-3 max-w-md lg:mt-4",
+          caption.align === "end" && "md:ml-auto",
+        ]}
+      >
+        {caption.label && (
+          <span class="font-jetbrains text-ink/65 text-2xs mb-2 block uppercase sm:text-xs">
+            {caption.label}
+          </span>
+        )}
+        <p class="font-instrument text-ink/80 text-sm lg:text-base">
+          {caption.body}
+        </p>
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .grid-cell {
+    margin: 0;
+  }
+
+  @media (width >= 48rem) {
+    .grid-cell {
+      grid-column: var(--cell-placement);
+    }
+  }
+</style>
