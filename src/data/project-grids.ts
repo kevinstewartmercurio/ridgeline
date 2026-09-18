@@ -32,6 +32,13 @@ import fernHollow4Image from "../images/fern-hollow/grid-4.jpg";
 import fernHollow5Image from "../images/fern-hollow/grid-5.jpeg";
 import fernHollow6Image from "../images/fern-hollow/grid-6.jpg";
 
+import ledgerHouse1Image from "../images/ledger-house/grid-1.jpg";
+import ledgerHouse2Image from "../images/ledger-house/grid-2.jpg";
+import ledgerHouse3Image from "../images/ledger-house/grid-3.jpg";
+import ledgerHouse4Image from "../images/ledger-house/grid-4.jpg";
+import ledgerHouse5Image from "../images/ledger-house/grid-5.jpg";
+import ledgerHouse6Image from "../images/ledger-house/grid-6.jpg";
+
 import skagitBarn1Image from "../images/skagit-barn/grid-1.jpg";
 import skagitBarn2Image from "../images/skagit-barn/grid-2.jpg";
 import skagitBarn3Image from "../images/skagit-barn/grid-3.jpg";
@@ -203,37 +210,36 @@ export const projectGrids: Record<string, GridRow[]> = {
     columns(
       [
         {
-          image: photo(interiorImage, "1 / 1"),
+          image: photo(ledgerHouse1Image, "1 / 1"),
           caption: {
             label: "The brief",
             body: "A 1974 house with good bones and a plan that had been cut into small rooms. The owners wanted it opened up without losing the parts that made them buy it.",
           },
         },
-        { image: photo(roomImage, "4 / 5") },
-        { image: photo(detailImage, "4 / 5") },
+        { image: photo(ledgerHouse2Image, "4 / 5") },
+        { image: photo(ledgerHouse3Image, "4 / 5") },
       ],
       [6, 3, 3],
     ),
-    captioned(photo(ledgerHouseImage, "21 / 9"), {
+    captioned(photo(ledgerHouse4Image, "16 / 9"), {
       label: "The site",
       body: "A third of an acre above a canyon, dry and south-facing, with a deck that had outlived its framing.",
     }),
     columns(
       [
         {
-          image: photo(diningImage, "1 / 1"),
+          image: photo(ledgerHouse5Image, "1 / 1"),
+        },
+        {
+          image: photo(ledgerHouse6Image, "1 / 1"),
           caption: {
             label: "The outcome",
             body: "The original post-and-beam frame kept and exposed, partitions removed, and the glazing replaced. A new deck on steel, set out to the line the old one had only implied.",
           },
         },
-        {
-          image: photo(tableImage, "1 / 1"),
-        },
       ],
       [6, 6],
     ),
-    full(photo(exteriorImage, "16 / 9")),
   ],
   "skagit-barn": [
     columns(
