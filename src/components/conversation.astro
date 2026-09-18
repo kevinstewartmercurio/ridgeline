@@ -4,21 +4,22 @@ import Arrow from "./arrow.astro";
 ---
 
 {
-  /* The panel behind the "Start a Conversation" buttons in the nav. It shares
+  /* The card behind the "Start a Conversation" buttons in the nav. It shares
      `#nav-scrim` with `#nav-menu`, so only one of the two is ever open, and
      the nav's script drives both.
 
      Like the menu it is revealed with a translate inside a wrapper that clips
      it, rather than animating height, so its contents stay put instead of
-     reflowing as it opens. Here the clip runs vertically and the panel drops
-     out of the top of the viewport. The wrapper has no height of its own, so
-     it clips at the bottom of the panel and leaves the closed panel above it,
-     out of sight and out of reach of clicks.
+     reflowing as it opens. Here the clip runs vertically: the wrapper sits
+     centred in the viewport at the card's own height, so the card wipes down
+     into it from its top edge and, while closed, is out of sight and out of
+     reach of clicks.
 
      It sits under the nav so that the logo and the hamburger's "X" stay on top
-     of it to close it with, and over the scrim that darkens the page. The top
-     padding clears the nav rather than starting beneath it, since the panel
-     scrolls its own overflow on a short viewport.
+     of it to close it with, and over the scrim that darkens the page.
+
+     The outer padding is what holds the card off the edges of a narrow screen,
+     so the card's own max height is the viewport less that padding.
 
      The arrows take their colour from the text with `fill-current`, so the
      links only need to change `text-*` on hover. */
@@ -28,29 +29,29 @@ import Arrow from "./arrow.astro";
   id="nav-convo"
   transition:persist="nav-convo"
   inert
-  class="group pointer-events-none fixed inset-x-0 top-0 z-35 overflow-clip"
+  class="group pointer-events-none fixed inset-0 z-35 flex items-center justify-center p-5"
 >
-  <div
-    role="dialog"
-    aria-modal="true"
-    aria-label="About this site"
-    class="bg-pine pointer-events-auto max-h-dvh w-full -translate-y-full overflow-y-auto px-5 pt-28 pb-10 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-open:translate-y-0 motion-reduce:transition-none sm:px-8 lg:px-10 lg:pt-32 lg:pb-14"
-  >
-    <div class="mx-auto w-full max-w-344">
-      <div class="mb-6 flex items-start gap-x-4 lg:mb-8 lg:gap-x-6">
+  <div class="w-full max-w-md overflow-clip lg:max-w-xl">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="About this site"
+      class="bg-pine pointer-events-auto max-h-[calc(100dvh-2.5rem)] w-full -translate-y-full overflow-y-auto p-6 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-open:translate-y-0 motion-reduce:transition-none lg:p-8"
+    >
+      <div class="mb-6 flex items-start gap-x-3 lg:mb-8 lg:gap-x-4">
         <Logo
-          class="fill-alabaster 2xs:size-14 mt-1 size-12 shrink-0 sm:size-16 lg:mt-2 lg:size-20 xl:size-24"
+          class="fill-alabaster size-11 shrink-0 sm:size-13 lg:size-16"
           aria-hidden="true"
         />
         <h2
-          class="text-alabaster font-newsreader 2xs:text-5xl/[95%] text-4xl/[95%] font-light sm:text-6xl/[95%] lg:text-7xl/[95%] xl:text-8xl/[95%]"
+          class="text-alabaster font-newsreader text-xl/[110%] font-light sm:text-2xl/[110%] lg:text-3xl/[110%]"
         >
           <span class="block">My name is</span>
           <span class="block">Kevin Stewart-Mercurio</span>
         </h2>
       </div>
       <div
-        class="font-instrument text-alabaster/80 mb-8 max-w-xl space-y-6 lg:mb-10 lg:max-w-2xl lg:text-lg xl:text-xl"
+        class="font-instrument text-alabaster/80 mb-6 space-y-4 text-sm lg:mb-8 lg:text-base"
       >
         <p>
           Ridgeline isn't real. This is a fake website that I made for a fake
@@ -61,7 +62,7 @@ import Arrow from "./arrow.astro";
           and a story to tell. Let's tell it together.
         </p>
       </div>
-      <div class="flex flex-wrap gap-4">
+      <div class="flex flex-wrap justify-center gap-4">
         {
           (
             [
@@ -71,12 +72,12 @@ import Arrow from "./arrow.astro";
           ).map(({ label, href }) => (
             <a
               href={href}
-              class="border-alabaster/40 text-alabaster hover:bg-alabaster hover:border-alabaster hover:text-pine focus-visible:bg-alabaster focus-visible:border-alabaster focus-visible:text-pine flex items-center gap-x-3 border px-4 py-3 transition-colors duration-300 outline-none motion-reduce:transition-none lg:px-5 lg:py-4"
+              class="border-alabaster/40 text-alabaster hover:bg-alabaster hover:border-alabaster hover:text-pine focus-visible:bg-alabaster focus-visible:border-alabaster focus-visible:text-pine flex items-center gap-x-2.5 border px-4 py-2.5 transition-colors duration-300 outline-none motion-reduce:transition-none lg:gap-x-3 lg:px-5 lg:py-3"
             >
-              <span class="font-jetbrains block text-sm uppercase lg:text-base">
+              <span class="font-jetbrains block text-xs uppercase lg:text-sm">
                 {label}
               </span>
-              <Arrow class="w-6 fill-current lg:w-7" />
+              <Arrow class="w-5 fill-current lg:w-6" />
             </a>
           ))
         }
