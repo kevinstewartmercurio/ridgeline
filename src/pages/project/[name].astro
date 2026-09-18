@@ -4,11 +4,14 @@ import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Hero from "../../components/project/hero.astro";
 import SubHero from "../../components/project/sub-hero.astro";
+import Grid from "../../components/project/grid.astro";
+import GridTweaks from "../../components/project/grid-tweaks.astro";
 import NextProject from "../../components/project/next-project.astro";
 import Unreal from "../../components/unreal.astro";
 import Footer from "../../components/footer.astro";
 
 import { projects } from "../../data/projects";
+import { projectGrids } from "../../data/project-grids";
 
 export const getStaticPaths = (() =>
   projects.map((project) => ({
@@ -19,12 +22,15 @@ export const getStaticPaths = (() =>
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { project } = Astro.props;
+const gridRows = projectGrids[project.slug] ?? [];
 ---
 
 <Layout title={`${project.title} — Ridgeline Architecture Studio`}>
   <main>
     <Hero project={project} />
     <SubHero project={project} />
+    <Grid rows={gridRows} />
+    {import.meta.env.DEV && <GridTweaks slug={project.slug} rows={gridRows} />}
     <NextProject project={project} />
     <Unreal />
     <Footer />
