@@ -21,7 +21,8 @@ import Hamburger from "./hamburger.astro";
      back on scrolling up.
 
      The hamburger opens `#nav-menu`, a panel in the bottom right over a scrim,
-     with the page behind it locked. Both sit outside `<nav>`, which is
+     with the page behind it locked. The hamburger closes it again, as does a
+     click on the scrim outside the panel. Both sit outside `<nav>`, which is
      translated as it hides and would otherwise drag them along with it.
 
      The nav spans the page width, so it ignores clicks to keep the content
@@ -328,6 +329,11 @@ import Hamburger from "./hamburger.astro";
     hamburgerBtn.addEventListener("click", () => {
       setMenuOpen(hamburgerBtn.getAttribute("aria-expanded") !== "true");
     });
+
+    // The scrim covers the viewport behind the menu, so clicking it is a click
+    // outside the panel. A click only lands here when it both starts and ends
+    // on the scrim, which leaves a drag out of the panel alone.
+    scrim.addEventListener("click", () => setMenuOpen(false));
 
     // Brings the nav back when a keyboard user tabs into it while hidden.
     nav.addEventListener("focusin", () => setHidden(false));
