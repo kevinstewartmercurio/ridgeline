@@ -22,9 +22,12 @@ import Conversation from "./conversation.astro";
      back on scrolling up.
 
      The hamburger opens `#nav-menu`, a panel in the bottom right over a scrim,
-     with the page behind it locked. The "Start a Conversation" buttons open
-     `#nav-convo` over the same scrim in the same way. Only one of the two is
-     ever open; the hamburger's "X" and the logo close whichever is. All of
+     with the page behind it locked. `#nav-convo` opens over the same scrim in
+     the same way, from the "Start a Conversation" buttons here and from the
+     triggers in the page content — anything marked `data-convo-btn`, plus the
+     footer's `data-convo-form` enquiry form. Opening it closes whichever nav
+     panel the button sits in. Only one of the menu and the conversation panel
+     is ever open; the hamburger's "X" and the logo close whichever is. All of
      them sit outside `<nav>`, which is translated as it hides and would
      otherwise drag them along with it.
 
@@ -81,6 +84,7 @@ import Conversation from "./conversation.astro";
           <a href="/studio" class="uline after:bg-alabaster">Studio</a>
           <button
             id="nav-convo-btn"
+            data-convo-btn
             aria-haspopup="dialog"
             class="group flex h-12 cursor-pointer"
           >
@@ -154,6 +158,7 @@ import Conversation from "./conversation.astro";
         <a href="/studio" class="uline after:bg-ink block w-max"> Studio </a>
         <button
           id="nav-menu-convo-btn"
+          data-convo-btn
           aria-haspopup="dialog"
           class="group/modal-convo flex cursor-pointer gap-x-3"
         >
@@ -222,12 +227,6 @@ import Conversation from "./conversation.astro";
   const leftPanel = document.getElementById("nav-left-panel");
   const rightPanel = document.getElementById("nav-right-panel");
   const hamburgerBtn = document.getElementById("nav-hamburger-btn");
-  // The two buttons that open the conversation panel: one in the nav's right
-  // panel, the other in the menu for the widths where that panel isn't shown.
-  const convoBtns = document.querySelectorAll<HTMLButtonElement>(
-    "#nav-convo-btn, #nav-menu-convo-btn",
-  );
-
   if (
     nav instanceof HTMLElement &&
     scrim instanceof HTMLDivElement &&
@@ -365,8 +364,37 @@ import Conversation from "./conversation.astro";
       setPanelOpen(openPanel ? null : "menu");
     });
 
-    convoBtns.forEach((btn) =>
-      btn.addEventListener("click", () => setPanelOpen("convo")),
+    // Anything that opens the conversation panel is marked `data-convo-btn`:
+    // the two "Start a Conversation" buttons in the nav, and the triggers in
+    // the page content. They are matched here rather than looked up once,
+    // because the ones in the content are swapped out on navigation while
+    // this script, like the nav it belongs to, runs a single time.
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest("[data-convo-btn]")) return;
+
+      setPanelOpen("convo");
+    });
+
+    // The enquiry form has nowhere to send anything, so submitting it opens
+    // the panel instead. The default is prevented rather than the form reset,
+    // which both keeps the page from navigating and leaves what was typed in
+    // place, so it is still there once the panel is closed again.
+    //
+    // This listens in the capture phase because `<ClientRouter>` handles
+    // submits from one on `document` too, and only bails on an event that has
+    // already had its default prevented. Capture runs before that, so the form
+    // opens the panel rather than being routed as a page navigation.
+    document.addEventListener(
+      "submit",
+      (event) => {
+        if (!(event.target instanceof Element)) return;
+        if (!event.target.closest("[data-convo-form]")) return;
+
+        event.preventDefault();
+        setPanelOpen("convo");
+      },
+      { capture: true },
     );
 
     // The logo is the other way out of an open panel, so while one is open it
