@@ -132,6 +132,11 @@
 
       if (!link || !(thumbnail instanceof HTMLImageElement)) return;
 
+      // The overlay is persisted across the swap, so this mark travels with it
+      // into the page being opened, where `reveal.astro` reads it and holds
+      // that page's entrance back until the hero is in place under the copy.
+      overlay.setAttribute("data-covering", "");
+
       const loadNewDocument = e.loader;
 
       e.loader = async () => {
@@ -151,7 +156,17 @@
         await hero.decode().catch(() => {});
       }
 
-      if (clone === frame) reset();
+      // The mark has done its job by now either way: the page being opened
+      // read it as it arrived.
+      overlay.removeAttribute("data-covering");
+
+      // The navigation that took over is covering this one and hands its own
+      // page over when it is ready, so announcing this one's arrival would
+      // start that page's entrance behind a curtain.
+      if (clone !== frame) return;
+
+      reset();
+      document.dispatchEvent(new Event("transition:handover"));
     });
   }
 </script>

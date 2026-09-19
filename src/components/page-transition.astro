@@ -120,6 +120,11 @@ const pool = await Promise.all(
   const SHRINK_DURATION = 0.8;
   // Used when there is no nav logo to shrink into.
   const SLIDE_OUT_DURATION = 0.25;
+  // How far into the shrink the page underneath has enough of itself back to
+  // begin its own entrance. The curtain leaves the far corner first and takes
+  // its time landing in the nav, so waiting for the whole shrink would leave
+  // the page sitting still in plain sight.
+  const HANDOVER_POINT = 0.35;
   // How long the logo stays centered after the new page is ready.
   const HOLD_DURATION = 0.5;
   // How long the run will wait for a photograph that was not already in the
@@ -199,6 +204,16 @@ const pool = await Promise.all(
         );
         slot.src = src;
       });
+    };
+
+    // The curtain is persisted across the swap, so this mark travels with it
+    // into the page being opened, where `reveal.astro` reads it and holds that
+    // page's entrance back until the curtain is out of its way.
+    const handOver = () => {
+      if (!curtain.hasAttribute("data-covering")) return;
+
+      curtain.removeAttribute("data-covering");
+      document.dispatchEvent(new Event("transition:handover"));
     };
 
     const cover = async () => {
@@ -291,6 +306,10 @@ const pool = await Promise.all(
       // Loads the next run's photographs now, while nothing is moving.
       choose();
 
+      // Only left to do here if the curtain was taken off screen some way
+      // other than the reveal below, which hands over partway through.
+      handOver();
+
       document.dispatchEvent(new Event("page-transition:finished"));
     };
 
@@ -309,6 +328,7 @@ const pool = await Promise.all(
           { y: ["0%", "-100%"] },
           { duration: timing(SLIDE_OUT_DURATION), ease: EASE },
         );
+        handOver();
         if (!covered) reset();
         return;
       }
@@ -360,6 +380,14 @@ const pool = await Promise.all(
       ];
       shrinking = animations;
 
+      setTimeout(
+        () => {
+          // A new navigation covered the page again while the shrink ran.
+          if (shrinking === animations) handOver();
+        },
+        timing(SHRINK_DURATION) * HANDOVER_POINT * 1000,
+      );
+
       await Promise.all(animations);
       // A new navigation took over mid-shrink.
       if (shrinking !== animations) return;
@@ -378,6 +406,7 @@ const pool = await Promise.all(
 
       const loadNewDocument = e.loader;
       navigating = true;
+      curtain.setAttribute("data-covering", "");
 
       e.loader = async () => {
         await cover();
