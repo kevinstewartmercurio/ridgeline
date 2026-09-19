@@ -2,6 +2,7 @@
 import Logo from "./logo.astro";
 import Arrow from "./arrow.astro";
 import Hamburger from "./hamburger.astro";
+import Conversation from "./conversation.astro";
 ---
 
 {
@@ -21,9 +22,14 @@ import Hamburger from "./hamburger.astro";
      back on scrolling up.
 
      The hamburger opens `#nav-menu`, a panel in the bottom right over a scrim,
-     with the page behind it locked. The hamburger closes it again, as does a
-     click on the scrim outside the panel. Both sit outside `<nav>`, which is
-     translated as it hides and would otherwise drag them along with it.
+     with the page behind it locked. `#nav-convo` opens over the same scrim in
+     the same way, from the "Start a Conversation" buttons here and from the
+     triggers in the page content — anything marked `data-convo-btn`, plus the
+     footer's `data-convo-form` enquiry form. Opening it closes whichever nav
+     panel the button sits in. Only one of the menu and the conversation panel
+     is ever open; the hamburger's "X" and the logo close whichever is. All of
+     them sit outside `<nav>`, which is translated as it hides and would
+     otherwise drag them along with it.
 
      The nav spans the page width, so it ignores clicks to keep the content
      beneath it clickable; anything interactive inside needs
@@ -76,7 +82,12 @@ import Hamburger from "./hamburger.astro";
             >Projects</a
           >
           <a href="/studio" class="uline after:bg-alabaster">Studio</a>
-          <button class="group flex h-12 cursor-pointer">
+          <button
+            id="nav-convo-btn"
+            data-convo-btn
+            aria-haspopup="dialog"
+            class="group flex h-12 cursor-pointer"
+          >
             <div
               class="bg-alabaster text-ink flex items-center px-3 uppercase xl:px-4"
             >
@@ -103,7 +114,7 @@ import Hamburger from "./hamburger.astro";
 <div
   id="nav-scrim"
   transition:persist="nav-scrim"
-  class="bg-ink/80 invisible fixed inset-0 z-30 opacity-0 [backdrop-filter:blur(2px)] transition-[opacity,visibility] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:visible data-open:opacity-100 motion-reduce:transition-none"
+  class="bg-ink/80 invisible fixed inset-0 z-30 opacity-0 [backdrop-filter:blur(4px)] transition-[opacity,visibility] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:visible data-open:opacity-100 motion-reduce:transition-none"
 >
 </div>
 
@@ -123,6 +134,7 @@ import Hamburger from "./hamburger.astro";
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
+      data-lenis-prevent
       class="bg-alabaster pointer-events-auto max-h-[calc(100dvh-2.5rem)] w-72 max-w-full translate-x-full overflow-y-auto p-4 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-open:translate-x-0 motion-reduce:transition-none lg:w-88 lg:p-5"
     >
       <a href="/" class="mb-5 flex items-center gap-x-3 lg:mb-6">
@@ -145,7 +157,12 @@ import Hamburger from "./hamburger.astro";
           Projects
         </a>
         <a href="/studio" class="uline after:bg-ink block w-max"> Studio </a>
-        <button class="group/modal-convo flex cursor-pointer gap-x-3">
+        <button
+          id="nav-menu-convo-btn"
+          data-convo-btn
+          aria-haspopup="dialog"
+          class="group/modal-convo flex cursor-pointer gap-x-3"
+        >
           <span
             class="after:bg-ink relative block uppercase after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover/modal-convo:after:origin-bottom-left group-hover/modal-convo:after:scale-x-100 group-focus-visible/modal-convo:after:origin-bottom-left group-focus-visible/modal-convo:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
           >
@@ -186,6 +203,8 @@ import Hamburger from "./hamburger.astro";
   </div>
 </div>
 
+<Conversation />
+
 <style>
   /* A closed panel still takes up room inside the link, so move the focus ring
      onto the logo rather than outlining empty space. */
@@ -199,19 +218,28 @@ import Hamburger from "./hamburger.astro";
 </style>
 
 <script>
+  // The panels scroll on their own when they are taller than the viewport.
+  // `data-lenis-prevent` is Lenis's own opt-out, so marking them keeps Lenis
+  // off wheels inside them; the same mark is what the page's scroll lock
+  // checks before blocking one.
+  const SCROLLABLE = "[data-lenis-prevent]";
+
   const nav = document.getElementById("nav");
   const scrim = document.getElementById("nav-scrim");
   const menu = document.getElementById("nav-menu");
+  const convo = document.getElementById("nav-convo");
   // Matches Tailwind's `md` breakpoint, below which only the hamburger is used.
   const mdMql = matchMedia("(min-width: 768px)");
+  const homeLink = document.getElementById("nav-home");
   const leftPanel = document.getElementById("nav-left-panel");
   const rightPanel = document.getElementById("nav-right-panel");
   const hamburgerBtn = document.getElementById("nav-hamburger-btn");
-
   if (
     nav instanceof HTMLElement &&
     scrim instanceof HTMLDivElement &&
     menu instanceof HTMLDivElement &&
+    convo instanceof HTMLDivElement &&
+    homeLink instanceof HTMLAnchorElement &&
     leftPanel instanceof HTMLDivElement &&
     rightPanel instanceof HTMLDivElement &&
     hamburgerBtn instanceof HTMLButtonElement
@@ -223,9 +251,12 @@ import Hamburger from "./hamburger.astro";
     let transitioning = false;
     // Compared against on each scroll to tell which way the page is moving.
     let lastScrollY = window.scrollY;
-    // Freezes the nav's scroll-driven state, so that the hamburger stays in
-    // view to close the menu with.
-    let menuOpen = false;
+    // Whichever of the two panels is open, if any. Having one of them open
+    // freezes the nav's scroll-driven state, so that the hamburger stays in
+    // view to close it with.
+    let openPanel: "menu" | "convo" | null = null;
+    // Whether the page behind a panel is currently held still.
+    let scrollLocked = false;
 
     const setOpen = (panel: HTMLElement, open: boolean) => {
       if (panel.hasAttribute("data-open") === open) return;
@@ -276,8 +307,8 @@ import Hamburger from "./hamburger.astro";
     window.addEventListener(
       "scroll",
       () => {
-        // A resize while the menu is open can move the page and fire this.
-        if (menuOpen) {
+        // A resize while a panel is open can move the page and fire this.
+        if (openPanel) {
           lastScrollY = Math.max(window.scrollY, 0);
           return;
         }
@@ -292,35 +323,79 @@ import Hamburger from "./hamburger.astro";
     );
 
     mdMql.addEventListener("change", () => {
-      if (!menuOpen) setRightOpen(isAtTop());
+      if (!openPanel) setRightOpen(isAtTop());
     });
 
-    // Stops the page behind the menu from scrolling, padding out the gap left
-    // by a scrollbar that takes up space so the page doesn't shift sideways.
-    const setScrollLocked = (locked: boolean) => {
-      const scrollbarWidth = locked
-        ? window.innerWidth - document.documentElement.clientWidth
-        : 0;
-      const gap = scrollbarWidth ? `${scrollbarWidth}px` : "";
+    // The position the page is held at while a panel is open.
+    let lockedScrollY = 0;
 
-      document.documentElement.style.overflow = locked ? "hidden" : "";
-      document.body.style.paddingRight = gap;
-      // The nav is fixed, so body padding doesn't move it.
-      nav.style.paddingRight = gap;
+    const pinScroll = () => {
+      if (window.scrollY !== lockedScrollY) window.scrollTo(0, lockedScrollY);
     };
 
-    const setMenuOpen = (open: boolean) => {
-      menuOpen = open;
+    // Keeps a wheel or a touch from reaching the page, while leaving one
+    // inside an open panel to scroll the panel itself.
+    const blockScrollInput = (event: Event) => {
+      if (event.target instanceof Element && event.target.closest(SCROLLABLE)) {
+        return;
+      }
+
+      if (event.cancelable) event.preventDefault();
+    };
+
+    // Stops the page behind an open panel from scrolling. Lenis, not the
+    // browser, owns the wheel here, and it scrolls the window programmatically
+    // rather than letting it scroll itself: `overflow: hidden` on the root
+    // doesn't stop that, so the page kept moving while the scrollbar it took
+    // away made the layout jump. Lenis is stopped instead, which leaves the
+    // scrollbar alone, and the input is blocked here as well for the reduced
+    // motion case where Lenis isn't running at all.
+    //
+    // Keys and a drag of the scrollbar stay the browser's own either way, so
+    // the position is pinned as a backstop for as long as a panel is open.
+    // Locking twice over, as opening the conversation panel out of the menu
+    // does, has to leave the page where it already is, so all of this is
+    // written to be repeatable.
+    const setScrollLocked = (locked: boolean) => {
+      if (locked && !scrollLocked) lockedScrollY = Math.max(window.scrollY, 0);
+      if (locked === scrollLocked) return;
+
+      scrollLocked = locked;
+      document.dispatchEvent(
+        new CustomEvent("scroll-lock:change", { detail: { locked } }),
+      );
+
+      if (locked) {
+        window.addEventListener("scroll", pinScroll);
+        window.addEventListener("wheel", blockScrollInput, { passive: false });
+        window.addEventListener("touchmove", blockScrollInput, {
+          passive: false,
+        });
+      } else {
+        window.removeEventListener("scroll", pinScroll);
+        window.removeEventListener("wheel", blockScrollInput);
+        window.removeEventListener("touchmove", blockScrollInput);
+      }
+    };
+
+    // Opens one of the two panels, closing the other, or closes both with
+    // `null`. They share the scrim and the hamburger, so opening one over the
+    // other is a matter of moving the `data-open` between them.
+    const setPanelOpen = (panel: "menu" | "convo" | null) => {
+      const open = panel !== null;
+      openPanel = panel;
       hamburgerBtn.classList.toggle("open", open);
       hamburgerBtn.setAttribute("aria-expanded", String(open));
       scrim.toggleAttribute("data-open", open);
-      menu.toggleAttribute("data-open", open);
-      // Keeps the closed menu out of the tab order while it stays in the DOM.
-      menu.inert = !open;
+      menu.toggleAttribute("data-open", panel === "menu");
+      convo.toggleAttribute("data-open", panel === "convo");
+      // Keeps a closed panel out of the tab order while it stays in the DOM.
+      menu.inert = panel !== "menu";
+      convo.inert = panel !== "convo";
       setScrollLocked(open);
 
       if (open) {
-        // The nav holds the only way to close the menu again, so it stays in
+        // The nav holds the only way to close the panel again, so it stays in
         // view with the hamburger showing whatever the scroll position and
         // viewport width do next.
         setHidden(false);
@@ -333,21 +408,63 @@ import Hamburger from "./hamburger.astro";
     };
 
     hamburgerBtn.addEventListener("click", () => {
-      setMenuOpen(hamburgerBtn.getAttribute("aria-expanded") !== "true");
+      setPanelOpen(openPanel ? null : "menu");
     });
 
-    // The scrim covers the viewport behind the menu, so clicking it is a click
+    // Anything that opens the conversation panel is marked `data-convo-btn`:
+    // the two "Start a Conversation" buttons in the nav, and the triggers in
+    // the page content. They are matched here rather than looked up once,
+    // because the ones in the content are swapped out on navigation while
+    // this script, like the nav it belongs to, runs a single time.
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest("[data-convo-btn]")) return;
+
+      setPanelOpen("convo");
+    });
+
+    // The enquiry form has nowhere to send anything, so submitting it opens
+    // the panel instead. The default is prevented rather than the form reset,
+    // which both keeps the page from navigating and leaves what was typed in
+    // place, so it is still there once the panel is closed again.
+    //
+    // This listens in the capture phase because `<ClientRouter>` handles
+    // submits from one on `document` too, and only bails on an event that has
+    // already had its default prevented. Capture runs before that, so the form
+    // opens the panel rather than being routed as a page navigation.
+    document.addEventListener(
+      "submit",
+      (event) => {
+        if (!(event.target instanceof Element)) return;
+        if (!event.target.closest("[data-convo-form]")) return;
+
+        event.preventDefault();
+        setPanelOpen("convo");
+      },
+      { capture: true },
+    );
+
+    // The logo is the other way out of an open panel, so while one is open it
+    // closes that rather than following the link home.
+    homeLink.addEventListener("click", (event) => {
+      if (!openPanel) return;
+
+      event.preventDefault();
+      setPanelOpen(null);
+    });
+
+    // The scrim covers the viewport behind a panel, so clicking it is a click
     // outside the panel. A click only lands here when it both starts and ends
     // on the scrim, which leaves a drag out of the panel alone.
-    scrim.addEventListener("click", () => setMenuOpen(false));
+    scrim.addEventListener("click", () => setPanelOpen(null));
 
     // Brings the nav back when a keyboard user tabs into it while hidden.
     nav.addEventListener("focusin", () => setHidden(false));
 
     document.addEventListener("page-transition:covered", () => {
       transitioning = true;
-      // Leaves the next page scrollable if a link in the menu was followed.
-      setMenuOpen(false);
+      // Leaves the next page scrollable if a link in a panel was followed.
+      setPanelOpen(null);
       snap([leftPanel], () => setOpen(leftPanel, false));
       snap([nav], () => setHidden(false));
     });

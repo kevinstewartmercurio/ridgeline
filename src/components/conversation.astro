@@ -1,0 +1,93 @@
+---
+import Logo from "./logo.astro";
+import Arrow from "./arrow.astro";
+---
+
+{
+  /* The card behind the "Start a Conversation" buttons in the nav. It shares
+     `#nav-scrim` with `#nav-menu`, so only one of the two is ever open, and
+     the nav's script drives both.
+
+     Like the menu it is revealed with a translate inside a wrapper that clips
+     it, rather than animating height, so its contents stay put instead of
+     reflowing as it opens. Here the clip runs vertically: the wrapper sits
+     centred in the viewport at the card's own height, so the card wipes down
+     into it from its top edge and, while closed, is out of sight and out of
+     reach of clicks.
+
+     It sits under the nav so that the logo and the hamburger's "X" stay on top
+     of it to close it with, and over the scrim that darkens the page.
+
+     The outer padding is what holds the card off the edges of a narrow screen,
+     so the card's own max height is the viewport less that padding.
+
+     The arrows take their colour from the text with `fill-current`, so the
+     links only need to change `text-*` on hover. */
+}
+
+<div
+  id="nav-convo"
+  transition:persist="nav-convo"
+  inert
+  class="group pointer-events-none fixed inset-0 z-35 flex items-center justify-center p-5"
+>
+  <div class="w-full max-w-md overflow-clip lg:max-w-xl">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="About this site"
+      data-lenis-prevent
+      class="bg-pine pointer-events-auto max-h-[calc(100dvh-2.5rem)] w-full -translate-y-full overflow-y-auto p-6 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-open:translate-y-0 motion-reduce:transition-none lg:p-8"
+    >
+      <div class="mb-6 flex items-start gap-x-3 lg:mb-8 lg:gap-x-4">
+        <Logo
+          class="fill-alabaster size-12 shrink-0 sm:size-16 lg:size-20"
+          aria-hidden="true"
+        />
+        <h2
+          class="text-alabaster font-newsreader text-2xl/[110%] font-light sm:text-3xl/[110%] lg:text-4xl/[110%]"
+        >
+          <span class="block">My name is</span>
+          <span class="block">Kevin Stewart-Mercurio</span>
+        </h2>
+      </div>
+      <div
+        class="font-instrument text-alabaster/80 mb-10 space-y-4 text-sm lg:mb-12 lg:text-xl"
+      >
+        <p>
+          Ridgeline isn't real. This is a fake website that I made for a fake
+          company.
+        </p>
+        <p>
+          The only real thing about this site is its audience. You have ideas
+          and a story to tell. Let's tell it together.
+        </p>
+      </div>
+      <div class="flex flex-wrap justify-center gap-4">
+        {
+          (
+            [
+              {
+                label: "My Portfolio",
+                href: "https://www.kevinstewartmercurio.com/",
+              },
+              { label: "Email Me", href: "/" },
+            ] as const
+          ).map(({ label, href }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferer"
+              class="bg-alabaster text-pine flex items-center gap-x-2.5 border px-4 py-2.5 transition-colors duration-300 outline-none motion-reduce:transition-none lg:gap-x-3 lg:px-5 lg:py-3"
+            >
+              <span class="font-jetbrains block text-sm uppercase lg:text-base">
+                {label}
+              </span>
+              <Arrow class="w-5 fill-current lg:w-7" />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
