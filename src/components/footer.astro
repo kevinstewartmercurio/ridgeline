@@ -93,12 +93,22 @@
         </div>
         <div class="flex sm:justify-center">
           <div>
-            <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
+            <button
+              type="button"
+              data-convo-btn
+              aria-haspopup="dialog"
+              class="uline after:bg-alabaster cursor-pointer uppercase after:h-[0.5px]!"
+            >
               (360) 555-0148
-            </a>
+            </button>
             <br /><br />
 
-            <a href="/" class="group">
+            <button
+              type="button"
+              data-convo-btn
+              aria-haspopup="dialog"
+              class="group cursor-pointer text-left uppercase"
+            >
               <span
                 class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
                 >1420 Alder Ridge Lane, Suite 300</span
@@ -109,7 +119,7 @@
               >
                 Bellingham, WA 98225
               </span>
-            </a>
+            </button>
           </div>
         </div>
         <div>
@@ -118,9 +128,14 @@
           >
             {
               ["Instagram", "LinkedIn", "Contact"].map((s) => (
-                <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
+                <button
+                  type="button"
+                  data-convo-btn
+                  aria-haspopup="dialog"
+                  class="uline after:bg-alabaster cursor-pointer uppercase after:h-[0.5px]!"
+                >
                   {s}
-                </a>
+                </button>
               ))
             }
           </div>
