@@ -15,10 +15,7 @@ const { image, caption, span = 6, start } = cell;
 const placement = start ? `${start} / span ${span}` : `span ${span}`;
 ---
 
-<figure
-  class="grid-cell"
-  style={`--cell-placement: ${placement}`}
->
+<figure data-reveal class="grid-cell" style={`--cell-placement: ${placement}`}>
   <div
     class="grid-cell-frame relative w-full overflow-hidden"
     style={`aspect-ratio: ${image.aspect ?? "4 / 3"}`}

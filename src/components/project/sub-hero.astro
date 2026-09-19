@@ -21,7 +21,10 @@ const details = [
      spanning both, then one. Each cell's rules are set per position rather than
      on the grid, since which cell starts a row changes with the column count:
      a cell draws a rule on its left unless it is first in its row, and on its
-     top unless it is in the first row. */
+     top unless it is in the first row.
+
+     The table rises into place as one piece rather than cell by cell, so its
+     rules stay ruled while it moves. See `reveal.astro`. */
 }
 
 <section
@@ -29,6 +32,7 @@ const details = [
 >
   <div class="mx-auto w-full max-w-344">
     <dl
+      data-reveal
       class="2xs:grid-cols-2 border-ink/14 grid w-full grid-cols-1 border-y sm:grid-cols-6 lg:grid-cols-5"
     >
       {
