@@ -174,16 +174,37 @@ import Conversation from "./conversation.astro";
       <div
         class="font-jetbrains text-ink mb-8 flex gap-x-4 text-xs font-light uppercase lg:mb-12 lg:gap-x-6 lg:text-sm"
       >
-        <a href="/" class="uline after:bg-ink">Instagram</a>
-        <a href="/" class="uline after:bg-ink">LinkedIn</a>
-        <a href="/" class="uline after:bg-ink">Contact</a>
+        {
+          ["Instagram", "LinkedIn", "Contact"].map((label) => (
+            <button
+              type="button"
+              data-convo-btn
+              aria-haspopup="dialog"
+              class="uline after:bg-ink cursor-pointer uppercase"
+            >
+              {label}
+            </button>
+          ))
+        }
       </div>
       <div
         class="font-jetbrains text-ink text-xs font-light uppercase lg:text-sm"
       >
-        <a href="/" class="uline after:bg-ink">(360) 555-0148</a>
+        <button
+          type="button"
+          data-convo-btn
+          aria-haspopup="dialog"
+          class="uline after:bg-ink cursor-pointer uppercase"
+        >
+          (360) 555-0148
+        </button>
         <br /><br />
-        <a href="/" class="group/address">
+        <button
+          type="button"
+          data-convo-btn
+          aria-haspopup="dialog"
+          class="group/address cursor-pointer text-left uppercase"
+        >
           <span
             class="after:bg-ink relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover/address:after:origin-bottom-left group-hover/address:after:scale-x-100 group-focus-visible/address:after:origin-bottom-left group-focus-visible/address:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
           >
@@ -195,7 +216,7 @@ import Conversation from "./conversation.astro";
           >
             Bellingham, WA 98225
           </span>
-        </a>
+        </button>
         <br /><br />
         © 2026 Ridgeline Architecture Studio
       </div>

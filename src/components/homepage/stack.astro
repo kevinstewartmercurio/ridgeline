@@ -45,13 +45,20 @@ const cards = [
 <section class="bg-pine relative z-10">
   <div class="relative w-full">
     {
-      cards.map((card) => (
+      cards.map((card, idx) => (
         <div class="sticky top-0 h-screen w-full">
           <div class="relative h-full w-full">
             <Image
               src={card.img.src}
               alt={card.img.alt}
               class="h-full w-full object-cover"
+            />
+            <div class="absolute top-0 left-0 h-full w-full bg-[linear-gradient(to_bottom,#141412E0,#14141280,#14141240)] opacity-20" />
+            <div
+              class:list={[
+                "bg-ink absolute top-0 left-0 h-full w-full",
+                idx === 3 ? "opacity-60" : "opacity-50",
+              ]}
             />
             <div class="absolute bottom-[calc(min(20%,160px))] left-1/2 w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10">
               <div class="mx-auto w-full max-w-344">
