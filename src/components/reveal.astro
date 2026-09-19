@@ -1,0 +1,142 @@
+{
+  /* Rises a page's own content into place once whatever transition opened the
+     page has handed it over.
+
+     Which elements rise is marked up rather than listed here: `data-reveal` on
+     anything that rises, and `data-reveal-group` on a container whose marked
+     descendants rise one after another when the container reaches the
+     viewport. A group marked `entrance` rises as soon as the page lands,
+     wherever it sits, so the hero's title never waits below the fold for a
+     scroll that will not come.
+
+     The resting state is a stylesheet rather than script, so nothing is
+     painted in place and then hidden a frame later. `<noscript>` puts the
+     content back for a reader whose page would otherwise stay empty. */
+}
+
+<noscript>
+  <style>
+    [data-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+<style is:global>
+  [data-reveal] {
+    opacity: 0;
+    /* Matches `DISTANCE` in the script below. */
+    transform: translateY(28px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { animate, stagger } from "motion";
+
+  // How far below its place an element starts. Matches the stylesheet above.
+  const DISTANCE = 28;
+  const DURATION = 0.9;
+  // Between one element of a group and the next.
+  const STAGGER = 0.09;
+  // Leads with its speed and settles, so the text arrives rather than stops.
+  const EASE = [0.22, 1, 0.36, 1] as const;
+  // How far past the bottom edge a group has to come before it rises, so the
+  // motion happens where it can be watched rather than in the corner of the
+  // eye.
+  const MARGIN = "0px 0px -12% 0px";
+  // Longest a page waits for a transition to say it has handed over. Only
+  // reached if one was interrupted, where revealing the page late beats
+  // leaving it empty.
+  const HANDOVER_TIMEOUT = 2;
+
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  // Whole `transform` strings rather than Motion's `y` shorthand, so the
+  // keyframes match the resting state the stylesheet above sets.
+  const rise = (elements: Element[]) =>
+    animate(
+      elements,
+      {
+        opacity: [0, 1],
+        transform: [`translateY(${DISTANCE}px)`, "translateY(0px)"],
+      },
+      {
+        duration: prefersReducedMotion.matches ? 0 : DURATION,
+        ease: EASE,
+        delay: prefersReducedMotion.matches ? 0 : stagger(STAGGER),
+      },
+    );
+
+  // A transition marks its own overlay while it is covering the page, and both
+  // overlays are persisted across the swap. So a page can tell on arrival that
+  // one is still running over it, even on the first navigation into a page
+  // carrying this script, where the script did not yet exist to watch that
+  // transition start.
+  const handover = () =>
+    document.querySelector("[data-covering]") &&
+    new Promise<void>((resolve) => {
+      document.addEventListener("transition:handover", () => resolve(), {
+        once: true,
+      });
+      setTimeout(resolve, HANDOVER_TIMEOUT * 1000);
+    });
+
+  // The run currently waiting on a handover, so that one interrupted by a
+  // second navigation drops out rather than reaching for elements that have
+  // since been swapped away.
+  let run = 0;
+  let watching: IntersectionObserver | null = null;
+
+  const init = async () => {
+    const current = ++run;
+
+    watching?.disconnect();
+    watching = null;
+
+    const groups = new Map<Element, Element[]>();
+
+    document.querySelectorAll("[data-reveal]").forEach((element) => {
+      const group = element.closest("[data-reveal-group]") ?? element;
+      groups.set(group, [...(groups.get(group) ?? []), element]);
+    });
+
+    if (!groups.size) return;
+
+    // Read before the wait, since the mark is gone by the time it is over.
+    await handover();
+    if (current !== run) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          rise(groups.get(entry.target) ?? []);
+        });
+      },
+      { rootMargin: MARGIN },
+    );
+    watching = observer;
+
+    groups.forEach((elements, group) => {
+      if (
+        group instanceof HTMLElement &&
+        group.dataset.revealGroup === "entrance"
+      ) {
+        rise(elements);
+      } else {
+        observer.observe(group);
+      }
+    });
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>
