@@ -47,7 +47,12 @@ const team = [
   class="bg-pine relative z-10 w-full px-5 py-16 sm:px-8 sm:pt-20 md:pt-26 md:pb-24 lg:px-10"
 >
   <div class="mx-auto w-full max-w-344">
-    <div>
+    {
+      /* The heading and then each member rise as they reach the viewport, a
+         member at a time rather than the grid as one piece, since the grid is
+         several screens tall. See `reveal.astro`. */
+    }
+    <div data-reveal>
       <h2
         class="text-alabaster font-newsreader 2xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
       >
@@ -61,7 +66,7 @@ const team = [
     >
       {
         team.map((member) => (
-          <div class="member relative">
+          <div data-reveal class="member relative">
             <Image
               src={member.src}
               alt={`${member.name}, ${member.title}`}
