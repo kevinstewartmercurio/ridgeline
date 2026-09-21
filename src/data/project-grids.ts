@@ -17,11 +17,11 @@ import roomImage from "../images/homepage/stack-1.jpg";
 import tableImage from "../images/homepage/stack-2.jpg";
 import duskImage from "../images/homepage/stack-3.jpg";
 
-import larchHouse1Image from "../images/larch-house/grid-1.jpeg";
+import larchHouse1Image from "../images/larch-house/grid-1.jpg";
 import larchHouse2Image from "../images/larch-house/grid-2.jpg";
 import larchHouse3Image from "../images/larch-house/grid-3.jpg";
 import larchHouse4Image from "../images/larch-house/grid-4.jpg";
-import larchHouse5Image from "../images/larch-house/grid-5.jpeg";
+import larchHouse5Image from "../images/larch-house/grid-5.jpg";
 import larchHouse6Image from "../images/larch-house/grid-6.jpg";
 import larchHouse7Image from "../images/larch-house/grid-7.jpg";
 
@@ -29,7 +29,7 @@ import fernHollow1Image from "../images/fern-hollow/grid-1.jpg";
 import fernHollow2Image from "../images/fern-hollow/grid-2.jpg";
 import fernHollow3Image from "../images/fern-hollow/grid-3.jpg";
 import fernHollow4Image from "../images/fern-hollow/grid-4.jpg";
-import fernHollow5Image from "../images/fern-hollow/grid-5.jpeg";
+import fernHollow5Image from "../images/fern-hollow/grid-5.jpg";
 import fernHollow6Image from "../images/fern-hollow/grid-6.jpg";
 
 import cutbankResidence1Image from "../images/cutbank-residence/grid-1.jpg";
