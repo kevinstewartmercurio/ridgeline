@@ -58,7 +58,16 @@ const recognition = [
   class="bg-alabaster relative z-10 px-5 py-16 sm:px-8 md:py-20 lg:px-10"
 >
   <div class="mx-auto w-full max-w-344">
-    <h2 class="font-jetbrains text-ink/65 text-2xs mb-5 uppercase sm:text-xs">
+    {
+      /* The heading and then each row rise as they reach the viewport, a row
+         at a time rather than the list as one piece, so the list unrolls under
+         a scroll instead of arriving with its last rows still below the fold.
+         See `reveal.astro`. */
+    }
+    <h2
+      data-reveal
+      class="font-jetbrains text-ink/65 text-2xs mb-5 uppercase sm:text-xs"
+    >
       Recognition
     </h2>
     <div>
@@ -66,7 +75,12 @@ const recognition = [
         recognition.map((item, idx) => (
           <a
             href="/"
-            class="group recognition-link font-jetbrains text-ink/65 text-2xs relative uppercase outline-0 sm:text-xs"
+            data-reveal
+            class:list={[
+              // `block` so the row can be moved: a transform has no effect on
+              // an inline box, which is what the anchor would otherwise be.
+              "group recognition-link font-jetbrains text-ink/65 text-2xs relative block uppercase outline-0 sm:text-xs",
+            ]}
           >
             {[0, 1].map((n) => (
               <div

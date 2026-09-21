@@ -2,8 +2,16 @@
   class="bg-alabaster xs:pt-16 relative z-10 px-5 pt-12 sm:px-8 lg:px-10 lg:pt-20"
 >
   <div class="mx-auto w-full max-w-344">
-    <div class="w-full space-y-8 gap-x-14 pb-12 md:flex lg:gap-x-20">
-      <div class="md:w-1/2">
+    {
+      /* The pair of columns rise together as they reach the viewport, and the
+         row of figures rises after them as one piece, so its rules stay ruled
+         while it moves. See `reveal.astro`. */
+    }
+    <div
+      data-reveal-group
+      class="w-full space-y-8 gap-x-14 pb-12 md:flex lg:gap-x-20"
+    >
+      <div data-reveal class="md:w-1/2">
         <p
           class="font-newsreader text-ink text-2xl font-extralight md:text-3xl lg:text-4xl xl:text-5xl"
         >
@@ -11,7 +19,7 @@
           conviction that design and building should not be separate businesses.
         </p>
       </div>
-      <div class="md:w-1/2">
+      <div data-reveal class="md:w-1/2">
         <p class="font-instrument opacity-65 xl:text-lg">
           Fifteen years later we are fourteen: architects, interior designers,
           and project managers working exclusively on one-of-a-kind homes, from
@@ -25,7 +33,10 @@
         </p>
       </div>
     </div>
-    <div class="grid grid-cols-2 pb-12 lg:grid-cols-4 lg:pb-16 xl:pb-20">
+    <div
+      data-reveal
+      class="grid grid-cols-2 pb-12 lg:grid-cols-4 lg:pb-16 xl:pb-20"
+    >
       {
         [
           {
