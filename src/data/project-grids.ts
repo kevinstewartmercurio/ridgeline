@@ -2,21 +2,6 @@ import type { ImageMetadata } from "astro";
 
 import type { GridCell, GridRow } from "./project-grid";
 
-import larchHouseImage from "../images/larch-house/hero.jpg";
-import fernHollowImage from "../images/fern-hollow/hero.jpg";
-import cutbankResidenceImage from "../images/cutbank-residence/hero.jpg";
-import ledgerHouseImage from "../images/ledger-house/hero.jpg";
-import skagitBarnImage from "../images/skagit-barn/hero.jpg";
-
-// Stand-ins until each project has its own set of photographs.
-import interiorImage from "../images/homepage/wwd-1.jpg";
-import exteriorImage from "../images/homepage/wwd-2.jpg";
-import detailImage from "../images/homepage/wwd-3.jpg";
-import diningImage from "../images/homepage/wwd-4.jpg";
-import roomImage from "../images/homepage/stack-1.jpg";
-import tableImage from "../images/homepage/stack-2.jpg";
-import duskImage from "../images/homepage/stack-3.jpg";
-
 import larchHouse1Image from "../images/larch-house/grid-1.jpg";
 import larchHouse2Image from "../images/larch-house/grid-2.jpg";
 import larchHouse3Image from "../images/larch-house/grid-3.jpg";
