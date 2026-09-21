@@ -25,7 +25,7 @@ const files = import.meta.glob<{ default: ImageMetadata }>(
 const pool = await Promise.all(
   Object.entries(files)
     .filter(
-      ([path]) => !path.includes("/studio/") || path.endsWith("/hero.png"),
+      ([path]) => !path.includes("/studio/") || path.endsWith("/hero.jpg"),
     )
     .map(([, file]) =>
       getImage({
