@@ -1,6 +1,6 @@
 import type { ImageMetadata } from "astro";
 
-import type { GridCell, GridRow } from "./project-grid";
+import type { GridCell, GridRow } from "./project-grid.types";
 
 import larchHouse1Image from "../images/larch-house/grid-1.jpg";
 import larchHouse2Image from "../images/larch-house/grid-2.jpg";
