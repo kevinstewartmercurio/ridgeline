@@ -1,8 +1,8 @@
-import larchHouseImage from "../images/larch-house/hero.png";
-import fernHollowImage from "../images/fern-hollow/hero.png";
-import cutbankResidenceImage from "../images/cutbank-residence/hero.png";
-import ledgerHouseImage from "../images/ledger-house/hero.png";
-import skagitBarnImage from "../images/skagit-barn/hero.png";
+import larchHouseImage from "../images/larch-house/hero.jpg";
+import fernHollowImage from "../images/fern-hollow/hero.jpg";
+import cutbankResidenceImage from "../images/cutbank-residence/hero.jpg";
+import ledgerHouseImage from "../images/ledger-house/hero.jpg";
+import skagitBarnImage from "../images/skagit-barn/hero.jpg";
 
 export const projects = [
   {
