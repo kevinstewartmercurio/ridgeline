@@ -102,6 +102,8 @@ import { address, year } from "../data/studio";
         <button
           id="nav-hamburger-btn"
           inert
+          aria-label="Menu"
+          aria-controls="nav-menu"
           aria-expanded="false"
           class="bg-alabaster pointer-events-auto absolute top-1/2 right-0 flex size-12 -translate-y-1/2 cursor-pointer items-center justify-center transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none md:peer-data-open:translate-x-full"
         >
@@ -407,7 +409,17 @@ import { address, year } from "../data/studio";
       const open = panel !== null;
       openPanel = panel;
       hamburgerBtn.classList.toggle("open", open);
-      hamburgerBtn.setAttribute("aria-expanded", String(open));
+      // `aria-expanded` speaks for the menu alone. With the conversation panel
+      // open the button still closes it, so only the label says so.
+      hamburgerBtn.setAttribute("aria-expanded", String(panel === "menu"));
+      hamburgerBtn.setAttribute(
+        "aria-label",
+        panel === "menu"
+          ? "Close menu"
+          : panel === "convo"
+            ? "Close conversation"
+            : "Menu",
+      );
       scrim.toggleAttribute("data-open", open);
       menu.toggleAttribute("data-open", panel === "menu");
       convo.toggleAttribute("data-open", panel === "convo");
