@@ -26,7 +26,7 @@ export const projects = [
     slug: "fern-hollow",
     details: {
       program: "3 bed / 2.5 bath, 2,150 sq ft",
-      site: "0.14 acre infill lot",
+      site: "0.25 acre infill lot",
       completed: "June 2024",
       scope: "Architecture, interiors",
     },
@@ -43,7 +43,7 @@ export const projects = [
     slug: "cutbank-residence",
     details: {
       program: "4 bed / 3 bath, 3,120 sq ft",
-      site: "2.4 acres, bluff edge",
+      site: "2.5 acres, bluff edge",
       completed: "September 2024",
       scope: "Architecture, build oversight",
     },

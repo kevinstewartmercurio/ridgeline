@@ -32,7 +32,7 @@ const team = [
   },
   {
     name: "Callum Sørensen",
-    title: " Site & Materials Lead",
+    title: "Site & Materials Lead",
     src: callumSorensenImage,
   },
   {
@@ -93,18 +93,35 @@ const team = [
     const teamMembers = document.querySelectorAll(".member");
     const memberLogos = document.querySelectorAll(".member-logo");
 
-    teamMembers.forEach((member, idx) => {
-      member.addEventListener("mouseenter", () => {
-        if (memberLogos[idx] instanceof HTMLDivElement) {
-          memberLogos[idx].classList.replace("scale-0", "scale-100");
-        }
-      });
+    // `astro:page-load` runs this again after every navigation, so the
+    // listeners below are dropped as the members they belong to go away.
+    const controller = new AbortController();
+    const { signal } = controller;
 
-      member.addEventListener("mouseleave", () => {
-        if (memberLogos[idx] instanceof HTMLDivElement) {
-          memberLogos[idx].classList.replace("scale-100", "scale-0");
-        }
-      });
+    document.addEventListener("astro:before-swap", () => controller.abort(), {
+      once: true,
+    });
+
+    teamMembers.forEach((member, idx) => {
+      member.addEventListener(
+        "mouseenter",
+        () => {
+          if (memberLogos[idx] instanceof HTMLDivElement) {
+            memberLogos[idx].classList.replace("scale-0", "scale-100");
+          }
+        },
+        { signal },
+      );
+
+      member.addEventListener(
+        "mouseleave",
+        () => {
+          if (memberLogos[idx] instanceof HTMLDivElement) {
+            memberLogos[idx].classList.replace("scale-100", "scale-0");
+          }
+        },
+        { signal },
+      );
     });
   };
 

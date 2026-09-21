@@ -1,54 +1,29 @@
-# Astro Starter Kit: Basics
+# Ridgeline
+
+A portfolio piece: the marketing site for **Ridgeline Architecture Studio**, a residential architecture and design-build practice in Bellingham, WA.
+
+> **Ridgeline is fictional.** The studio, its people, projects, addresses, phone number and press are invented for this site. Any resemblance to a real practice is coincidental. The only real person involved is the developer.
+
+## Stack
+
+- [Astro 6](https://astro.build) with `<ClientRouter />` page transitions
+- [Tailwind CSS v4](https://tailwindcss.com), CSS-first: design tokens live in the `@theme` block of `src/styles/global.css`, and there is no JS config
+- [Lenis](https://lenis.darkroom.engineering) for smooth scrolling
+- [Motion](https://motion.dev) for animation
+- [Bun](https://bun.sh) as the package manager
+
+## Running it
 
 ```sh
-bun create astro@latest -- --template basics
+bun install
+bun run dev      # dev server at localhost:4321
+bun run build    # type-check (astro check) and build to ./dist
+bun run preview  # serve the production build locally
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## Layout
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- `src/pages/`: routes, including the dynamic `project/[slug]` pages
+- `src/components/`: components, grouped by page (`homepage/`, `studio/`, `project/`) plus shared ones like the nav and footer
+- `src/data/`: project content and shared studio details (address, year)
+- `src/styles/global.css`: Tailwind entry point and theme tokens

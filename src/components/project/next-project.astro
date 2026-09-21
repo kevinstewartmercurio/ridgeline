@@ -44,7 +44,7 @@ const next = projects[(idx + 1) % projects.length];
                 ? "bg-alabaster"
                 : "next-project-selector bg-pine absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]",
             ]}
-            aria-hidden="true"
+            aria-hidden={n ? "true" : undefined}
           >
             {/* The arrow sits inline so that it follows the last word when a
                 long title wraps, rather than being pushed to the far edge. */}
