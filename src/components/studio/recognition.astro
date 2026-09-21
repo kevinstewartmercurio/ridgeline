@@ -73,13 +73,15 @@ const recognition = [
     <div>
       {
         recognition.map((item, idx) => (
-          <a
-            href="/"
+          <button
+            type="button"
+            data-convo-btn
             data-reveal
+            aria-haspopup="dialog"
             class:list={[
               // `block` so the row can be moved: a transform has no effect on
-              // an inline box, which is what the anchor would otherwise be.
-              "group recognition-link font-jetbrains text-ink/65 text-2xs relative block uppercase outline-0 sm:text-xs",
+              // an inline box.
+              "group recognition-link font-jetbrains text-ink/65 text-2xs relative block w-full cursor-pointer text-left uppercase outline-0 sm:text-xs",
             ]}
           >
             {[0, 1].map((n) => (
@@ -111,7 +113,7 @@ const recognition = [
                 )}
               </div>
             ))}
-          </a>
+          </button>
         ))
       }
     </div>
