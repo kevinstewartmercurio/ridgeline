@@ -137,8 +137,9 @@ import { address, year } from "../data/studio";
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
+      tabindex="-1"
       data-lenis-prevent
-      class="bg-alabaster pointer-events-auto max-h-[calc(100dvh-2.5rem)] w-72 max-w-full translate-x-full overflow-y-auto p-4 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-open:translate-x-0 motion-reduce:transition-none lg:w-88 lg:p-5"
+      class="bg-alabaster pointer-events-auto max-h-[calc(100dvh-2.5rem)] w-72 max-w-full translate-x-full overflow-y-auto p-4 transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] outline-none group-data-open:translate-x-0 motion-reduce:transition-none lg:w-88 lg:p-5"
     >
       <a href="/" class="mb-5 flex items-center gap-x-3 lg:mb-6">
         <Logo class="fill-pine size-8 lg:size-10" />
@@ -405,8 +406,24 @@ import { address, year } from "../data/studio";
     // Opens one of the two panels, closing the other, or closes both with
     // `null`. They share the scrim and the hamburger, so opening one over the
     // other is a matter of moving the `data-open` between them.
-    const setPanelOpen = (panel: "menu" | "convo" | null) => {
+    const setPanelOpen = (
+      panel: "menu" | "convo" | null,
+      trigger?: Element | null,
+    ) => {
       const open = panel !== null;
+      const previous = openPanel;
+      // Only the first opening records where focus came from. Opening the
+      // conversation panel out of the menu leaves this as the hamburger, which
+      // is where the menu was opened from and where the "X" is.
+      if (open && previous === null) {
+        const active = document.activeElement;
+        returnFocusTo =
+          trigger instanceof HTMLElement
+            ? trigger
+            : active instanceof HTMLElement && active !== document.body
+              ? active
+              : null;
+      }
       openPanel = panel;
       hamburgerBtn.classList.toggle("open", open);
       // `aria-expanded` speaks for the menu alone. With the conversation panel
@@ -439,10 +456,82 @@ import { address, year } from "../data/studio";
         setRightOpen(isAtTop());
         setOpen(leftPanel, isAtTop());
       }
+
+      // Opening a panel inerts whatever held focus, whether that was the nav
+      // button that opened it or the menu it was opened out of, which would
+      // drop focus to the top of the document. Moving it into the panel's
+      // dialog keeps it there. `preventScroll` because the dialog starts out
+      // translated off inside its clip, and scrolling that clip into view
+      // would shift it.
+      if (open && panel !== previous) {
+        const dialog = (
+          panel === "menu" ? menu : convo
+        ).querySelector<HTMLElement>('[role="dialog"]');
+        dialog?.focus({ preventScroll: true });
+      }
     };
 
+    // Where focus goes back to when a panel is closed by the user. A trigger
+    // can be out of reach by then: the nav's own buttons are inert again
+    // while the page is scrolled, and the ones in the page content are
+    // swapped out on navigation. The hamburger is what is left in those cases.
+    let returnFocusTo: HTMLElement | null = null;
+
+    const closePanel = () => {
+      setPanelOpen(null);
+
+      const reachable = (element: HTMLElement | null) =>
+        element?.isConnected && !element.closest("[inert]") ? element : null;
+      (reachable(returnFocusTo) ?? reachable(hamburgerBtn))?.focus({
+        preventScroll: true,
+      });
+      returnFocusTo = null;
+    };
+
+    // What Tab cycles through while a panel is open: the hamburger, which is
+    // the visible way to close it, and the open dialog's own controls.
+    const FOCUSABLE =
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    const trapTab = (event: KeyboardEvent) => {
+      const dialog = (openPanel === "menu" ? menu : convo).querySelector(
+        '[role="dialog"]',
+      );
+      if (!dialog) return;
+
+      const items = [
+        hamburgerBtn,
+        ...dialog.querySelectorAll<HTMLElement>(FOCUSABLE),
+      ].filter((element) => !element.closest("[inert]"));
+      const index = items.indexOf(document.activeElement as HTMLElement);
+
+      event.preventDefault();
+      if (index === -1) {
+        // Focus is on the dialog itself, or has strayed out of the panel.
+        items[
+          event.shiftKey ? items.length - 1 : Math.min(1, items.length - 1)
+        ]?.focus();
+        return;
+      }
+
+      const step = event.shiftKey ? -1 : 1;
+      items[(index + step + items.length) % items.length].focus();
+    };
+
+    document.addEventListener("keydown", (event) => {
+      if (!openPanel) return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePanel();
+      } else if (event.key === "Tab") {
+        trapTab(event);
+      }
+    });
+
     hamburgerBtn.addEventListener("click", () => {
-      setPanelOpen(openPanel ? null : "menu");
+      if (openPanel) closePanel();
+      else setPanelOpen("menu", hamburgerBtn);
     });
 
     // Anything that opens the conversation panel is marked `data-convo-btn`:
@@ -452,9 +541,10 @@ import { address, year } from "../data/studio";
     // this script, like the nav it belongs to, runs a single time.
     document.addEventListener("click", (event) => {
       if (!(event.target instanceof Element)) return;
-      if (!event.target.closest("[data-convo-btn]")) return;
+      const trigger = event.target.closest("[data-convo-btn]");
+      if (!trigger) return;
 
-      setPanelOpen("convo");
+      setPanelOpen("convo", trigger);
     });
 
     // The enquiry form has nowhere to send anything, so submitting it opens
@@ -473,7 +563,7 @@ import { address, year } from "../data/studio";
         if (!event.target.closest("[data-convo-form]")) return;
 
         event.preventDefault();
-        setPanelOpen("convo");
+        setPanelOpen("convo", event.target.closest("[data-convo-form]"));
       },
       { capture: true },
     );
@@ -484,13 +574,13 @@ import { address, year } from "../data/studio";
       if (!openPanel) return;
 
       event.preventDefault();
-      setPanelOpen(null);
+      closePanel();
     });
 
     // The scrim covers the viewport behind a panel, so clicking it is a click
     // outside the panel. A click only lands here when it both starts and ends
     // on the scrim, which leaves a drag out of the panel alone.
-    scrim.addEventListener("click", () => setPanelOpen(null));
+    scrim.addEventListener("click", closePanel);
 
     // Brings the nav back when a keyboard user tabs into it while hidden.
     nav.addEventListener("focusin", () => setHidden(false));
