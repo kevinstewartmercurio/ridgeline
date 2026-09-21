@@ -40,20 +40,20 @@
       {
         [
           {
-            h3: "14",
-            p: "Architects, Designers, & PMs",
+            p1: "14",
+            p2: "Architects, Designers, & PMs",
           },
           {
-            h3: "8-10",
-            p: "Active projects at a time",
+            p1: "8-10",
+            p2: "Active projects at a time",
           },
           {
-            h3: "2011",
-            p: "Year founded",
+            p1: "2011",
+            p2: "Year founded",
           },
           {
-            h3: "62",
-            p: "Homes completed",
+            p1: "62",
+            p2: "Homes completed",
           },
         ].map((obj, idx) => (
           <div
@@ -65,11 +65,11 @@
               idx === 3 && "border-y border-l",
             ]}
           >
-            <h3 class="font-newsreader text-pine text-4xl font-light md:text-5xl xl:text-6xl">
-              {obj.h3}
-            </h3>
+            <p class="font-newsreader text-pine text-4xl font-light md:text-5xl xl:text-6xl">
+              {obj.p1}
+            </p>
             <p class="font-jetbrains text-ink/65 text-2xs uppercase md:text-xs">
-              {obj.p}
+              {obj.p2}
             </p>
           </div>
         ))

@@ -1,27 +1,12 @@
 import type { ImageMetadata } from "astro";
 
-import type { GridCell, GridRow } from "./project-grid";
+import type { GridCell, GridRow } from "./project-grid.types";
 
-import larchHouseImage from "../images/larch-house/hero.png";
-import fernHollowImage from "../images/fern-hollow/hero.png";
-import cutbankResidenceImage from "../images/cutbank-residence/hero.png";
-import ledgerHouseImage from "../images/ledger-house/hero.png";
-import skagitBarnImage from "../images/skagit-barn/hero.png";
-
-// Stand-ins until each project has its own set of photographs.
-import interiorImage from "../images/homepage/wwd-1.png";
-import exteriorImage from "../images/homepage/wwd-2.png";
-import detailImage from "../images/homepage/wwd-3.png";
-import diningImage from "../images/homepage/wwd-4.png";
-import roomImage from "../images/homepage/stack-1.png";
-import tableImage from "../images/homepage/stack-2.png";
-import duskImage from "../images/homepage/stack-3.png";
-
-import larchHouse1Image from "../images/larch-house/grid-1.jpeg";
+import larchHouse1Image from "../images/larch-house/grid-1.jpg";
 import larchHouse2Image from "../images/larch-house/grid-2.jpg";
 import larchHouse3Image from "../images/larch-house/grid-3.jpg";
 import larchHouse4Image from "../images/larch-house/grid-4.jpg";
-import larchHouse5Image from "../images/larch-house/grid-5.jpeg";
+import larchHouse5Image from "../images/larch-house/grid-5.jpg";
 import larchHouse6Image from "../images/larch-house/grid-6.jpg";
 import larchHouse7Image from "../images/larch-house/grid-7.jpg";
 
@@ -29,7 +14,7 @@ import fernHollow1Image from "../images/fern-hollow/grid-1.jpg";
 import fernHollow2Image from "../images/fern-hollow/grid-2.jpg";
 import fernHollow3Image from "../images/fern-hollow/grid-3.jpg";
 import fernHollow4Image from "../images/fern-hollow/grid-4.jpg";
-import fernHollow5Image from "../images/fern-hollow/grid-5.jpeg";
+import fernHollow5Image from "../images/fern-hollow/grid-5.jpg";
 import fernHollow6Image from "../images/fern-hollow/grid-6.jpg";
 
 import cutbankResidence1Image from "../images/cutbank-residence/grid-1.jpg";
