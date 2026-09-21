@@ -14,8 +14,16 @@ import heroImage from "../../images/studio/hero.png";
   <div
     class="absolute top-0 left-1/2 h-full w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10"
   >
-    <div class="mx-auto flex h-full w-full max-w-344 items-end pb-10 xl:pb-16">
+    {
+      /* The title rises into place once the page has landed, which leaves the
+         photograph alone to arrive with the page. See `reveal.astro`. */
+    }
+    <div
+      data-reveal-group="entrance"
+      class="mx-auto flex h-full w-full max-w-344 items-end pb-10 xl:pb-16"
+    >
       <h1
+        data-reveal
         class="font-newsreader text-alabaster text-4xl/[110%] font-light sm:text-5xl/[110%] md:text-6xl/[110%] lg:text-7xl/[110%] xl:text-8xl/[110%]"
       >
         An architect-led practice,
