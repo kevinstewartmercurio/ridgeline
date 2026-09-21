@@ -192,7 +192,7 @@ const recognition = [
 
       recognitionLinks.forEach((item, idx) => {
         const selector = recognitionSelectors[idx];
-        if (!(item instanceof HTMLAnchorElement) || !selector) return;
+        if (!(item instanceof HTMLButtonElement) || !selector) return;
 
         ["mouseenter", "focus"].forEach((trigger) => {
           item.addEventListener(trigger, () => wipe(selector, true), {
