@@ -1,3 +1,7 @@
+---
+import { address, year } from "../data/studio";
+---
+
 <footer class="sticky bottom-0 w-full">
   <div class="bg-pine px-5 pt-10 pb-6 sm:px-8 lg:px-10 lg:pb-10">
     <div class="mx-auto w-full max-w-344">
@@ -78,7 +82,7 @@
       >
         <div>
           <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
-            Ridgeline Architecture Studio
+            © {year} Ridgeline Architecture Studio
           </a>
           <br /><br class="hidden sm:block" />
           Designed and built by
@@ -111,13 +115,13 @@
             >
               <span
                 class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
-                >1420 Alder Ridge Lane, Suite 300</span
+                >{address.street}</span
               >
               <br />
               <span
                 class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:delay-150 after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
               >
-                Bellingham, WA 98225
+                {address.city}
               </span>
             </button>
           </div>
