@@ -2,20 +2,20 @@ import type { ImageMetadata } from "astro";
 
 import type { GridCell, GridRow } from "./project-grid";
 
-import larchHouseImage from "../images/larch-house/hero.png";
-import fernHollowImage from "../images/fern-hollow/hero.png";
-import cutbankResidenceImage from "../images/cutbank-residence/hero.png";
-import ledgerHouseImage from "../images/ledger-house/hero.png";
-import skagitBarnImage from "../images/skagit-barn/hero.png";
+import larchHouseImage from "../images/larch-house/hero.jpg";
+import fernHollowImage from "../images/fern-hollow/hero.jpg";
+import cutbankResidenceImage from "../images/cutbank-residence/hero.jpg";
+import ledgerHouseImage from "../images/ledger-house/hero.jpg";
+import skagitBarnImage from "../images/skagit-barn/hero.jpg";
 
 // Stand-ins until each project has its own set of photographs.
-import interiorImage from "../images/homepage/wwd-1.png";
-import exteriorImage from "../images/homepage/wwd-2.png";
-import detailImage from "../images/homepage/wwd-3.png";
-import diningImage from "../images/homepage/wwd-4.png";
-import roomImage from "../images/homepage/stack-1.png";
-import tableImage from "../images/homepage/stack-2.png";
-import duskImage from "../images/homepage/stack-3.png";
+import interiorImage from "../images/homepage/wwd-1.jpg";
+import exteriorImage from "../images/homepage/wwd-2.jpg";
+import detailImage from "../images/homepage/wwd-3.jpg";
+import diningImage from "../images/homepage/wwd-4.jpg";
+import roomImage from "../images/homepage/stack-1.jpg";
+import tableImage from "../images/homepage/stack-2.jpg";
+import duskImage from "../images/homepage/stack-3.jpg";
 
 import larchHouse1Image from "../images/larch-house/grid-1.jpeg";
 import larchHouse2Image from "../images/larch-house/grid-2.jpg";
