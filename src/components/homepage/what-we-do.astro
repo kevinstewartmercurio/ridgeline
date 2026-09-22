@@ -1,0 +1,278 @@
+---
+import { Image } from "astro:assets";
+import Logo from "../logo.astro";
+import { imageWidths } from "../../utils/images";
+
+import wwd1Image from "../../images/homepage/wwd-1.jpg";
+import wwd2Image from "../../images/homepage/wwd-2.jpg";
+import wwd3Image from "../../images/homepage/wwd-3.jpg";
+import wwd4Image from "../../images/homepage/wwd-4.jpg";
+
+const images = [
+  {
+    src: wwd1Image,
+    alt: "Living room under a timber-boarded ceiling, with a grey sofa and a dog asleep on a rust rug beside white-painted brick walls.",
+  },
+  {
+    src: wwd2Image,
+    alt: "Cedar-clad addition with a clerestory upper storey and a pergola sheltering a dining deck, joined to the original white-framed house.",
+  },
+  {
+    src: wwd3Image,
+    alt: "Open-plan living and dining space under a slatted timber ceiling, divided by a dark three-sided fireplace column.",
+  },
+  {
+    src: wwd4Image,
+    alt: "Dining room under a gabled timber ceiling, with floor-to-ceiling glass on three sides looking out over trees to open water.",
+  },
+];
+
+const services = [
+  {
+    h3: "Custom residential architecture",
+    p: "New single-family builds, from site reading through final walkthrough",
+  },
+  {
+    h3: "Whole-home renovation & addition",
+    p: "Structural rework, envelope, and reprogramming of existing houses",
+  },
+  {
+    h3: "Interior architecture & materials",
+    p: "Millwork, stone, fixtures, and finish selection carried in-house",
+  },
+  {
+    h3: "Site selection & feasibility",
+    p: "Land assessment, zoning, buildability, and early cost modeling",
+  },
+];
+---
+
+<section
+  class="bg-alabaster relative z-10 w-full px-5 pt-20 pb-16 sm:px-8 md:pt-26 md:pb-24 lg:px-10"
+>
+  {
+    /* The heading, the photograph, and the block of cards each rise as they
+       reach the viewport. The cards rise as one piece rather than card by
+       card, so their rules stay ruled while they move. See `reveal.astro`. */
+  }
+  <div
+    class="xs:grid-cols-[1fr_0.675fr] xs:gap-4 mx-auto grid w-full max-w-344 grid-cols-2 md:grid-cols-2 md:gap-y-0 lg:gap-x-6"
+  >
+    <h2
+      data-reveal
+      class="text-pine font-newsreader 2xs:text-6xl xs:col-span-1 xs:order-2 xs:flex-col order-1 col-span-2 flex w-full justify-between text-5xl font-light md:order-1 md:col-span-2 md:flex-row md:text-7xl lg:text-8xl"
+    >
+      <span>What</span>
+      <span class="xs:translate-y-3 block md:translate-y-0">We Do</span>
+    </h2>
+    <div
+      id="wwd-images-container"
+      data-reveal
+      class="xs:order-1 xs:col-span-1 xs:mb-0 relative order-2 col-span-2 mb-4 h-full w-full md:order-2"
+    >
+      {
+        images.map((img, idx) => (
+          <Image
+            src={img.src}
+            alt={img.alt}
+            widths={imageWidths}
+            sizes="(min-width: 1456px) 676px, (min-width: 525px) 60vw, 100vw"
+            class:list={[
+              "aspect-square w-full object-cover duration-500 motion-reduce:transition-none",
+              !idx ? "opacity-100" : "absolute top-0 left-0 opacity-0",
+            ]}
+          />
+        ))
+      }
+    </div>
+    <div
+      id="service-cards-container"
+      data-reveal
+      class="xs:grid-cols-2 xs:grid-rows-2 order-3 col-span-2 grid w-full grid-cols-1 grid-rows-4 md:col-span-1 md:grid-cols-1 md:grid-rows-4 lg:grid-cols-2 lg:grid-rows-2"
+    >
+      {
+        services.map((service, idx) => (
+          <div
+            role="button"
+            tabindex="0"
+            aria-pressed={!idx ? "true" : "false"}
+            class:list={[
+              "service-card border-ink/12 relative cursor-pointer border-t duration-300 focus-visible:z-40 focus-visible:outline-2 focus-visible:-outline-offset-2 motion-reduce:transition-none lg:aspect-square",
+              idx === 1 && "xs:border-l md:border-l-0 lg:border-l",
+              idx === 2 && "xs:border-b md:border-b-0 lg:border-b",
+              idx === 3 && "xs:border-l border-b md:border-l-0 lg:border-l",
+              !idx ? "text-alabaster" : "text-ink/65",
+            ]}
+          >
+            {!idx && (
+              <div
+                id="service-card-selector-bg"
+                class="bg-pine pointer-events-none absolute top-0 left-0 z-10 h-full w-full duration-300 motion-reduce:transition-none md:h-[calc(100%+1px)] lg:h-full"
+              />
+            )}
+            {!idx && (
+              <div
+                id="service-card-selector-logo-container"
+                class="pointer-events-none absolute top-0 left-0 z-30 h-full w-full bg-transparent duration-300 motion-reduce:transition-none md:h-[calc(100%+1px)] lg:h-full"
+              >
+                <div
+                  id="service-card-selector-logo"
+                  class="bg-alabaster absolute top-2 right-2 flex h-8 w-8 origin-top-right scale-0 items-center justify-center duration-300 motion-reduce:transition-none md:top-1/4 md:right-3 lg:top-5 lg:right-5 lg:h-12 lg:w-12 xl:h-16 xl:w-16"
+                >
+                  <Logo class="fill-pine h-3/4 w-3/4 lg:h-8 lg:w-8 xl:h-12 xl:w-12" />
+                </div>
+              </div>
+            )}
+            <div class="relative z-20 py-2.5 pr-16 pl-3 md:absolute md:top-1/2 md:left-0 md:-translate-y-1/2 lg:top-[50%] lg:px-5">
+              <h3 class="font-newsreader mb-1 text-lg/[1] font-light lg:mb-1.5 lg:text-xl/[1] xl:mb-3 xl:text-2xl/[1]">
+                {service.h3}
+              </h3>
+              <p class="font-jetbrains text-2xs uppercase xl:text-xs">
+                {service.p}
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const init = () => {
+    const wwdImages = document.querySelectorAll("#wwd-images-container img");
+    const serviceCardsContainer = document.getElementById(
+      "service-cards-container",
+    );
+    const serviceCards = document.querySelectorAll(".service-card");
+    const serviceCardSelectorBg = document.getElementById(
+      "service-card-selector-bg",
+    );
+    const serviceCardSelectorLogoContainer = document.getElementById(
+      "service-card-selector-logo-container",
+    );
+    const serviceCardSelectorLogo = document.getElementById(
+      "service-card-selector-logo",
+    );
+
+    const xsMql = matchMedia("(min-width: 525px)");
+    const mdMql = matchMedia("(min-width: 768px)");
+    const lgMql = matchMedia("(min-width: 1024px)");
+
+    if (
+      serviceCardsContainer instanceof HTMLDivElement &&
+      serviceCardSelectorBg instanceof HTMLDivElement &&
+      serviceCardSelectorLogoContainer instanceof HTMLDivElement &&
+      serviceCardSelectorLogo instanceof HTMLDivElement
+    ) {
+      // `astro:page-load` runs this again after every navigation. The element
+      // listeners go away with the elements, but the `MediaQueryList`s are
+      // fresh objects the browser keeps alive for as long as they have
+      // listeners, so those have to be dropped explicitly.
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
+      // Moves the pine block and the logo badge onto card `idx`, and shows
+      // that card's photograph.
+      const select = (idx: number) => {
+        const translate =
+          lgMql.matches || (!mdMql.matches && xsMql.matches)
+            ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+            : `translate(0%, ${idx * 100}%)`;
+        serviceCardSelectorBg.style.transform = translate;
+        serviceCardSelectorLogoContainer.style.transform = translate;
+
+        wwdImages.forEach((img, idx2) => {
+          img.classList.replace(
+            idx === idx2 ? "opacity-0" : "opacity-100",
+            idx === idx2 ? "opacity-100" : "opacity-0",
+          );
+        });
+
+        serviceCards.forEach((card, idx2) => {
+          card.classList.replace(
+            idx === idx2 ? "text-ink/65" : "text-alabaster",
+            idx === idx2 ? "text-alabaster" : "text-ink/65",
+          );
+          card.setAttribute("aria-pressed", idx === idx2 ? "true" : "false");
+        });
+      };
+
+      const showLogo = () => (serviceCardSelectorLogo.style.scale = "1");
+      const hideLogo = () => (serviceCardSelectorLogo.style.scale = "0");
+
+      // Hover selects on devices that have it. Everywhere else a tap does,
+      // and focus does for keyboard users, so the panel is never inert.
+      const hoverDevice = matchMedia("(hover: hover)").matches;
+
+      if (hoverDevice) {
+        serviceCardsContainer.addEventListener("mouseenter", showLogo, {
+          signal,
+        });
+        serviceCardsContainer.addEventListener("mouseleave", hideLogo, {
+          signal,
+        });
+      }
+
+      serviceCardsContainer.addEventListener(
+        "focusout",
+        (e) => {
+          if (
+            !serviceCardsContainer.contains(e.relatedTarget as Node | null) &&
+            !serviceCardsContainer.matches(":hover")
+          ) {
+            hideLogo();
+          }
+        },
+        { signal },
+      );
+
+      [xsMql, mdMql, lgMql].forEach((mql) => {
+        mql.addEventListener(
+          "change",
+          () => {
+            select(0);
+            hideLogo();
+          },
+          { signal },
+        );
+      });
+
+      serviceCards.forEach((card, idx) => {
+        const selectCard = () => {
+          // The breakpoint reset above hides the logo, so every selection
+          // brings it back rather than waiting for the pointer to re-enter
+          // the container.
+          showLogo();
+          select(idx);
+        };
+
+        if (hoverDevice) {
+          card.addEventListener("mouseenter", selectCard, { signal });
+        }
+        card.addEventListener("click", selectCard, { signal });
+        card.addEventListener("focus", selectCard, { signal });
+        card.addEventListener(
+          "keydown",
+          (e) => {
+            if (
+              e instanceof KeyboardEvent &&
+              (e.key === "Enter" || e.key === " ")
+            ) {
+              // Space would otherwise scroll the page.
+              e.preventDefault();
+              selectCard();
+            }
+          },
+          { signal },
+        );
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>

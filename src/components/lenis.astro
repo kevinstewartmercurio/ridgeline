@@ -1,0 +1,65 @@
+{
+  /* The instance is rebuilt after every navigation rather than reused: the
+     ClientRouter's swap replaces every attribute on `<html>` with the
+     incoming document's (see `swapRootAttributes` in
+     astro/dist/transitions/swap-functions.js), which wipes the `lenis`
+     class Lenis sets on it. Rebuilding on `astro:after-swap` picks that back
+     up instead of leaving a stale, unclassed root behind. Its raf runs on
+     Motion's frame loop rather than a bare `requestAnimationFrame` since
+     Motion already owns one for the page-transition and nav animations.
+
+     It also stops and starts on the nav's `scroll-lock:change`, which is what
+     actually keeps the page still behind an open panel. */
+}
+
+<script>
+  import Lenis from "lenis";
+  import { frame, cancelFrame } from "motion";
+
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  let lenis: Lenis | undefined;
+
+  const update = ({ timestamp }: { timestamp: number }) => {
+    lenis?.raf(timestamp);
+  };
+
+  const start = () => {
+    if (prefersReducedMotion.matches) return;
+
+    lenis = new Lenis({ autoRaf: false });
+    frame.update(update, true);
+  };
+
+  const stop = () => {
+    if (!lenis) return;
+
+    cancelFrame(update);
+    lenis.destroy();
+    lenis = undefined;
+  };
+
+  const restart = () => {
+    stop();
+    start();
+  };
+
+  prefersReducedMotion.addEventListener("change", restart);
+  document.addEventListener("astro:after-swap", restart);
+
+  // The nav holds the page still behind an open panel. Lenis scrolls the
+  // window itself, so it has to be told to stop rather than being left to
+  // scroll a page the browser has been told not to. Panels marked
+  // `data-lenis-prevent` keep scrolling on their own while it is stopped.
+  document.addEventListener("scroll-lock:change", (event) => {
+    if (!(event instanceof CustomEvent)) return;
+
+    if (event.detail.locked) {
+      lenis?.stop();
+    } else {
+      lenis?.start();
+    }
+  });
+
+  start();
+</script>

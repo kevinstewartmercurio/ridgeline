@@ -1,0 +1,88 @@
+---
+import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
+
+import marenOstbergImage from "../../images/studio/maren-ostberg.jpg";
+import danielReyesImage from "../../images/studio/daniel-reyes.jpg";
+import irisNakamuraImage from "../../images/studio/iris-nakamura.jpg";
+import priyaAnandImage from "../../images/studio/priya-anand.jpg";
+import callumSorensenImage from "../../images/studio/callum-sorensen.jpg";
+import tomWhitlockImage from "../../images/studio/tom-whitlock.jpg";
+
+const team = [
+  {
+    name: "Maren Ostberg",
+    title: "Founding Partner, Architect",
+    src: marenOstbergImage,
+  },
+  {
+    name: "Daniel Reyes",
+    title: "Partner, Design-Build",
+    src: danielReyesImage,
+  },
+  {
+    name: "Iris Nakamura",
+    title: "Director of Interiors",
+    src: irisNakamuraImage,
+  },
+  {
+    name: "Priya Anand",
+    title: "Project Architect",
+    src: priyaAnandImage,
+  },
+  {
+    name: "Callum Sørensen",
+    title: "Site & Materials Lead",
+    src: callumSorensenImage,
+  },
+  {
+    name: "Tom Whitlock",
+    title: "Construction Administration",
+    src: tomWhitlockImage,
+  },
+];
+---
+
+<section
+  class="bg-pine relative z-10 w-full px-5 py-16 sm:px-8 sm:pt-20 md:pt-26 md:pb-24 lg:px-10"
+>
+  <div class="mx-auto w-full max-w-344">
+    {
+      /* The heading and then each member rise as they reach the viewport, a
+         member at a time rather than the grid as one piece, since the grid is
+         several screens tall. See `reveal.astro`. */
+    }
+    <div data-reveal>
+      <h2
+        class="text-alabaster font-newsreader 2xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
+      >
+        <span>The</span>
+        <span>Team</span>
+      </h2>
+      <hr class="border-alabaster w-full" />
+    </div>
+    <div
+      class="grid grid-cols-2 gap-x-3 gap-y-12 pt-10 sm:gap-y-16 md:grid-cols-3 lg:gap-x-5 lg:gap-y-24"
+    >
+      {
+        team.map((member) => (
+          <div data-reveal class="relative">
+            <Image
+              src={member.src}
+              alt={`${member.name}, ${member.title}`}
+              widths={imageWidths}
+              sizes="(min-width: 1456px) 450px, (min-width: 768px) 33vw, 50vw"
+              class="mb-4 aspect-square w-full object-cover"
+            />
+            <h3 class="font-newsreader text-alabaster xs:text-2xl text-xl font-light lg:mb-1.5 lg:text-3xl">
+              {member.name}
+            </h3>
+            <span class="text-alabaster font-jetbrains text-2xs block uppercase lg:text-xs">
+              {member.title}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

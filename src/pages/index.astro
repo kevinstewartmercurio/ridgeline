@@ -1,7 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Hero from "../components/homepage/hero.astro";
+import SubHero from "../components/homepage/sub-hero.astro";
+import SelectedWork from "../components/homepage/selected-work.astro";
+import Stack from "../components/homepage/stack.astro";
+import WhatWeDo from "../components/homepage/what-we-do.astro";
+import Unreal from "../components/unreal.astro";
+import Footer from "../components/footer.astro";
+import Reveal from "../components/reveal.astro";
 ---
 
-<Layout title="Welcome to Astro.">
-  <main></main>
+<Layout
+  title="Ridgeline Architecture Studio"
+  description="A boutique residential architecture and design-build studio of fourteen, working on one-of-a-kind homes across the Pacific Northwest since 2011."
+>
+  <main id="main-content" tabindex="-1" class="relative focus:outline-none">
+    <Hero />
+    <SubHero />
+    <SelectedWork />
+    <Stack />
+    <WhatWeDo />
+    <Unreal />
+  </main>
+  <Footer />
+  <Reveal />
 </Layout>

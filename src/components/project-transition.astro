@@ -1,0 +1,172 @@
+{
+  /* Replaces the curtain for links marked `data-project-transition`: the
+     clicked thumbnail grows into the project hero while the rest of the old
+     page fades out behind it, and the real hero takes over once it has been
+     swapped in underneath.
+
+     The overlay sits under the nav (z-40) so the nav stays over the image,
+     just as it sits over the hero on the page being opened.
+
+     `#project-transition-target` is never shown. It shares the hero's sizing
+     classes so the expansion can measure where the hero will land before the
+     new page exists. */
+}
+
+<div
+  id="project-transition"
+  transition:persist="project-transition"
+  aria-hidden="true"
+  class="pointer-events-none invisible fixed inset-0 z-35"
+>
+  <div
+    id="project-transition-backdrop"
+    class="bg-alabaster absolute inset-0 opacity-0"
+  >
+  </div>
+  <div
+    id="project-transition-target"
+    class="absolute top-0 left-0 h-screen max-h-224 w-full"
+  >
+  </div>
+</div>
+
+<script>
+  import { animate } from "motion";
+
+  const EXPAND_DURATION = 0.9;
+  const EASE = [0.76, 0, 0.24, 1] as const;
+
+  const overlay = document.getElementById("project-transition");
+  const backdrop = document.getElementById("project-transition-backdrop");
+  const target = document.getElementById("project-transition-target");
+  const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  const timing = (seconds: number) =>
+    prefersReducedMotion.matches ? 0 : seconds;
+
+  const box = (rect: DOMRect) => ({
+    top: `${rect.top}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
+  });
+
+  if (
+    overlay instanceof HTMLDivElement &&
+    backdrop instanceof HTMLDivElement &&
+    target instanceof HTMLDivElement
+  ) {
+    // The expanding copy of the thumbnail, present only while a transition
+    // runs. Compared by identity to tell whether a later navigation has taken
+    // over.
+    let clone: HTMLDivElement | null = null;
+
+    const reset = () => {
+      clone?.remove();
+      clone = null;
+      overlay.classList.add("invisible", "pointer-events-none");
+      animate(backdrop, { opacity: 0 }, { duration: 0 });
+    };
+
+    const expand = async (link: Element, thumbnail: HTMLImageElement) => {
+      const from = thumbnail.getBoundingClientRect();
+      const to = target.getBoundingClientRect();
+
+      // Animates the box rather than a transform: scaling unevenly would
+      // stretch the image, where resizing lets `object-cover` recrop it each
+      // frame.
+      const frame = document.createElement("div");
+      frame.className = "absolute overflow-hidden";
+      Object.assign(frame.style, box(from));
+
+      const image = new Image();
+      image.src = thumbnail.currentSrc || thumbnail.src;
+      image.alt = "";
+      image.className = "h-full w-full object-cover";
+
+      // Matches the overlay on the project hero, so the copy is already tinted
+      // the same by the time the hero takes over from it.
+      const tint = document.createElement("div");
+      tint.className = "bg-ink/60 absolute inset-0 opacity-0";
+
+      frame.append(image, tint);
+
+      reset();
+      clone = frame;
+      overlay.append(frame);
+
+      // The thumbnail's URL is already loaded, so this only waits for the
+      // copy to be paintable and avoids flashing an empty box over it.
+      await image.decode().catch(() => {});
+      if (clone !== frame) return;
+
+      overlay.classList.remove("invisible", "pointer-events-none");
+      // Both the thumbnail and its copy in the row's hover state.
+      link.querySelectorAll("img").forEach((img) => {
+        img.style.visibility = "hidden";
+      });
+
+      const options = { duration: timing(EXPAND_DURATION), ease: EASE };
+      const start = box(from);
+      const end = box(to);
+
+      await Promise.all([
+        animate(backdrop, { opacity: [0, 1] }, options),
+        animate(tint, { opacity: [0, 1] }, options),
+        animate(
+          frame,
+          {
+            top: [start.top, end.top],
+            left: [start.left, end.left],
+            width: [start.width, end.width],
+            height: [start.height, end.height],
+          },
+          options,
+        ),
+      ]);
+    };
+
+    document.addEventListener("astro:before-preparation", (e) => {
+      const link = e.sourceElement?.closest("[data-project-transition]");
+      const thumbnail = link?.querySelector("[data-project-thumbnail]");
+
+      if (!link || !(thumbnail instanceof HTMLImageElement)) return;
+
+      // The overlay is persisted across the swap, so this mark travels with it
+      // into the page being opened, where `reveal.astro` reads it and holds
+      // that page's entrance back until the hero is in place under the copy.
+      overlay.setAttribute("data-covering", "");
+
+      const loadNewDocument = e.loader;
+
+      e.loader = async () => {
+        await Promise.all([expand(link, thumbnail), loadNewDocument()]);
+      };
+    });
+
+    document.addEventListener("astro:after-swap", async () => {
+      const frame = clone;
+      if (!frame) return;
+
+      // Missing when another navigation, such as one from the nav, took over
+      // mid-expansion; that one brings its own curtain, which is covering the
+      // overlay by now.
+      const hero = document.getElementById("project-hero-image");
+      if (hero instanceof HTMLImageElement) {
+        await hero.decode().catch(() => {});
+      }
+
+      // The mark has done its job by now either way: the page being opened
+      // read it as it arrived.
+      overlay.removeAttribute("data-covering");
+
+      // The navigation that took over is covering this one and hands its own
+      // page over when it is ready, so announcing this one's arrival would
+      // start that page's entrance behind a curtain.
+      if (clone !== frame) return;
+
+      reset();
+      document.dispatchEvent(new Event("transition:handover"));
+    });
+  }
+</script>

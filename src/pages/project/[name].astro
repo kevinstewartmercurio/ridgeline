@@ -1,0 +1,42 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+
+import Layout from "../../layouts/Layout.astro";
+import Hero from "../../components/project/hero.astro";
+import SubHero from "../../components/project/sub-hero.astro";
+import Grid from "../../components/project/grid.astro";
+import NextProject from "../../components/project/next-project.astro";
+import Unreal from "../../components/unreal.astro";
+import Footer from "../../components/footer.astro";
+import Reveal from "../../components/reveal.astro";
+
+import { projects } from "../../data/projects";
+import { projectGrids } from "../../data/project-grids";
+
+export const getStaticPaths = (() =>
+  projects.map((project) => ({
+    params: { name: project.slug },
+    props: { project },
+  }))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { project } = Astro.props;
+
+const description = `${project.title} — a ${project.type.toLowerCase()} in ${project.location}, completed ${project.year} by Ridgeline Architecture Studio.`;
+---
+
+<Layout
+  title={`${project.title} — Ridgeline Architecture Studio`}
+  description={description}
+>
+  <main id="main-content" tabindex="-1" class="focus:outline-none">
+    <Hero project={project} />
+    <SubHero project={project} />
+    <Grid rows={projectGrids[project.slug] ?? []} />
+    <NextProject project={project} />
+    <Unreal />
+  </main>
+  <Footer />
+  <Reveal />
+</Layout>

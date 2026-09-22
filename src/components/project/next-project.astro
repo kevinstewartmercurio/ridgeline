@@ -1,0 +1,159 @@
+---
+import Arrow from "../arrow.astro";
+
+import { projects, type Project } from "../../data/projects";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+// Wraps around, so the last project points back at the first.
+const idx = projects.findIndex((item) => item.slug === project.slug);
+const next = projects[(idx + 1) % projects.length];
+---
+
+{
+  /* The link renders twice, as in `selected-work.astro`: the pine copy sits on
+     top of the alabaster one and is revealed by a clip-path wipe on hover. */
+}
+
+<section
+  id="next-project-section"
+  class="bg-alabaster relative z-10 px-5 pb-16 sm:px-8 md:pb-20 lg:px-10"
+>
+  <div class="mx-auto w-full max-w-344">
+    <h2
+      class="font-jetbrains text-ink/65 text-2xs mb-1.5 uppercase sm:mb-3 sm:text-xs"
+    >
+      Next project
+    </h2>
+    <a
+      href={`/project/${next.slug}`}
+      id="next-project-link"
+      aria-label={`Next project: ${next.title}, ${next.location}, completed ${next.year}`}
+      class="relative block focus-visible:outline-2 focus-visible:-outline-offset-2"
+    >
+      {
+        [0, 1].map((n) => (
+          <div
+            class:list={[
+              "flex w-full items-center justify-between gap-x-3 px-1.5 py-4 sm:gap-x-6 sm:px-3 md:px-4 md:py-5 lg:px-6 lg:py-7",
+              !n
+                ? "bg-alabaster"
+                : "next-project-selector bg-pine absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]",
+            ]}
+            aria-hidden={n ? "true" : undefined}
+          >
+            {/* The arrow sits inline so that it follows the last word when a
+                long title wraps, rather than being pushed to the far edge. */}
+            <span
+              class:list={[
+                "font-newsreader translate-y-0.5 text-2xl font-light sm:translate-y-1 sm:text-3xl md:text-4xl lg:translate-y-1.25 lg:text-5xl",
+                !n ? "text-pine" : "text-alabaster",
+              ]}
+            >
+              {next.title}
+              <Arrow
+                class={`ml-1.75 hidden w-10 -translate-y-1 align-middle sm:inline-block md:ml-2.5 md:w-12 lg:w-16 lg:-translate-y-1.5 ${!n ? "fill-pine" : "fill-alabaster"}`}
+              />
+            </span>
+            <span
+              class:list={[
+                "font-jetbrains text-2xs shrink-0 uppercase sm:text-xs",
+                !n ? "text-ink/65" : "text-alabaster",
+              ]}
+            >
+              {next.location} {next.year}
+            </span>
+          </div>
+        ))
+      }
+    </a>
+  </div>
+</section>
+
+<script>
+  import { animate } from "motion";
+
+  const init = () => {
+    const nextProjectSection = document.getElementById("next-project-section");
+    const nextProjectLink = document.getElementById("next-project-link");
+    const nextProjectSelector = document.querySelector(
+      ".next-project-selector",
+    );
+
+    const hoverDevice = matchMedia("(hover: hover)").matches;
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (
+      hoverDevice &&
+      nextProjectSection instanceof HTMLElement &&
+      nextProjectLink instanceof HTMLAnchorElement &&
+      nextProjectSelector instanceof HTMLDivElement
+    ) {
+      // `astro:page-load` runs this again after every navigation, so the
+      // listeners below are dropped as the page they belong to goes away.
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
+      let directionDown = true;
+      let prevY = 0;
+
+      nextProjectSection.addEventListener(
+        "mousemove",
+        (e) => {
+          directionDown = e.y > prevY;
+          prevY = e.y;
+        },
+        { signal },
+      );
+
+      window.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key === "Tab") {
+            directionDown = e.shiftKey ? false : true;
+          }
+        },
+        { signal },
+      );
+
+      // The pine copy wipes in from the edge the pointer crossed and back out
+      // the way it came.
+      const wipe = (show: boolean) => {
+        const away = directionDown
+          ? show
+            ? "inset(0% 0% 100% 0%)"
+            : "inset(100% 0% 0% 0%)"
+          : show
+            ? "inset(100% 0% 0% 0%)"
+            : "inset(0% 0% 100% 0%)";
+        const covered = "inset(0% 0% 0% 0%)";
+
+        animate(
+          nextProjectSelector,
+          { clipPath: show ? [away, covered] : [covered, away] },
+          { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+        );
+      };
+
+      ["mouseenter", "focus"].forEach((trigger) => {
+        nextProjectLink.addEventListener(trigger, () => wipe(true), { signal });
+      });
+
+      ["mouseleave", "blur"].forEach((trigger) => {
+        nextProjectLink.addEventListener(trigger, () => wipe(false), {
+          signal,
+        });
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>

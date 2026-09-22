@@ -1,24 +1,118 @@
 ---
+import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
+
+import Lenis from "../components/lenis.astro";
+import Nav from "../components/nav.astro";
+import PageTransition from "../components/page-transition.astro";
+import ProjectTransition from "../components/project-transition.astro";
+
 import "../styles/global.css";
 
 interface Props {
   title: string;
+  description: string;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
+
+// `site` is set in astro.config.mjs, so these resolve to the production domain.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shareImage = new URL("/og-image.jpg", Astro.site);
+const shareImageAlt =
+  "Larch House at dusk — a lit timber pavilion on stilts among ferns and trees.";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1f3d2b" />
+    {
+      /* The raster icons are generated from `favicon.svg`: the `.ico` for
+         browsers without SVG favicons (its `sizes` keeps SVG-capable browsers
+         on the vector), and the touch icon for iOS home screens. */
+    }
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ridgeline Architecture Studio" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={shareImageAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
+    <meta name="twitter:image:alt" content={shareImageAlt} />
+    <Font cssVariable="--newsreader" preload />
+    <Font cssVariable="--jetbrains-mono" preload />
+    <Font cssVariable="--instrument-sans" preload />
+    <ClientRouter />
   </head>
   <body>
+    {
+      /* First focusable thing on the page, so a keyboard user can get past the
+         fixed nav — and, on a narrow screen, past the whole menu — without
+         tabbing through it on every navigation. Hidden until it takes focus.
+         `z-50` puts it over the nav's `z-40`. */
+    }
+    <a
+      href="#main-content"
+      class="bg-pine text-alabaster font-jetbrains sr-only text-xs uppercase focus:not-sr-only focus:fixed focus:top-5 focus:left-5 focus:z-50 focus:px-4 focus:py-3"
+    >
+      Skip to content
+    </a>
+    <Lenis />
+    <Nav />
     <slot />
+    <ProjectTransition />
+    <PageTransition />
   </body>
 </html>
+
+<style is:global>
+  .uline {
+    position: relative;
+  }
+
+  .uline::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    transform-origin: bottom right;
+    transform: scaleX(0);
+    /* Tailwind's `transition` easing and `duration-300`. */
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Swapping the origin makes the underline wipe out the way it came in. */
+  .uline:hover::after,
+  .uline:focus-visible::after,
+  .uline[data-active="true"]::after {
+    transform-origin: bottom left;
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .uline::after {
+      transition: none;
+    }
+  }
+</style>

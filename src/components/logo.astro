@@ -1,0 +1,17 @@
+---
+const { ...props } = Astro.props;
+---
+
+<svg
+  width="200"
+  height="200"
+  viewBox="0 0 200 200"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  {...props}
+>
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M0 0H200V200H0V0ZM0 200V150L72 78L128 134L200 62V200H0Z"></path>
+</svg>

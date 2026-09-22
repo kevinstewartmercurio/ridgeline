@@ -1,0 +1,59 @@
+<section
+  class="bg-alabaster xs:pt-16 relative z-10 px-5 pt-12 sm:px-8 lg:px-10 lg:pt-20"
+>
+  <div class="mx-auto w-full max-w-344">
+    {
+      /* The eyebrow, the pair of columns, and the row of figures each rise as
+         they reach the viewport: the two columns together, and the row as one
+         piece so its rules stay ruled while it moves. See `reveal.astro`. */
+    }
+    <p
+      data-reveal
+      class="font-jetbrains text-2xs mb-6 tracking-tight uppercase opacity-65 md:text-xs lg:mb-8 xl:mb-10"
+    >
+      Residential architecture and design-build · Est. 2011
+    </p>
+    <div
+      data-reveal-group
+      class="xs:mb-12 mb-8 w-full space-y-3 gap-x-20 md:flex lg:mb-16 xl:mb-20"
+    >
+      <div data-reveal class="md:w-1/2">
+        <p
+          class="font-newsreader max-w-lg text-4xl font-light md:max-w-88 xl:max-w-116 xl:text-5xl"
+        >
+          Homes that could only have been built for you.
+        </p>
+      </div>
+      <div data-reveal class="md:w-1/2">
+        <p class="font-instrument max-w-xl opacity-65 md:max-w-121 xl:text-lg">
+          A boutique studio of fourteen. Every project begins with an architect
+          and stays with us through final walkthrough.
+        </p>
+      </div>
+    </div>
+    <div
+      data-reveal
+      class="xs:flex xs:max-w-none mx-auto w-full max-w-90 justify-between"
+    >
+      {
+        [
+          "8-10 active projects at a time",
+          "Design and construction oversight, one roof",
+          "$1.5M to $8M+ typical project value",
+        ].map((s, idx) => (
+          <div
+            class:list={[
+              "border-ink/12 xs:border-t grow border-b px-3 py-2 text-center md:px-5 md:py-4 xl:text-left",
+              idx === 0 && "border-t",
+              idx === 1 && "xs:border-x",
+            ]}
+          >
+            <p class="font-jetbrains text-2xs uppercase opacity-65 md:text-xs">
+              {s}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

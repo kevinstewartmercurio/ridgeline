@@ -1,0 +1,187 @@
+---
+import { address, year } from "../data/studio";
+---
+
+<footer class="sticky bottom-0 w-full">
+  <div class="bg-pine px-5 pt-10 pb-6 sm:px-8 lg:px-10 lg:pb-10">
+    <div class="mx-auto w-full max-w-344">
+      <div
+        class="border-alabaster/15 w-full space-y-8 gap-x-8 border-t pt-10 md:flex md:pt-14 lg:gap-x-12 xl:gap-x-16"
+      >
+        <div class="space-y-4 md:w-1/2 lg:space-y-6">
+          <h2
+            class="text-alabaster font-newsreader text-5xl/[85%] font-light md:text-6xl/[85%] lg:text-7xl/[85%] xl:text-8xl/[85%]"
+          >
+            Start a conversation
+          </h2>
+          <p
+            class="font-instrument text-alabaster max-w-md text-sm opacity-65 md:text-base xl:max-w-124 xl:text-lg"
+          >
+            Tell us the project type, roughly where it sits, and when you would
+            like to be living in it. A partner replies to every enquiry.
+          </p>
+        </div>
+        <div class="max-w-lg pb-10 md:w-1/2 md:max-w-none">
+          <form data-convo-form>
+            {
+              (
+                [
+                  { id: "name", type: "text", label: "Name" },
+                  { id: "email", type: "email", label: "Email Address" },
+                  { id: "phone", type: "tel", label: "Phone Number" },
+                ] as const
+              ).map((inputObj, idx) => (
+                <div
+                  class:list={[
+                    "border-alabaster/14 relative",
+                    !idx ? "border-y" : "border-b",
+                  ]}
+                >
+                  <input
+                    id={inputObj.id}
+                    type={inputObj.type}
+                    placeholder={inputObj.label}
+                    required={inputObj.id !== "phone"}
+                    class="peer text-alabaster/65 font-newsreader ring-alabaster w-full px-2.5 pt-5 pb-2.5 text-lg placeholder-transparent outline-none focus:ring-1"
+                  />
+                  <label
+                    for={inputObj.id}
+                    class="font-jetbrains text-alabaster/65 absolute top-2.75 left-2.5 -translate-y-1/2 text-[0.5625rem] uppercase duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-xs peer-focus:top-2.75 peer-focus:text-[0.5625rem]"
+                  >
+                    {inputObj.label}
+                  </label>
+                </div>
+              ))
+            }
+            <div class="border-alabaster/14 relative border-b">
+              <textarea
+                id="message"
+                placeholder="Message"
+                rows="6"
+                required
+                class="peer text-alabaster/65 font-newsreader ring-alabaster w-full resize-none px-2.5 py-4 text-lg placeholder-transparent outline-none focus:ring-1"
+              ></textarea>
+              <label
+                for="message"
+                class="font-jetbrains text-alabaster/65 absolute top-2.75 left-2.5 -translate-y-1/2 text-[0.5625rem] uppercase duration-300 peer-placeholder-shown:top-7.5 peer-placeholder-shown:text-xs peer-focus:top-2.75 peer-focus:text-[0.5625rem]"
+              >
+                Message
+              </label>
+            </div>
+            <button
+              type="submit"
+              aria-haspopup="dialog"
+              class="text-pine bg-alabaster font-jetbrains mt-6 cursor-pointer px-4 py-3 text-xs uppercase lg:px-5 lg:py-4"
+              >Send Enquiry</button
+            >
+          </form>
+        </div>
+      </div>
+      <div
+        class="font-jetbrains text-alabaster/65 text-2xs border-alabaster/15 flex w-full flex-col gap-y-8 border-t py-6 uppercase sm:flex-row sm:justify-between md:grid md:grid-cols-3"
+      >
+        <div>
+          <a href="/" class="uline after:bg-alabaster after:h-[0.5px]!">
+            Ridgeline Architecture Studio
+          </a>
+          <span class="block">© {year} Ridgeline Architecture Studio</span>
+          <br /><br class="hidden sm:block" />
+          Designed and built by
+          <br class="hidden sm:block md:hidden" />
+          <a
+            href="https://www.kevinstewartmercurio.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="uline after:bg-alabaster text-nowrap after:h-[0.5px]!"
+            >Kevin Stewart-Mercurio</a
+          >
+        </div>
+        <div class="flex sm:justify-center">
+          <div>
+            <button
+              type="button"
+              data-convo-btn
+              aria-haspopup="dialog"
+              class="uline after:bg-alabaster cursor-pointer uppercase after:h-[0.5px]!"
+            >
+              (360) 555-0148
+            </button>
+            <br /><br />
+
+            <button
+              type="button"
+              data-convo-btn
+              aria-haspopup="dialog"
+              class="group cursor-pointer text-left uppercase"
+            >
+              <span
+                class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+                >{address.street}</span
+              >
+              <br />
+              <span
+                class="after:bg-alabaster relative after:absolute after:bottom-0 after:left-0 after:h-[0.5px] after:w-full after:origin-bottom-right after:scale-x-0 after:transform after:transition after:delay-150 after:duration-300 group-hover:after:origin-bottom-left group-hover:after:scale-x-100 group-focus-visible:after:origin-bottom-left group-focus-visible:after:scale-x-100 data-[active=true]:after:origin-bottom-left data-[active=true]:after:scale-x-100"
+              >
+                {address.city}
+              </span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex gap-x-6 gap-y-1 sm:flex-col sm:items-end md:flex-row md:justify-end lg:gap-x-8"
+          >
+            {
+              ["Instagram", "LinkedIn", "Contact"].map((s) => (
+                <button
+                  type="button"
+                  data-convo-btn
+                  aria-haspopup="dialog"
+                  class="uline after:bg-alabaster cursor-pointer uppercase after:h-[0.5px]!"
+                >
+                  {s}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const init = () => {
+    const footer = document.querySelector("footer");
+
+    if (footer instanceof HTMLElement) {
+      // `astro:page-load` runs this again after every navigation, so the
+      // listener below is dropped as the footer it belongs to goes away.
+      const controller = new AbortController();
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
+      // A footer taller than the viewport can't be stuck to the bottom: the
+      // top of it would scroll out of reach above the fold.
+      const updateSticky = () => {
+        // Measured unstuck, so the height doesn't depend on the current state.
+        footer.classList.remove("sticky", "bottom-0");
+
+        if (footer.getBoundingClientRect().height <= window.innerHeight) {
+          footer.classList.add("sticky", "bottom-0");
+        }
+      };
+
+      window.addEventListener("resize", updateSticky, {
+        signal: controller.signal,
+      });
+
+      // The markup ships sticky, so the first load needs this too.
+      updateSticky();
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>

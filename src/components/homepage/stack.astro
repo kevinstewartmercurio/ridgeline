@@ -1,0 +1,98 @@
+---
+import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
+
+import stack1Image from "../../images/homepage/stack-1.jpg";
+import stack2Image from "../../images/homepage/stack-2.jpg";
+import stack3Image from "../../images/homepage/stack-3.jpg";
+import stack4Image from "../../images/homepage/stack-4.jpg";
+
+const cards = [
+  {
+    img: {
+      src: stack1Image,
+      alt: "Low modern house with pale panelled walls, tall black-framed windows and a timber front door, set into a wooded slope above a curving drive.",
+    },
+    span: "Our Position",
+    p: "A home should be designed around how a family actually lives, not around a template.",
+  },
+  {
+    img: {
+      src: stack2Image,
+      alt: "Timber-clad cabin with a round window, raised on steel posts among eucalyptus, its glass wall slid open onto a warm interior.",
+    },
+    span: "One Roof",
+    p: "Design and construction oversight stay in-house from day one. Fewer handoffs, shorter timelines, fewer cost overruns.",
+  },
+  {
+    img: {
+      src: stack3Image,
+      alt: "Open-tread timber stair in front of a glass-walled sitting room with a sofa and a cello, looking out into the forest.",
+    },
+    span: "Small Roster",
+    p: "Eight to ten active projects at a time, so every home gets partner-level attention rather than a junior team.",
+  },
+  {
+    img: {
+      src: stack4Image,
+      alt: "Two-storey glass living room and cantilevered timber decks of a dark-framed house among tall cedars.",
+    },
+    span: "Architect First",
+    p: "Every engagement opens with an architect on the site, reading the land before anything is drawn.",
+  },
+];
+---
+
+{
+  /* Each card slides up over the one before it. The card's own words rise into
+     place once they have come far enough up the screen to be read, which is
+     watched for on the block holding them rather than on the card, since the
+     card's top edge arrives a screen's height ahead of them. See
+     `reveal.astro`. */
+}
+
+<section class="bg-pine relative z-10">
+  <div class="relative w-full">
+    {
+      cards.map((card, idx) => (
+        <div class="sticky top-0 h-screen w-full">
+          <div class="relative h-full w-full">
+            <Image
+              src={card.img.src}
+              alt={card.img.alt}
+              widths={imageWidths}
+              sizes="100vw"
+              class="h-full w-full object-cover"
+            />
+            <div class="absolute top-0 left-0 h-full w-full bg-[linear-gradient(to_bottom,#141412E0,#14141280,#14141240)] opacity-20" />
+            <div
+              class:list={[
+                "bg-ink absolute top-0 left-0 h-full w-full",
+                idx === 3 ? "opacity-60" : "opacity-50",
+              ]}
+            />
+            <div
+              data-reveal-group
+              class="absolute bottom-[calc(min(20%,160px))] left-1/2 w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10"
+            >
+              <div class="mx-auto w-full max-w-344">
+                <span
+                  data-reveal
+                  class="font-jetbrains text-alabaster mb-2 block text-xs uppercase md:mb-3 md:text-sm"
+                >
+                  {card.span}
+                </span>
+                <p
+                  data-reveal
+                  class="font-newsreader text-alabaster max-w-md text-2xl font-light md:max-w-135 md:text-3xl lg:max-w-2xl lg:text-4xl"
+                >
+                  {card.p}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

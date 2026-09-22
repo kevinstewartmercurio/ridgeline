@@ -1,0 +1,65 @@
+---
+import { type Project } from "../../data/projects";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const details = [
+  { label: "Location", value: project.location },
+  { label: "Program", value: project.details.program },
+  { label: "Site", value: project.details.site },
+  { label: "Completed", value: project.details.completed },
+  { label: "Scope", value: project.details.scope },
+];
+---
+
+{
+  /* The row of five reflows to three over two, then two with the last cell
+     spanning both, then one. Each cell's rules are set per position rather than
+     on the grid, since which cell starts a row changes with the column count:
+     a cell draws a rule on its left unless it is first in its row, and on its
+     top unless it is in the first row.
+
+     The table rises into place as one piece rather than cell by cell, so its
+     rules stay ruled while it moves. See `reveal.astro`. */
+}
+
+<section
+  class="bg-alabaster xs:pt-16 relative z-10 px-5 pt-12 pb-12 sm:px-8 lg:px-10 lg:pt-20 lg:pb-20"
+>
+  <div class="mx-auto w-full max-w-344">
+    <dl
+      data-reveal
+      class="2xs:grid-cols-2 border-ink/14 grid w-full grid-cols-1 border-y sm:grid-cols-6 lg:grid-cols-5"
+    >
+      {
+        details.map((detail, idx) => (
+          <div
+            class:list={[
+              "border-ink/14 px-3 py-5 lg:px-6 lg:py-6",
+              // Three over two across six columns, so the pair below fills the
+              // same width as the three above it.
+              idx < 3 ? "sm:col-span-2" : "sm:col-span-3",
+              "lg:col-span-1",
+              idx === 1 && "2xs:border-t-0 2xs:border-l border-t",
+              idx === 2 && "border-t sm:border-t-0 sm:border-l",
+              idx === 3 &&
+                "2xs:border-l border-t sm:border-l-0 lg:border-t-0 lg:border-l",
+              idx === 4 && "2xs:col-span-2 border-t sm:border-l lg:border-t-0",
+            ]}
+          >
+            <dt class="font-jetbrains text-ink/65 text-2xs mb-2 uppercase">
+              {detail.label}
+            </dt>
+            <dd class="font-newsreader text-ink text-base/[120%] font-light lg:text-lg/[120%]">
+              {detail.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

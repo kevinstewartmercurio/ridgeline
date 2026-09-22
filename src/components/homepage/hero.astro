@@ -1,0 +1,50 @@
+---
+import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
+
+import heroImage from "../../images/larch-house/hero.jpg";
+---
+
+<section class="relative z-10 h-screen max-h-224 w-full">
+  <Image
+    src={heroImage}
+    alt="Larch House at dusk — a lit timber pavilion on stilts among ferns and trees."
+    widths={imageWidths}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="h-full w-full object-cover"
+  />
+  <div
+    class="absolute top-0 left-0 h-full w-full bg-[linear-gradient(to_bottom,#141412E0,#14141280,#14141240)] opacity-20"
+  >
+  </div>
+  <div class="bg-ink/30 absolute top-0 left-0 h-full w-full"></div>
+  <div
+    class="absolute top-0 left-1/2 h-full w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10"
+  >
+    <div class="mx-auto h-full w-full max-w-344">
+      {
+        /* Both rise into place once the page has landed, which leaves the
+           photograph alone to arrive with the page. See `reveal.astro`. */
+      }
+      <div
+        data-reveal-group="entrance"
+        class="flex h-full w-full flex-col justify-end md:flex-row md:items-end md:justify-between"
+      >
+        <h1
+          data-reveal
+          class="font-newsreader text-alabaster xs:text-7xl 2xs:text-6xl mb-1.5 max-w-sm text-5xl font-light sm:mb-3 md:mb-5 lg:max-w-lg lg:text-8xl 2xl:max-w-3xl 2xl:text-9xl"
+        >
+          Ridgeline Architecture Studio
+        </h1>
+        <p
+          data-reveal
+          class="font-newsreader text-alabaster/85 xs:text-base 2xs:text-sm mb-5 text-xs italic sm:mb-9 md:text-end"
+        >
+          Larch House. Methow Valley, WA.<br class="lg:hidden" /> Completed 2025.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

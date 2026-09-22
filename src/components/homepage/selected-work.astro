@@ -1,0 +1,198 @@
+---
+import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
+
+import { projects } from "../../data/projects";
+---
+
+<section
+  id="selected-work-section"
+  class="bg-alabaster relative z-10 px-5 py-16 sm:px-8 md:py-20 lg:px-10"
+>
+  <div class="mx-auto w-full max-w-344">
+    {
+      /* The heading and then each row rise as they reach the viewport, a row
+         at a time rather than the list as one piece, so the list unrolls under
+         a scroll instead of arriving with its last rows still below the fold.
+         See `reveal.astro`. */
+    }
+    <div class="text-ink">
+      <h2
+        data-reveal
+        class="text-pine font-newsreader 2xs:text-6xl flex w-full justify-between text-5xl font-light md:text-7xl lg:text-8xl"
+      >
+        <span>Selected</span>
+        <span>Work</span>
+      </h2>
+      <div>
+        {
+          projects.map((project, idx) => (
+            <a
+              href={`/project/${project.slug}`}
+              data-project-transition
+              data-reveal
+              class:list={[
+                // `block` so the row can be moved: a transform has no effect
+                // on an inline box, which is what the anchor would otherwise
+                // be.
+                "group project-link font-jetbrains text-ink/65 relative block text-xs uppercase focus-visible:outline-2 focus-visible:-outline-offset-2 sm:text-sm",
+              ]}
+            >
+              {[0, 1].map((n) => (
+                <div
+                  class:list={[
+                    "xs:grid-cols-[20px_1fr_1fr_72px] grid w-full grid-cols-[20px_1fr_80px] items-center gap-x-4 py-2 pl-1.5 sm:grid-cols-[24px_1fr_0.875fr_80px] sm:gap-x-5 md:grid-cols-[36px_1.375fr_1fr_0.25fr_90px] md:py-4 lg:grid-cols-[50px_2.25fr_1.5fr_1fr_0.5fr_90px] lg:py-5",
+                    n &&
+                      "bg-pine project-selector text-alabaster absolute top-0 left-0 h-full w-full [clip-path:inset(0%_0%_100%_0%)]",
+                  ]}
+                  aria-hidden={n ? "true" : "false"}
+                >
+                  {!idx && (
+                    <hr
+                      class:list={[
+                        "absolute top-0 left-0 h-px w-full",
+                        !n ? "border-ink/12" : "border-pine",
+                      ]}
+                    />
+                  )}
+                  <span class="block">{String(idx + 1).padStart(2, "0")}</span>
+                  <h3
+                    class:list={[
+                      "font-newsreader text-xl font-light normal-case sm:text-2xl md:text-3xl lg:text-4xl",
+                      !n ? "text-ink" : "text-alabaster",
+                    ]}
+                  >
+                    {project.title}
+                  </h3>
+                  <span class="xs:block hidden">{project.location}</span>
+                  <span class="hidden lg:block">{project.type}</span>
+                  <span class="hidden md:block">{project.year}</span>
+                  {/* Sized as the project hero rather than the thumbnail it
+                      is here: the thumbnail grows into that hero on click,
+                      and matching its options means both pick the same
+                      srcset candidate. See `project/hero.astro`. */}
+                  <Image
+                    src={project.img.src}
+                    alt={project.img.alt}
+                    widths={imageWidths}
+                    sizes="100vw"
+                    class="h-14 w-22.5 object-cover"
+                    data-project-thumbnail={!n || undefined}
+                  />
+                  <hr
+                    class:list={[
+                      "absolute bottom-0 left-0 h-px w-full",
+                      !n ? "border-ink/12" : "border-pine",
+                    ]}
+                  />
+                </div>
+              ))}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { animate } from "motion";
+
+  const init = () => {
+    const selectedWorkSection = document.getElementById(
+      "selected-work-section",
+    );
+    const projectLinks = document.querySelectorAll(".project-link");
+    const projectSelectors = document.querySelectorAll(".project-selector");
+
+    const hoverDevice = matchMedia("(hover: hover)").matches;
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (hoverDevice && selectedWorkSection instanceof HTMLElement) {
+      // `astro:page-load` runs this again after every navigation, so the
+      // listeners below are dropped as the page they belong to goes away.
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      document.addEventListener("astro:before-swap", () => controller.abort(), {
+        once: true,
+      });
+
+      let directionDown = true;
+      let prevY = 0;
+
+      selectedWorkSection.addEventListener(
+        "mousemove",
+        (e) => {
+          directionDown = e.y > prevY;
+          prevY = e.y;
+        },
+        { signal },
+      );
+
+      window.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key === "Tab") {
+            directionDown = e.shiftKey ? false : true;
+          }
+        },
+        { signal },
+      );
+
+      projectLinks.forEach((project, idx) => {
+        if (project instanceof HTMLAnchorElement) {
+          ["mouseenter", "focus"].forEach((trigger) => {
+            project.addEventListener(
+              trigger,
+              () => {
+                if (projectSelectors[idx] instanceof HTMLDivElement) {
+                  animate(
+                    projectSelectors[idx],
+                    {
+                      clipPath: [
+                        directionDown
+                          ? "inset(0% 0% 100% 0%)"
+                          : "inset(100% 0% 0% 0%)",
+                        "inset(0% 0% 0% 0%)",
+                      ],
+                    },
+                    {
+                      duration: prefersReducedMotion.matches ? 0 : 0.3,
+                    },
+                  );
+                }
+              },
+              { signal },
+            );
+          });
+
+          ["mouseleave", "blur"].forEach((trigger) => {
+            project.addEventListener(
+              trigger,
+              () => {
+                if (projectSelectors[idx] instanceof HTMLDivElement) {
+                  animate(
+                    projectSelectors[idx],
+                    {
+                      clipPath: [
+                        "inset(0% 0% 0% 0%)",
+                        directionDown
+                          ? "inset(100% 0% 0% 0%)"
+                          : "inset(0% 0% 100% 0%)",
+                      ],
+                    },
+                    { duration: prefersReducedMotion.matches ? 0 : 0.3 },
+                  );
+                }
+              },
+              { signal },
+            );
+          });
+        }
+      });
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>

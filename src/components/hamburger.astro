@@ -1,0 +1,48 @@
+---
+const { ...props } = Astro.props;
+---
+
+<svg
+  id="hamburger-icon"
+  width="33"
+  height="33"
+  viewBox="0 0 33 33"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+  focusable="false"
+  {...props}
+>
+  <line
+    y1="7"
+    x2="33"
+    y2="7"
+    class="stroke-pine origin-top-left duration-300"
+    stroke-width="2"></line>
+  <line
+    y1="16"
+    x2="33"
+    y2="16"
+    class="stroke-pine origin-top-right duration-300"
+    stroke-width="2"></line>
+  <line
+    y1="25"
+    x2="33"
+    y2="25"
+    class="stroke-pine opacity-100 duration-300"
+    stroke-width="2"></line>
+</svg>
+
+<style is:global>
+  .open line:nth-of-type(1) {
+    transform: translateX(10px) rotate(45deg);
+  }
+
+  .open line:nth-of-type(2) {
+    transform: translate(-16px, -7px) rotate(-45deg);
+  }
+
+  .open line:nth-of-type(3) {
+    opacity: 0;
+  }
+</style>
