@@ -22,16 +22,21 @@ export const getStaticPaths = (() =>
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { project } = Astro.props;
+
+const description = `${project.title} — a ${project.type.toLowerCase()} in ${project.location}, completed ${project.year} by Ridgeline Architecture Studio.`;
 ---
 
-<Layout title={`${project.title} — Ridgeline Architecture Studio`}>
-  <main>
+<Layout
+  title={`${project.title} — Ridgeline Architecture Studio`}
+  description={description}
+>
+  <main id="main-content" tabindex="-1" class="focus:outline-none">
     <Hero project={project} />
     <SubHero project={project} />
     <Grid rows={projectGrids[project.slug] ?? []} />
     <NextProject project={project} />
     <Unreal />
-    <Footer />
   </main>
+  <Footer />
   <Reveal />
 </Layout>

@@ -10,15 +10,18 @@ import Footer from "../components/footer.astro";
 import Reveal from "../components/reveal.astro";
 ---
 
-<Layout title="Ridgeline Architecture Studio">
-  <main class="relative">
+<Layout
+  title="Ridgeline Architecture Studio"
+  description="A boutique residential architecture and design-build studio of fourteen, working on one-of-a-kind homes across the Pacific Northwest since 2011."
+>
+  <main id="main-content" tabindex="-1" class="relative focus:outline-none">
     <Hero />
     <SubHero />
     <SelectedWork />
     <Stack />
     <WhatWeDo />
     <Unreal />
-    <Footer />
   </main>
+  <Footer />
   <Reveal />
 </Layout>

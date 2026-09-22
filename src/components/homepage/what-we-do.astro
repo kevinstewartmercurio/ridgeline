@@ -75,7 +75,7 @@ const services = [
             src={img.src}
             alt={img.alt}
             class:list={[
-              "aspect-square w-full object-cover duration-500",
+              "aspect-square w-full object-cover duration-500 motion-reduce:transition-none",
               !idx ? "opacity-100" : "absolute top-0 left-0 opacity-0",
             ]}
           />
@@ -91,7 +91,7 @@ const services = [
         services.map((service, idx) => (
           <div
             class:list={[
-              "service-card border-ink/12 relative border-t duration-300 lg:aspect-square",
+              "service-card border-ink/12 relative border-t duration-300 motion-reduce:transition-none lg:aspect-square",
               idx === 1 && "xs:border-l md:border-l-0 lg:border-l",
               idx === 2 && "xs:border-b md:border-b-0 lg:border-b",
               idx === 3 && "xs:border-l border-b md:border-l-0 lg:border-l",
@@ -101,17 +101,17 @@ const services = [
             {!idx && (
               <div
                 id="service-card-selector-bg"
-                class="bg-pine pointer-events-none absolute top-0 left-0 z-10 h-full w-full duration-300 md:h-[calc(100%+1px)] lg:h-full"
+                class="bg-pine pointer-events-none absolute top-0 left-0 z-10 h-full w-full duration-300 motion-reduce:transition-none md:h-[calc(100%+1px)] lg:h-full"
               />
             )}
             {!idx && (
               <div
                 id="service-card-selector-logo-container"
-                class="pointer-events-none absolute top-0 left-0 z-30 h-full w-full bg-transparent duration-300 md:h-[calc(100%+1px)] lg:h-full"
+                class="pointer-events-none absolute top-0 left-0 z-30 h-full w-full bg-transparent duration-300 motion-reduce:transition-none md:h-[calc(100%+1px)] lg:h-full"
               >
                 <div
                   id="service-card-selector-logo"
-                  class="bg-alabaster absolute top-2 right-2 flex h-8 w-8 origin-top-right scale-0 items-center justify-center duration-300 md:top-1/4 md:right-3 lg:top-5 lg:right-5 lg:h-12 lg:w-12 xl:h-16 xl:w-16"
+                  class="bg-alabaster absolute top-2 right-2 flex h-8 w-8 origin-top-right scale-0 items-center justify-center duration-300 motion-reduce:transition-none md:top-1/4 md:right-3 lg:top-5 lg:right-5 lg:h-12 lg:w-12 xl:h-16 xl:w-16"
                 >
                   <Logo class="fill-pine h-3/4 w-3/4 lg:h-8 lg:w-8 xl:h-12 xl:w-12" />
                 </div>

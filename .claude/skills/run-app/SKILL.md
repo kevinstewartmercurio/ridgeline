@@ -25,10 +25,11 @@ verification, and only ever stop what you started on that port.
 ```bash
 # start (background), reclaiming 4322 from a prior run — do NOT touch 4321
 lsof -ti:4322 -sTCP:LISTEN | xargs -r kill 2>/dev/null
-cd /Users/ksm/Desktop/dev/ridgeline
-(./node_modules/.bin/astro dev --port 4322 > /tmp/astro-4322.log 2>&1 &)
+cd "$(git rev-parse --show-toplevel)"
+LOG="${TMPDIR:-/tmp}/astro-4322.log"
+(./node_modules/.bin/astro dev --port 4322 > "$LOG" 2>&1 &)
 i=0; until curl -sf http://localhost:4322/ >/dev/null || [ $i -ge 30 ]; do sleep 1; i=$((i+1)); done
-curl -sf http://localhost:4322/ >/dev/null && echo READY || { echo NOTREADY; cat /tmp/astro-4322.log; }
+curl -sf http://localhost:4322/ >/dev/null && echo READY || { echo NOTREADY; cat "$LOG"; }
 
 # ...drive it (see below)...
 
@@ -36,29 +37,34 @@ curl -sf http://localhost:4322/ >/dev/null && echo READY || { echo NOTREADY; cat
 lsof -ti:4322 -sTCP:LISTEN | xargs -r kill 2>/dev/null
 ```
 
+Resolve the repo root with `git rev-parse --show-toplevel` rather than
+hardcoding a path — this skill has to run on whatever machine the session
+is on, including a Linux cloud session.
+
 macOS doesn't ship `timeout`, so poll with the `until`/`sleep` loop
-above rather than `timeout ... curl`.
+above rather than `timeout ... curl`. If `lsof` is missing (some minimal
+Linux images), `fuser -k 4322/tcp` does the same job.
 
 The repo uses **bun** (`bun.lockb`, `@types/bun`), so `bun run dev` also
 works, but calling `./node_modules/.bin/astro` directly is what lets you
 pass `--port` without argument-forwarding quirks.
 
-### CLAUDE.md's background flags do not exist
+### There are no `astro dev` background flags
 
-`CLAUDE.md` says to use `astro dev --background` and manage it with
-`astro dev stop` / `status` / `logs`. **Astro 6.2.2 has none of these.**
-`--background` is silently ignored and the server runs in the
-foreground; `astro dev status` treats `status` as a stray positional and
-just starts a server, which then hangs the tool call. Background it with
-the shell (`&`) as above and stop it by port, as shown. If CLAUDE.md is
-ever corrected or Astro gains the flag, prefer whatever it says then.
+**Astro 6.2.2 has no `--background` flag and no `astro dev stop` /
+`status` / `logs` subcommands.** `--background` is silently ignored and
+the server runs in the foreground; `astro dev status` treats `status` as
+a stray positional and just starts a server, which then hangs the tool
+call. Background it with the shell (`&`) as above and stop it by port, as
+shown. `AGENTS.md` used to document those flags and now points here
+instead.
 
 ## Checking for errors without a browser
 
 Fastest signal, and enough for most changes:
 
 ```bash
-cd /Users/ksm/Desktop/dev/ridgeline
+cd "$(git rev-parse --show-toplevel)"
 ./node_modules/.bin/astro check     # types + template diagnostics
 ./node_modules/.bin/astro build     # full build; `bun run build` = check && build
 ```
@@ -74,29 +80,37 @@ grep -o '<title>[^<]*</title>' dist/index.html dist/studio/index.html
 
 ## Driving the page
 
-`chromium-cli` isn't installed on this machine and there's no global
-Playwright, but Playwright's Chromium build is already cached under
-`~/Library/Caches/ms-playwright`. Rather than adding a devDependency to
-the repo just for a one-off screenshot, install it into a throwaway
-directory and point at the cached browser binary:
+`chromium-cli` isn't installed and there's no global Playwright, but a
+Chromium build is usually already on the machine. Rather than adding a
+devDependency to the repo just for a one-off screenshot, install
+Playwright into a throwaway directory and point it at that browser:
 
 ```bash
 WORK=$(mktemp -d)
 cd "$WORK"
 npm init -y >/dev/null 2>&1
-npm install playwright@1.62.0 >/dev/null 2>&1
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install playwright@1.62.0 >/dev/null 2>&1
 ```
 
-Find the cached Chromium binary dynamically (version numbers drift as
-Playwright updates — the `.app` sits three levels down, e.g.
-`chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app`):
+Find the browser rather than hardcoding a path. Check
+`PLAYWRIGHT_BROWSERS_PATH` first — Linux cloud sessions set it (to
+`/opt/pw-browsers`) and ship Chromium preinstalled — then fall back to
+the per-platform cache. Version numbers drift as Playwright updates, so
+match on the `chromium-*` directory rather than a fixed build number:
 
 ```bash
-find ~/Library/Caches/ms-playwright -maxdepth 3 -iname "*.app" -path "*chromium-*" | sort -V | tail -1
+PW_CACHE="${PLAYWRIGHT_BROWSERS_PATH:-$HOME/Library/Caches/ms-playwright}"
+[ -d "$PW_CACHE" ] || PW_CACHE="$HOME/.cache/ms-playwright"   # Linux default
+
+# Linux: a plain `chrome` binary, sometimes directly at $PLAYWRIGHT_BROWSERS_PATH/chromium
+find "$PW_CACHE" -maxdepth 3 -type f -name chrome -path "*chrom*" | sort -V | tail -1
+# macOS: an .app bundle, e.g. chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app
+find "$PW_CACHE" -maxdepth 3 -iname "*.app" -path "*chromium-*" | sort -V | tail -1
 ```
 
-Then write a script in `$WORK` that does
-`chromium.launch({ executablePath: "<that path>/Contents/MacOS/Google Chrome for Testing" })`,
+Then write a script in `$WORK` that passes whichever path you found as
+`chromium.launch({ executablePath })` — on macOS append
+`/Contents/MacOS/Google Chrome for Testing` to the `.app` bundle — then
 navigates to `http://localhost:4322/`, interacts, and screenshots to a
 file in `$WORK`. Read the screenshots back with the Read tool.
 
@@ -104,6 +118,9 @@ If the installed `playwright` npm version doesn't match the cached
 browser build (`browserType.launch: Executable doesn't exist...`),
 that's expected — the `executablePath` override bypasses Playwright's
 own version check, so it still works against the cached binary.
+
+On Linux, launch with `--no-sandbox` if Chromium refuses to start in a
+container.
 
 ### What to actually exercise
 

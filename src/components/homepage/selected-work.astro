@@ -34,7 +34,7 @@ import { projects } from "../../data/projects";
                 // `block` so the row can be moved: a transform has no effect
                 // on an inline box, which is what the anchor would otherwise
                 // be.
-                "group project-link font-jetbrains text-ink/65 relative block text-xs uppercase outline-0 sm:text-sm",
+                "group project-link font-jetbrains text-ink/65 relative block text-xs uppercase focus-visible:outline-2 focus-visible:-outline-offset-2 sm:text-sm",
               ]}
             >
               {[0, 1].map((n) => (
@@ -101,11 +101,7 @@ import { projects } from "../../data/projects";
     const hoverDevice = matchMedia("(hover: hover)").matches;
     const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-    if (!hoverDevice) {
-      projectLinks.forEach((project) => {
-        project.classList.remove("outline-0");
-      });
-    } else if (selectedWorkSection instanceof HTMLElement) {
+    if (hoverDevice && selectedWorkSection instanceof HTMLElement) {
       // `astro:page-load` runs this again after every navigation, so the
       // listeners below are dropped as the page they belong to goes away.
       const controller = new AbortController();
