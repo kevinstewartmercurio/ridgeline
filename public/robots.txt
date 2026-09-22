@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ridgeline-five-puce.vercel.app/sitemap-index.xml
