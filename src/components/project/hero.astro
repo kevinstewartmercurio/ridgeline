@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
 
 import { type Project } from "../../data/projects";
 
@@ -11,9 +12,10 @@ const { project } = Astro.props;
 ---
 
 {
-  /* The image keeps the same `<Image>` options as the homepage thumbnail so
-     both resolve to the same URL, which is already cached and decoded by the
-     time the expanding thumbnail hands over to it. */
+  /* The image keeps the same `<Image>` options as the homepage thumbnail,
+     `widths` and `sizes` included, so at any viewport both pick the same
+     srcset candidate, which is already cached and decoded by the time the
+     expanding thumbnail hands over to it. */
 }
 
 <section class="relative z-10 h-screen max-h-224 w-full">
@@ -21,6 +23,8 @@ const { project } = Astro.props;
     id="project-hero-image"
     src={project.img.src}
     alt={project.img.alt}
+    widths={imageWidths}
+    sizes="100vw"
     loading="eager"
     fetchpriority="high"
     class="h-full w-full object-cover"

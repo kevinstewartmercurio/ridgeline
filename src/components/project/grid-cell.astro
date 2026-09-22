@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
 
 import type { GridCell } from "../../data/project-grid.types";
 
@@ -13,6 +14,14 @@ const { image, caption, span = 6, start } = cell;
 // Spans vary per cell, so placement is passed as a custom property rather
 // than a class, which Tailwind can only generate from literal values.
 const placement = start ? `${start} / span ${span}` : `span ${span}`;
+
+// Cells stack full-width below `md` and take `span` twelfths of the row from
+// there, up to the 1376 px content cap. See `utils/images.ts`.
+const sizes = [
+  `(min-width: 1456px) ${Math.round((1376 * span) / 12)}px`,
+  `(min-width: 768px) ${Math.round((100 * span) / 12)}vw`,
+  "100vw",
+].join(", ");
 ---
 
 <figure data-reveal class="grid-cell" style={`--cell-placement: ${placement}`}>
@@ -23,6 +32,8 @@ const placement = start ? `${start} / span ${span}` : `span ${span}`;
     <Image
       src={image.src}
       alt={image.alt}
+      widths={imageWidths}
+      sizes={sizes}
       class="grid-cell-image absolute inset-0 h-full w-full object-cover"
     />
   </div>
