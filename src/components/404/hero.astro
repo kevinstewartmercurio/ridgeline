@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
+
+import heroImage from "../../images/404/hero.jpg";
+---
+
+<section class="relative z-10 h-screen max-h-224 w-full">
+  <Image
+    src={heroImage}
+    alt=""
+    widths={imageWidths}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="h-full w-full object-cover"
+  />
+  <div
+    class="absolute top-0 left-0 h-full w-full bg-[linear-gradient(to_bottom,#141412E0,#14141280,#14141240)] opacity-30"
+  >
+  </div>
+  <div class="bg-ink/60 absolute top-0 left-0 h-full w-full"></div>
+  <div
+    class="absolute top-0 left-1/2 h-full w-full -translate-x-1/2 px-5 sm:px-8 lg:px-10"
+  >
+    {
+      /* The title rises into place once the page has landed, which leaves the
+         photograph alone to arrive with the page. See `reveal.astro`. */
+    }
+    <div
+      data-reveal-group="entrance"
+      class="mx-auto flex h-full w-full max-w-344 items-end pb-10 xl:pb-16"
+    >
+      <h1
+        data-reveal
+        class="font-newsreader text-alabaster text-4xl/[110%] font-light sm:text-5xl/[110%] md:text-6xl/[110%] lg:text-7xl/[110%] xl:text-8xl/[110%]"
+      >
+        Oops, there's nothing here!
+      </h1>
+    </div>
+  </div>
+</section>
