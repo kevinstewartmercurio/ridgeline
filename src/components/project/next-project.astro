@@ -33,7 +33,7 @@ const next = projects[(idx + 1) % projects.length];
       href={`/project/${next.slug}`}
       id="next-project-link"
       aria-label={`Next project: ${next.title}, ${next.location}, completed ${next.year}`}
-      class="relative block outline-0"
+      class="focus-visible:outline-pine relative block focus-visible:outline-2 focus-visible:-outline-offset-2"
     >
       {
         [0, 1].map((n) => (
@@ -87,9 +87,8 @@ const next = projects[(idx + 1) % projects.length];
     const hoverDevice = matchMedia("(hover: hover)").matches;
     const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-    if (!hoverDevice) {
-      nextProjectLink?.classList.remove("outline-0");
-    } else if (
+    if (
+      hoverDevice &&
       nextProjectSection instanceof HTMLElement &&
       nextProjectLink instanceof HTMLAnchorElement &&
       nextProjectSelector instanceof HTMLDivElement
