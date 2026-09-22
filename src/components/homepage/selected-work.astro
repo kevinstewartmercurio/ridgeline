@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
 
 import { projects } from "../../data/projects";
 ---
@@ -66,9 +67,15 @@ import { projects } from "../../data/projects";
                   <span class="xs:block hidden">{project.location}</span>
                   <span class="hidden lg:block">{project.type}</span>
                   <span class="hidden md:block">{project.year}</span>
+                  {/* Sized as the project hero rather than the thumbnail it
+                      is here: the thumbnail grows into that hero on click,
+                      and matching its options means both pick the same
+                      srcset candidate. See `project/hero.astro`. */}
                   <Image
                     src={project.img.src}
                     alt={project.img.alt}
+                    widths={imageWidths}
+                    sizes="100vw"
                     class="h-14 w-22.5 object-cover"
                     data-project-thumbnail={!n || undefined}
                   />
