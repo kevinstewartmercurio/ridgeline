@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
 
 import heroImage from "../../images/larch-house/hero.jpg";
 ---
@@ -8,6 +9,8 @@ import heroImage from "../../images/larch-house/hero.jpg";
   <Image
     src={heroImage}
     alt=""
+    widths={imageWidths}
+    sizes="100vw"
     loading="eager"
     fetchpriority="high"
     class="h-full w-full object-cover"

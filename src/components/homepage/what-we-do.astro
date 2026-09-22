@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Logo from "../logo.astro";
+import { imageWidths } from "../../utils/images";
 
 import wwd1Image from "../../images/homepage/wwd-1.jpg";
 import wwd2Image from "../../images/homepage/wwd-2.jpg";
@@ -74,6 +75,8 @@ const services = [
           <Image
             src={img.src}
             alt={img.alt}
+            widths={imageWidths}
+            sizes="(min-width: 1456px) 676px, (min-width: 525px) 60vw, 100vw"
             class:list={[
               "aspect-square w-full object-cover duration-500 motion-reduce:transition-none",
               !idx ? "opacity-100" : "absolute top-0 left-0 opacity-0",
