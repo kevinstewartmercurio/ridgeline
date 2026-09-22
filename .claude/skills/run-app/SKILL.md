@@ -45,7 +45,7 @@ macOS doesn't ship `timeout`, so poll with the `until`/`sleep` loop
 above rather than `timeout ... curl`. If `lsof` is missing (some minimal
 Linux images), `fuser -k 4322/tcp` does the same job.
 
-The repo uses **bun** (`bun.lockb`, `@types/bun`), so `bun run dev` also
+The repo uses **bun** (`bun.lock`, `@types/bun`), so `bun run dev` also
 works, but calling `./node_modules/.bin/astro` directly is what lets you
 pass `--port` without argument-forwarding quirks.
 
