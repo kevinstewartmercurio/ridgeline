@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Logo from "../logo.astro";
+import { imageWidths } from "../../utils/images";
 
 import wwd1Image from "../../images/homepage/wwd-1.jpg";
 import wwd2Image from "../../images/homepage/wwd-2.jpg";
@@ -74,6 +75,8 @@ const services = [
           <Image
             src={img.src}
             alt={img.alt}
+            widths={imageWidths}
+            sizes="(min-width: 1456px) 676px, (min-width: 525px) 60vw, 100vw"
             class:list={[
               "aspect-square w-full object-cover duration-500 motion-reduce:transition-none",
               !idx ? "opacity-100" : "absolute top-0 left-0 opacity-0",
@@ -90,8 +93,11 @@ const services = [
       {
         services.map((service, idx) => (
           <div
+            role="button"
+            tabindex="0"
+            aria-pressed={!idx ? "true" : "false"}
             class:list={[
-              "service-card border-ink/12 relative border-t duration-300 motion-reduce:transition-none lg:aspect-square",
+              "service-card border-ink/12 relative cursor-pointer border-t duration-300 focus-visible:z-40 focus-visible:outline-2 focus-visible:-outline-offset-2 motion-reduce:transition-none lg:aspect-square",
               idx === 1 && "xs:border-l md:border-l-0 lg:border-l",
               idx === 2 && "xs:border-b md:border-b-0 lg:border-b",
               idx === 3 && "xs:border-l border-b md:border-l-0 lg:border-l",
@@ -170,18 +176,57 @@ const services = [
         once: true,
       });
 
-      serviceCardsContainer.addEventListener(
-        "mouseenter",
-        () => {
-          serviceCardSelectorLogo.style.scale = "1";
-        },
-        { signal },
-      );
+      // Moves the pine block and the logo badge onto card `idx`, and shows
+      // that card's photograph.
+      const select = (idx: number) => {
+        const translate =
+          lgMql.matches || (!mdMql.matches && xsMql.matches)
+            ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
+            : `translate(0%, ${idx * 100}%)`;
+        serviceCardSelectorBg.style.transform = translate;
+        serviceCardSelectorLogoContainer.style.transform = translate;
+
+        wwdImages.forEach((img, idx2) => {
+          img.classList.replace(
+            idx === idx2 ? "opacity-0" : "opacity-100",
+            idx === idx2 ? "opacity-100" : "opacity-0",
+          );
+        });
+
+        serviceCards.forEach((card, idx2) => {
+          card.classList.replace(
+            idx === idx2 ? "text-ink/65" : "text-alabaster",
+            idx === idx2 ? "text-alabaster" : "text-ink/65",
+          );
+          card.setAttribute("aria-pressed", idx === idx2 ? "true" : "false");
+        });
+      };
+
+      const showLogo = () => (serviceCardSelectorLogo.style.scale = "1");
+      const hideLogo = () => (serviceCardSelectorLogo.style.scale = "0");
+
+      // Hover selects on devices that have it. Everywhere else a tap does,
+      // and focus does for keyboard users, so the panel is never inert.
+      const hoverDevice = matchMedia("(hover: hover)").matches;
+
+      if (hoverDevice) {
+        serviceCardsContainer.addEventListener("mouseenter", showLogo, {
+          signal,
+        });
+        serviceCardsContainer.addEventListener("mouseleave", hideLogo, {
+          signal,
+        });
+      }
 
       serviceCardsContainer.addEventListener(
-        "mouseleave",
-        () => {
-          serviceCardSelectorLogo.style.scale = "0";
+        "focusout",
+        (e) => {
+          if (
+            !serviceCardsContainer.contains(e.relatedTarget as Node | null) &&
+            !serviceCardsContainer.matches(":hover")
+          ) {
+            hideLogo();
+          }
         },
         { signal },
       );
@@ -190,60 +235,38 @@ const services = [
         mql.addEventListener(
           "change",
           () => {
-            serviceCardSelectorBg.style.transform = "translate(0%, 0%)";
-            serviceCardSelectorLogoContainer.style.transform =
-              "translate(0%, 0%)";
-            serviceCardSelectorLogo.style.scale = "0";
-
-            wwdImages.forEach((img, idx) => {
-              img.classList.replace(
-                !idx ? "opacity-0" : "opacity-100",
-                !idx ? "opacity-100" : "opacity-0",
-              );
-            });
-
-            serviceCards.forEach((card, idx) => {
-              card.classList.replace(
-                !idx ? "text-ink/65" : "text-alabaster",
-                !idx ? "text-alabaster" : "text-ink/65",
-              );
-            });
+            select(0);
+            hideLogo();
           },
           { signal },
         );
       });
 
       serviceCards.forEach((card, idx) => {
+        const selectCard = () => {
+          // The breakpoint reset above hides the logo, so every selection
+          // brings it back rather than waiting for the pointer to re-enter
+          // the container.
+          showLogo();
+          select(idx);
+        };
+
+        if (hoverDevice) {
+          card.addEventListener("mouseenter", selectCard, { signal });
+        }
+        card.addEventListener("click", selectCard, { signal });
+        card.addEventListener("focus", selectCard, { signal });
         card.addEventListener(
-          "mouseenter",
-          () => {
-            // The breakpoint reset above hides the logo; a card hover always
-            // happens inside the container, so bring it back here too rather
-            // than waiting for the pointer to re-enter the container.
-            serviceCardSelectorLogo.style.scale = "1";
-
-            serviceCardSelectorBg.style.transform =
-              lgMql.matches || (!mdMql.matches && xsMql.matches)
-                ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
-                : `translate(0%, ${idx * 100}%)`;
-            serviceCardSelectorLogoContainer.style.transform =
-              lgMql.matches || (!mdMql.matches && xsMql.matches)
-                ? `translate(${idx % 2 ? "100%" : "0%"}, ${idx >= 2 ? "100%" : "0%"})`
-                : `translate(0%, ${idx * 100}%)`;
-
-            wwdImages.forEach((img, idx2) => {
-              img.classList.replace(
-                idx === idx2 ? "opacity-0" : "opacity-100",
-                idx === idx2 ? "opacity-100" : "opacity-0",
-              );
-            });
-
-            serviceCards.forEach((card2, idx2) => {
-              card2.classList.replace(
-                idx === idx2 ? "text-ink/65" : "text-alabaster",
-                idx === idx2 ? "text-alabaster" : "text-ink/65",
-              );
-            });
+          "keydown",
+          (e) => {
+            if (
+              e instanceof KeyboardEvent &&
+              (e.key === "Enter" || e.key === " ")
+            ) {
+              // Space would otherwise scroll the page.
+              e.preventDefault();
+              selectCard();
+            }
           },
           { signal },
         );

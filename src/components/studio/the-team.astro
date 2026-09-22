@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
 
 import marenOstbergImage from "../../images/studio/maren-ostberg.jpg";
 import danielReyesImage from "../../images/studio/daniel-reyes.jpg";
@@ -69,6 +70,8 @@ const team = [
             <Image
               src={member.src}
               alt={`${member.name}, ${member.title}`}
+              widths={imageWidths}
+              sizes="(min-width: 1456px) 450px, (min-width: 768px) 33vw, 50vw"
               class="mb-4 aspect-square w-full object-cover"
             />
             <h3 class="font-newsreader text-alabaster xs:text-2xl text-xl font-light lg:mb-1.5 lg:text-3xl">
