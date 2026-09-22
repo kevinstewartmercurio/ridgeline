@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { imageWidths } from "../../utils/images";
 
 import stack1Image from "../../images/homepage/stack-1.jpg";
 import stack2Image from "../../images/homepage/stack-2.jpg";
@@ -59,6 +60,8 @@ const cards = [
             <Image
               src={card.img.src}
               alt={card.img.alt}
+              widths={imageWidths}
+              sizes="100vw"
               class="h-full w-full object-cover"
             />
             <div class="absolute top-0 left-0 h-full w-full bg-[linear-gradient(to_bottom,#141412E0,#14141280,#14141240)] opacity-20" />
