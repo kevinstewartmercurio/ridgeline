@@ -10,11 +10,16 @@ import unrealImage from "../images/homepage/unreal.jpg";
 <section
   class="bg-alabaster xs:pt-12 relative z-10 w-full px-5 pt-8 pb-16 sm:px-8 sm:pt-16 lg:px-10"
 >
+  {
+    /* The title, the copy, and the photograph rise one after another as the
+       section reaches the viewport. See `reveal.astro`. */
+  }
   <div
+    data-reveal-group
     class="mx-auto w-full max-w-344 gap-x-10 md:flex md:h-100 lg:h-100 lg:gap-x-16 xl:h-116 xl:gap-x-20"
   >
     <div class="xs:flex mb-5 space-y-6 md:mb-0 md:block md:space-y-12">
-      <div class="xs:w-1/2 flex gap-x-2.5 md:w-auto md:gap-x-4">
+      <div data-reveal class="xs:w-1/2 flex gap-x-2.5 md:w-auto md:gap-x-4">
         <Logo
           class="fill-pine xs:h-11 xs:w-11 h-14 w-14 shrink-0 sm:h-14 sm:w-14 md:h-18 md:w-18 lg:h-24 lg:w-24 xl:h-30 xl:w-30"
         />
@@ -30,7 +35,7 @@ import unrealImage from "../images/homepage/unreal.jpg";
           </span>
         </h2>
       </div>
-      <div class="xs:w-1/2 space-y-4 md:w-auto xl:gap-y-8">
+      <div data-reveal class="xs:w-1/2 space-y-4 md:w-auto xl:gap-y-8">
         <p
           class="font-newsreader text-ink/65 text-xl font-light md:text-2xl lg:text-3xl xl:text-4xl"
         >
@@ -56,7 +61,7 @@ import unrealImage from "../images/homepage/unreal.jpg";
         </button>
       </div>
     </div>
-    <div class="grow">
+    <div data-reveal class="grow">
       <Image
         src={unrealImage}
         alt="Single-storey desert house at dusk with a turquoise front door, glass walls and a concrete path, mountains behind."
