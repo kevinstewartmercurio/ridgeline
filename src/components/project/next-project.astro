@@ -33,7 +33,7 @@ const next = projects[(idx + 1) % projects.length];
       href={`/project/${next.slug}`}
       id="next-project-link"
       aria-label={`Next project: ${next.title}, ${next.location}, completed ${next.year}`}
-      class="focus-visible:outline-pine relative block focus-visible:outline-2 focus-visible:-outline-offset-2"
+      class="relative block focus-visible:outline-2 focus-visible:-outline-offset-2"
     >
       {
         [0, 1].map((n) => (
