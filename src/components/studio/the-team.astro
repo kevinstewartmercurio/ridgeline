@@ -1,6 +1,5 @@
 ---
 import { Image } from "astro:assets";
-import Logo from "../logo.astro";
 
 import marenOstbergImage from "../../images/studio/maren-ostberg.jpg";
 import danielReyesImage from "../../images/studio/daniel-reyes.jpg";
@@ -66,7 +65,7 @@ const team = [
     >
       {
         team.map((member) => (
-          <div data-reveal class="member relative">
+          <div data-reveal class="relative">
             <Image
               src={member.src}
               alt={`${member.name}, ${member.title}`}
@@ -78,52 +77,9 @@ const team = [
             <span class="text-alabaster font-jetbrains text-2xs block uppercase lg:text-xs">
               {member.title}
             </span>
-            <div class="bg-alabaster member-logo xs:size-12 absolute top-2.5 right-2.5 flex size-10 origin-top-right scale-0 items-center justify-center duration-300 motion-reduce:transition-none sm:size-14 md:size-10 lg:size-12 xl:size-20">
-              <Logo class="fill-pine size-[75%]" />
-            </div>
           </div>
         ))
       }
     </div>
   </div>
 </section>
-
-<script>
-  const init = () => {
-    const teamMembers = document.querySelectorAll(".member");
-    const memberLogos = document.querySelectorAll(".member-logo");
-
-    // `astro:page-load` runs this again after every navigation, so the
-    // listeners below are dropped as the members they belong to go away.
-    const controller = new AbortController();
-    const { signal } = controller;
-
-    document.addEventListener("astro:before-swap", () => controller.abort(), {
-      once: true,
-    });
-
-    teamMembers.forEach((member, idx) => {
-      member.addEventListener(
-        "mouseenter",
-        () => {
-          if (memberLogos[idx] instanceof HTMLDivElement) {
-            memberLogos[idx].classList.replace("scale-0", "scale-100");
-          }
-        },
-        { signal },
-      );
-
-      member.addEventListener(
-        "mouseleave",
-        () => {
-          if (memberLogos[idx] instanceof HTMLDivElement) {
-            memberLogos[idx].classList.replace("scale-100", "scale-0");
-          }
-        },
-        { signal },
-      );
-    });
-  };
-
-  document.addEventListener("astro:page-load", init);
-</script>
