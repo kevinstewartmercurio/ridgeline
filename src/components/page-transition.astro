@@ -104,6 +104,21 @@ const pool = await Promise.all(
   ::view-transition-new(root) {
     animation: none;
   }
+
+  /* The curtain already down on arrival, for a visit that opens with the
+     intro. Only the head script in `Layout.astro` sets the mark, and the
+     script below lifts it as soon as it has copied this state into inline
+     styles, so the `!important` only has to beat the resting inline transform
+     for those first few frames. The reduced-motion query repeats the head
+     script's own check, so the curtain can never cover a page that has no way
+     to animate it away. */
+  @media not (prefers-reduced-motion: reduce) {
+    html[data-intro] #page-transition {
+      visibility: visible;
+      pointer-events: auto;
+      transform: none !important;
+    }
+  }
 </style>
 
 <script>
@@ -133,6 +148,9 @@ const pool = await Promise.all(
   // How long the run will wait for a photograph that was not already in the
   // cache before starting without it.
   const DECODE_TIMEOUT = 0.3;
+  // The intro's photographs start loading with the page rather than a whole
+  // navigation ahead, so they are given longer.
+  const INTRO_DECODE_TIMEOUT = 1;
   const EASE = [0.76, 0, 0.24, 1] as const;
   // The photographs hand off to one another, so each wipe leads with its
   // speed rather than easing in from a stop.
@@ -177,7 +195,9 @@ const pool = await Promise.all(
     // Whether the curtain is currently down, so that a navigation started
     // while another one is still running does not replay the slide in.
     let covered = false;
-    let logoShown = false;
+    // The logo reveal in progress or done, shared so that a navigation started
+    // during the intro waits on the intro's reveal rather than skipping it.
+    let revealing: Promise<void> | null = null;
     // `astro:page-load` also fires on the initial load, where there is
     // nothing to reveal.
     let navigating = false;
@@ -249,16 +269,16 @@ const pool = await Promise.all(
 
     // Wipes a handful of photographs through the square, each faster than the
     // last, and lands on the logo.
-    const revealLogo = async () => {
-      if (logoShown) return;
-      logoShown = true;
+    const revealLogo = (decodeTimeout = DECODE_TIMEOUT) =>
+      (revealing ??= runPhotographs(decodeTimeout));
 
+    const runPhotographs = async (decodeTimeout: number) => {
       const run = chosen;
 
       if (run.length) {
         await Promise.race([
           Promise.all(run.map((slot) => slot.decode().catch(() => {}))),
-          deadline(DECODE_TIMEOUT),
+          deadline(decodeTimeout),
         ]);
       }
 
@@ -296,7 +316,7 @@ const pool = await Promise.all(
     // navigation.
     const reset = () => {
       curtain.classList.add("invisible", "pointer-events-none");
-      logoShown = false;
+      revealing = null;
 
       animate(curtain, { y: "-100%" }, { duration: 0 });
       animate(background, { transform: IDENTITY }, { duration: 0 });
@@ -401,7 +421,32 @@ const pool = await Promise.all(
       reset();
     };
 
+    // Plays the second half of a navigation over a visit's first page: the
+    // curtain arrives already down (see the stylesheet above), so it goes
+    // straight into the photographs, the logo and the shrink into the nav.
+    const intro = async () => {
+      covered = true;
+
+      // Takes the covered state over from the stylesheet before lifting the
+      // mark it hangs on, so the curtain never leaves the viewport between
+      // the two.
+      curtain.classList.remove("invisible", "pointer-events-none");
+      curtain.style.transform = "translateY(0%)";
+      curtain.setAttribute("data-covering", "");
+      document.documentElement.removeAttribute("data-intro");
+      document.dispatchEvent(new Event("page-transition:covered"));
+
+      await revealLogo(INTRO_DECODE_TIMEOUT);
+      await wait(HOLD_DURATION);
+
+      // A navigation started during the intro reveals its own page once it
+      // has loaded.
+      if (!navigating) reveal();
+    };
+
     choose();
+
+    if (document.documentElement.hasAttribute("data-intro")) intro();
 
     document.addEventListener("astro:before-preparation", (e) => {
       // These links bring their own transition, which takes priority.

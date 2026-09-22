@@ -61,6 +61,36 @@ const shareImageAlt =
     <Font cssVariable="--newsreader" preload />
     <Font cssVariable="--jetbrains-mono" preload />
     <Font cssVariable="--instrument-sans" preload />
+    {
+      /* Decides, before anything is painted, whether this visit opens behind
+         the page transition's curtain: once per tab session, and never for a
+         reader who prefers reduced motion. It has to be an inline, blocking
+         script, since a module script runs only after the page has already
+         shown itself. The mark it leaves is what brings the curtain down (see
+         `page-transition.astro`), so without JavaScript there is no curtain.
+
+         The storage flag is set up front rather than once the intro finishes,
+         so a reload mid-intro does not play it again, and a repeat run of this
+         script after a client-side navigation finds it set and does nothing.
+
+         Should the curtain's module script never arrive to take over from the
+         mark, the timeout lifts it rather than leaving the page covered. */
+    }
+    <script is:inline>
+      try {
+        if (
+          !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+          !sessionStorage.getItem("ridgeline:intro-played")
+        ) {
+          sessionStorage.setItem("ridgeline:intro-played", "1");
+          document.documentElement.setAttribute("data-intro", "");
+          setTimeout(
+            () => document.documentElement.removeAttribute("data-intro"),
+            5000,
+          );
+        }
+      } catch {}
+    </script>
     <ClientRouter />
   </head>
   <body>
