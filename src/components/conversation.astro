@@ -68,18 +68,20 @@ import Arrow from "./arrow.astro";
               {
                 label: "My Portfolio",
                 href: "https://www.kevinstewartmercurio.com/",
+                external: true,
               },
               {
                 label: "Email Me",
                 href: "mailto:kevinstewartmercurio@gmail.com?subject=Howdy 👋",
+                external: false,
               },
             ] as const
-          ).map(({ label, href }) => (
+          ).map(({ label, href, external }) => (
             <a
               href={href}
-              target="_blank"
-              rel="noreferer"
-              class="bg-alabaster text-pine 2xs:px-4 2xs:py-2.5 flex items-center gap-x-2.5 border px-3 py-1.5 transition-colors duration-300 outline-none motion-reduce:transition-none lg:gap-x-3 lg:px-5 lg:py-3"
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
+              class="bg-alabaster text-pine 2xs:px-4 2xs:py-2.5 focus-visible:outline-alabaster hover:text-pine/65 focus-visible:text-pine/65 flex items-center gap-x-2.5 border px-3 py-1.5 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none lg:gap-x-3 lg:px-5 lg:py-3"
             >
               <span class="font-jetbrains 2xs:text-sm block text-xs uppercase lg:text-base">
                 {label}

@@ -37,82 +37,90 @@ import { address, year } from "../data/studio";
      `pointer-events-auto`. */
 }
 
-<nav
-  id="nav"
-  transition:persist="nav"
-  class="pointer-events-none fixed top-5 left-0 z-40 w-full transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-hidden:translate-y-[calc(-100%---spacing(5))] motion-reduce:transition-none"
->
-  <div class="w-full px-5 sm:px-8 lg:px-10">
-    <div class="mx-auto flex w-full max-w-344 justify-between">
-      <a
-        href="/"
-        id="nav-home"
-        aria-label="Ridgeline Architecture Studio home"
-        class="flex"
-      >
-        <div
-          id="nav-logo"
-          class="bg-pine pointer-events-auto flex size-14 shrink-0 items-center justify-center px-3 py-2 lg:size-16"
+{
+  /* Only `<nav>` is wrapped, so the `banner` landmark holds the site header
+     and nothing else. The scrim, the menu and the conversation card below
+     are siblings: a modal dialog does not belong inside `banner`. */
+}
+
+<header>
+  <nav
+    id="nav"
+    transition:persist="nav"
+    class="pointer-events-none fixed top-5 left-0 z-40 w-full transition-[translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-hidden:translate-y-[calc(-100%---spacing(5))] motion-reduce:transition-none"
+  >
+    <div class="w-full px-5 sm:px-8 lg:px-10">
+      <div class="mx-auto flex w-full max-w-344 justify-between">
+        <a
+          href="/"
+          id="nav-home"
+          aria-label="Ridgeline Architecture Studio home"
+          class="flex"
         >
-          <Logo class="fill-alabaster h-full w-full" aria-hidden="true" />
-        </div>
-        <div
-          id="nav-left-panel"
-          data-open
-          class="text-alabaster bg-pine pointer-events-auto flex h-14 items-center pr-3 transition-[clip-path] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:inset(0_100%_0_0)] data-open:[clip-path:inset(0)] motion-reduce:transition-none lg:h-16 lg:pr-4"
-        >
-          <div>
-            <span
-              class="font-newsreader block text-2xl/[110%] font-light lg:text-3xl"
-              >Ridgeline</span
-            >
-            <span
-              class="font-jetbrains text-2xs/[1] block uppercase lg:text-xs/[1]"
-              >Architecture Studio</span
-            >
+          <div
+            id="nav-logo"
+            class="bg-pine pointer-events-auto flex size-14 shrink-0 items-center justify-center px-3 py-2 lg:size-16"
+          >
+            <Logo class="fill-alabaster h-full w-full" aria-hidden="true" />
           </div>
-        </div>
-      </a>
-      <div class="relative overflow-clip max-md:w-12">
-        <div
-          id="nav-right-panel"
-          data-open
-          class="font-jetbrains text-alabaster peer pointer-events-auto flex h-14 translate-x-full items-center gap-x-7 text-xs uppercase transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:translate-x-0 motion-reduce:transition-none max-md:hidden sm:gap-x-8 lg:h-16 lg:text-sm"
-        >
-          <a href="/project/larch-house" class="uline after:bg-alabaster"
-            >Projects</a
+          <div
+            id="nav-left-panel"
+            data-open
+            class="text-alabaster bg-pine pointer-events-auto flex h-14 items-center pr-3 transition-[clip-path] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:inset(0_100%_0_0)] data-open:[clip-path:inset(0)] motion-reduce:transition-none lg:h-16 lg:pr-4"
           >
-          <a href="/studio" class="uline after:bg-alabaster">Studio</a>
-          <button
-            id="nav-convo-btn"
-            data-convo-btn
-            aria-haspopup="dialog"
-            class="group flex h-12 cursor-pointer"
+            <div>
+              <span
+                class="font-newsreader block text-2xl/[110%] font-light lg:text-3xl"
+                >Ridgeline</span
+              >
+              <span
+                class="font-jetbrains text-2xs/[1] block uppercase lg:text-xs/[1]"
+                >Architecture Studio</span
+              >
+            </div>
+          </div>
+        </a>
+        <div class="relative overflow-clip max-md:w-12">
+          <div
+            id="nav-right-panel"
+            data-open
+            class="font-jetbrains text-alabaster peer pointer-events-auto flex h-14 translate-x-full items-center gap-x-7 text-xs uppercase transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] data-open:translate-x-0 motion-reduce:transition-none max-md:hidden sm:gap-x-8 lg:h-16 lg:text-sm"
           >
-            <div
-              class="bg-alabaster text-ink flex items-center px-3 uppercase xl:px-4"
+            <a href="/project/larch-house" class="uline after:bg-alabaster"
+              >Projects</a
             >
-              Start a Conversation
-            </div>
-            <div class="bg-pine flex items-center px-3">
-              <Arrow class="fill-alabaster w-11" />
-            </div>
+            <a href="/studio" class="uline after:bg-alabaster">Studio</a>
+            <button
+              id="nav-convo-btn"
+              data-convo-btn
+              aria-haspopup="dialog"
+              class="group flex h-12 cursor-pointer"
+            >
+              <div
+                class="bg-alabaster text-ink flex items-center px-3 uppercase xl:px-4"
+              >
+                Start a Conversation
+              </div>
+              <div class="bg-pine flex items-center px-3">
+                <Arrow class="fill-alabaster w-11" />
+              </div>
+            </button>
+          </div>
+          <button
+            id="nav-hamburger-btn"
+            inert
+            aria-label="Menu"
+            aria-controls="nav-menu"
+            aria-expanded="false"
+            class="bg-alabaster pointer-events-auto absolute top-1/2 right-0 flex size-12 -translate-y-1/2 cursor-pointer items-center justify-center transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none md:peer-data-open:translate-x-full"
+          >
+            <Hamburger class="scale-80 overflow-visible" />
           </button>
         </div>
-        <button
-          id="nav-hamburger-btn"
-          inert
-          aria-label="Menu"
-          aria-controls="nav-menu"
-          aria-expanded="false"
-          class="bg-alabaster pointer-events-auto absolute top-1/2 right-0 flex size-12 -translate-y-1/2 cursor-pointer items-center justify-center transition-[translate] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none md:peer-data-open:translate-x-full"
-        >
-          <Hamburger class="scale-80 overflow-visible" />
-        </button>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</header>
 
 <div
   id="nav-scrim"

@@ -81,7 +81,7 @@ const recognition = [
             class:list={[
               // `block` so the row can be moved: a transform has no effect on
               // an inline box.
-              "group recognition-link font-jetbrains text-ink/65 text-2xs relative block w-full cursor-pointer text-left uppercase outline-0 sm:text-xs",
+              "group recognition-link font-jetbrains text-ink/65 text-2xs relative block w-full cursor-pointer text-left uppercase focus-visible:outline-2 focus-visible:-outline-offset-2 sm:text-xs",
             ]}
           >
             {[0, 1].map((n) => (
@@ -133,11 +133,7 @@ const recognition = [
     const hoverDevice = matchMedia("(hover: hover)").matches;
     const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-    if (!hoverDevice) {
-      recognitionLinks.forEach((item) => {
-        item.classList.remove("outline-0");
-      });
-    } else if (recognitionSection instanceof HTMLElement) {
+    if (hoverDevice && recognitionSection instanceof HTMLElement) {
       // `astro:page-load` runs this again after every navigation, so the
       // listeners below are dropped as the page they belong to goes away.
       const controller = new AbortController();
