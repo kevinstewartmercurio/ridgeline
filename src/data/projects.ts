@@ -19,7 +19,7 @@ export const projects = [
     year: 2025,
     img: {
       src: larchHouseImage,
-      alt: "",
+      alt: "A lit timber pavilion on stilts at dusk, with open stairs rising to a wraparound deck among ferns and trees.",
     },
   },
   {
@@ -36,7 +36,7 @@ export const projects = [
     year: 2024,
     img: {
       src: fernHollowImage,
-      alt: "",
+      alt: "Single-storey infill house with a sloping roof, brick piers, pale horizontal siding and a timber front door behind a stone path.",
     },
   },
   {
@@ -53,7 +53,7 @@ export const projects = [
     year: 2024,
     img: {
       src: cutbankResidenceImage,
-      alt: "",
+      alt: "Vertical-board timber house with a steep shed roof and a high corner window, on a wooded bluff above a lake at sunset.",
     },
   },
   {
@@ -70,7 +70,7 @@ export const projects = [
     year: 2023,
     img: {
       src: ledgerHouseImage,
-      alt: "",
+      alt: "Long, low pavilion with a deep timber roof and a glass wall reflecting the trees, a brick chimney mass and a dining terrace on a lawn.",
     },
   },
   {
@@ -87,7 +87,7 @@ export const projects = [
     year: 2023,
     img: {
       src: skagitBarnImage,
-      alt: "",
+      alt: "Barn kitchen and dining room under green-painted rafters, with walnut cabinets, dark tiled walls and a window seat by tall windows.",
     },
   },
 ];

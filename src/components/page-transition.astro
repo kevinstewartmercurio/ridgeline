@@ -74,6 +74,9 @@ const pool = await Promise.all(
       data-pool={JSON.stringify(pool.map((image) => image.src))}
     >
       {
+        /* Decorative: the photographs flash past behind the curtain, which is
+           hidden from assistive tech as a whole, so the empty alt is
+           deliberate. */
         Array.from({ length: SLOTS }, () => (
           <img
             alt=""
