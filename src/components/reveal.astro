@@ -54,8 +54,9 @@
   const MARGIN = "0px 0px -12% 0px";
   // Longest a page waits for a transition to say it has handed over. Only
   // reached if one was interrupted, where revealing the page late beats
-  // leaving it empty.
-  const HANDOVER_TIMEOUT = 2;
+  // leaving it empty. Long enough to outlast the intro a visit opens with,
+  // which hands over up to three and a half seconds after its page has loaded.
+  const HANDOVER_TIMEOUT = 5;
 
   const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
